@@ -1,0 +1,4 @@
+build/**
+integer-fhe
+*.o
+integer-fhe.xcodeproj/**
