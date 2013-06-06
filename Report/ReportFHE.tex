@@ -104,16 +104,18 @@ Amrit Kumar\\
 
 \maketitle
 \begin{abstract}
-Abstract \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+We present a study on variants of fully homomorphic schemes and the trade-off cost/security of basic operations on bits, integers, strings... \\\\\\\\\\\\\\\\\\\\\\\\\\
 \end{abstract}
 
 \keywords{ Fully Homomorphic Encryption, Security, Cost} % NOT required for Proceedings
 
 \section{Introduction}
 
-Motivation and significance of fully homomorphic encryption scheme such as Gentry's lattice-based scheme.  
-This work evaluates the efficiency of FHE implementations for operations varying from XOR to sort on remote machines. Trade-off between cost and security is analyzed. \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
+(Motivation and significance of fully homomorphic encryption scheme such as Gentry's lattice-based scheme.  
+This work evaluates the efficiency of FHE implementations for operations varying from XOR to sort on remote machines. Trade-off between cost and security is analyzed.) \\\\\\
+A homomorphic encryption allows operations on ciphertexts which implies a known operation on plaintext, such as RSA: 
+\[\texttt{E}(\prod_{i=1}^{n}{a_i}) = \prod_{i=1}^{n}{\texttt{E}(a_i)}\] 
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 \section{Gentry's fully homomorphic scheme}
  FHE\\\\\\\
 \subsection{The Framework}
@@ -121,7 +123,10 @@ Overview of the algorithm and its complexity.
  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 \subsection{Example}
-Description using a typical operation like modular multiplication of two $n$-bit vectors. Comparison with partial homomorphic encryption scheme such as RSA. \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+Description using a typical operation like modular multiplication of two $n$-bit vectors. Comparison with partial homomorphic encryption scheme such as RSA.
+
+Hence it uses $(n^2-1)$ \texttt{AND} gates and $n$ \texttt{OR} gates. 
+ \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 \section{Experimental Evaluation of Cost}
 

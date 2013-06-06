@@ -80,8 +80,10 @@ void not(mpz_t res, mpz_t a, fhe_pk_t pk){
 	mpz_clear(c1);
 }
 void test_xor_bits(){
-	int m, aux;
+	int  aux, i;
 	mpz_t c0, c1;
+	fmpz_poly_t poly_c;
+	fmpz_poly_init(poly_c);
 	mpz_init(c0);
 	mpz_init(c1);
 	fhe_pk_t pk;
@@ -89,25 +91,34 @@ void test_xor_bits(){
 	fhe_pk_init(pk);
 	fhe_sk_init(sk);
 	fhe_keygen(pk, sk);
-	m= 13;	
-	for(int i=13; i < 27; i++){
-		m=i;
+	//m= 13;	
+	for(int m=13; m < 27; m++){
+		aux=m;
+		i=0;
 		printf("--------->%i\n", m % 2);
-		fhe_encrypt(c0, pk, m % 2);
-		aux = m;	
+		fhe_encrypt(c0, pk, aux % 2);
+		fmpz_poly_set_coeff_mpz ( poly_c , i , c0 );
 		aux = aux >> 1;
 		do {
 			printf("--------->%i\n", aux % 2);
-			fhe_encrypt(c1, pk, aux % 2);
+			fhe_encrypt(c0, pk, aux % 2);
+			i=i+1;
+			fmpz_poly_set_coeff_mpz ( poly_c , i , c0 );
 			aux = aux >> 1;
-			fhe_add(c0, c0, c1, pk);
 		}while(aux != 0);
-////
+		fmpz_poly_get_coeff_mpz ( c0, poly_c, i);
+		i=i-1;
+		while(i>=0){
+			fmpz_poly_get_coeff_mpz ( c1, poly_c, i);
+			fhe_add(c0, c0, c1, pk);
+			i=i-1;
+		}
 		aux = fhe_decrypt(c0, sk);
 		printf("///////////////-----------!!!!!!  xor bits de %i est %i \n", m, aux);
 	}
 	mpz_clear(c0);
-	mpz_clear(c1);
+	mpz_clear(c1);	
+	fmpz_poly_clear(poly_c);
 	fhe_pk_clear(pk);
 	fhe_sk_clear(sk);
 }
