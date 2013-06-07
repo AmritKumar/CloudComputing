@@ -35,7 +35,6 @@
 \usepackage{algorithm2e}
 
 \begin{document}
-
 \title{Analysis of Security-Cost Trade-off of Fully Homomorphic Encryption Schemes}
 
 %
@@ -104,31 +103,56 @@ Amrit Kumar\\
 % number that will appear in the \additionalauthors section.
 
 \maketitle
+\tableofcontents
+
 \begin{abstract}
-Abstract \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+We present a study on variants of fully homomorphic schemes and the trade-off cost/security of basic operations on bits, integers, strings... \\\\\\\\\\\\\\\\\\\\\\\\\\
 \end{abstract}
 
 \keywords{ Fully Homomorphic Encryption, Security, Cost} % NOT required for Proceedings
 
 \section{Introduction}
 
-Motivation and significance of fully homomorphic encryption scheme such as Gentry's lattice-based scheme.  
-This work evaluates the efficiency of FHE implementations for operations varying from XOR to sort on remote machines. Trade-off between cost and security is analyzed. \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
+(Motivation and significance of fully homomorphic encryption scheme such as Gentry's lattice-based scheme.  
+This work evaluates the efficiency of FHE implementations for operations varying from XOR to sort on remote machines. Trade-off between cost and security is analyzed.) \\\\\\
+A partially homomorphic encryption allows certain operations on ciphertexts such as addition or multiplication which implies a known operation on plaintext like RSA Encryption
+\[\texttt{E}(\prod_{i=1}^{n}{a_i}) = \prod_{i=1}^{n}{\texttt{E}(a_i)}\] \\
+then Gentry proved that there is a fully homomorphic encryption which allows both addition and multiplication on encrypted bits: 
+\[\texttt{FHE}(m1) + \texttt{FHE} (m2) = \texttt{FHE}(m1+m2) \] 
+\[\texttt{FHE}(m1) \times \texttt{FHE} (m2) = \texttt{FHE}(m1 \times m2) ;\ \ \ m1, m2 \in \left\{ 0, 1 \right\}\] 
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 \section{Gentry's fully homomorphic scheme}
  FHE\\\\\\\
 \subsection{The Framework}
 Overview of the algorithm and its complexity. 
- \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 \subsection{Example}
-Description using a typical operation like modular multiplication of two $n$-bit vectors. Comparison with partial homomorphic encryption scheme such as RSA. \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+(Description using a typical operation like multiplication of two $n$-bit integers. Comparison with partial homomorphic encryption scheme such as RSA.)\\
+The multipliction of two FHE-encrypted integers of n bits consists on multiplications and additions on their FHE-encrypted bits: \[(\texttt{a}_{n},\texttt{a}_{n-1}, ... ,\texttt{a}_{1}) . (\texttt{b}_{n},\texttt{b}_{n-1}, ... ,\texttt{b}_{1}) = (\texttt{r}_{2n},\texttt{r}_{2n-1}, ... ,\texttt{r}_{1})\] \\
+We do $ n^{2}$ multiplications $ a_i.a_j$ and $ 2.(n + (n-1)(n-2)$ additions
+
+\[r_1= a_1.b_1 ; c_{1,1}=0\] 
+\[(r_2,c_{1,2})=\texttt{add}(a_2.b_1 ,a_1.b_2 ,c_{1,1}  ) \] 
+\[(r_3,c_{2,3})=\texttt{add}(a_1.b_3,\texttt{add}( a_3.b_1, a_2.b_2 , c_{1,2} ))   \] 
+ \[ \vdots    \] 
+\[ (r_{n-1},c_{n-1,n-1})= ...    \] 
+\[(r_{n},c_{n,n})=\texttt{add}(a_1.b_n, ...)      \] 
+\[  (r_{n+1},c_{n+1,n+1})= ..   \] 
+\[  \vdots      \] 
+\[  (r_{2n-1},c_{2n-1,2n-1})=     \] 
+\[ (r_{2n},c_{2n,2n})=  \texttt{add}(a_n.b_n, c_{2n,2n-1})    \]
+So it has $O(n^{2})$ complexity. In addition to that there is the cost of key generation, encryption and decryption, and there is also the recrypt algorithm called after each addition or multiplication. On the other hand the RSA-Encryption is much more easier and has a O(1) complexity for the multiplication of n-bits integer.
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 \section{Experimental Evaluation of Cost}
 
-Describe the FHE algorithm and its corresponding implementation choice. Installation, set-up procedure and usage of the implementation. We detail the measurements to be taken, like Wall time, CPU time and memory usage based on certain security or algorithmic parameters.
+(Describe the FHE algorithm and its corresponding implementation choice. Installation, set-up procedure and usage of the implementation. We detail the measurements to be taken, like Wall time, CPU time and memory usage based on certain security or algorithmic parameters.
 
-Statistical analysis of the measurements using minimum, max, mean and standard deviation. \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+Statistical analysis of the measurements using minimum, max, mean and standard deviation.) \\\\\\\\
+
+In this section we will experimentally measure time cost of Xor-bits operations using two versions of fully homomorphic encryption programs: libScarab-1.0.0 implementing Smart-Vercauteren algorithm and HElib implementing Gentry-Halevi-Smart algorithm.
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 \section{Evaluation on Bench Marks}
 
