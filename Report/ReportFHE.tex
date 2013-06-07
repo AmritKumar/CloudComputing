@@ -33,6 +33,7 @@
 \let\algorithm\relax
 \let\endalgorithm\relax
 \usepackage{algorithm2e}
+
 \begin{document}
 
 \title{Analysis of Security-Cost Trade-off of Fully Homomorphic Encryption Schemes}
@@ -134,23 +135,24 @@ Statistical analysis of the measurements using minimum, max, mean and standard d
 We describe the system parameters and test vectors. This section also includes description of the process of evaluation for the following operations :
 
 
-As the \textsc{hCrypt} implementation provides us with the two gates : \texttt{XOR} and \texttt{AND} which form a complete set of functional gates. The $\neg$\texttt{a} is \texttt{XOR(a,1)} while \texttt{OR(a,b)} is \texttt{XOR(XOR(a,b), AND(a,b))}.
+\subsection{Operations}
 
-\paragraph{ XOR of $n$-bits}
+The \textsc{Hcrypt} implementation provides two gates : \texttt{XOR} and \texttt{AND} forming a complete set of functional gates. We hence define $\neg$\texttt{a} as \texttt{XOR(a,1)}, while \texttt{OR(a,b)} as \texttt{XOR(XOR(a,b), AND(a,b))}, where \texttt{a,b} are bits. 
 
+Using these gates we build and analyse the cost of the following operations.
+
+\paragraph{XOR of $n$-bits}
 We start with the simplest operations on bits. \texttt{XOR} of $n$-bits requires $n-1$ \texttt{XOR} gates. 
-
 \paragraph{Majority of $n$-bits} 
-
-Majority bit will be evaluated with the following circuit : 
+Majority bit is evaluated with the following circuit : 
 
 \[\prod_{i=1}^{n}{a_i}+\sum_{i=1}^{n}{(\prod_{j!=i}{a_j}) \neg a_i}\]
 
-Hence it uses $(n^2-1)$ \texttt{AND} gates and $n$ \texttt{OR} gates. 
+where $\sum$ is the successive \texttt{OR}, and $\prod$ is the successive application of \texttt{AND}.
 
-\paragraph{Sum of integers of $n$-bits} Sum of two integers can be performed using an $n$-bit adder based on \texttt{full-adder} circuits. The cost of a full adder circuit is $2$ \texttt{XOR} to calculate the sum and the cost of calculating $3-bit$ majority function for the carry.
-
-\paragraph{Sum of arbtrary integers}
+Hence it uses $(n^2-1)$ \texttt{AND} gates, and $n$ \texttt{OR} and \texttt{NOT} gates i.e. $(n^2+n-1)$ \texttt{AND}, $3n$ \texttt{XOR} gates.
+\paragraph{Sum of integers of $n$-bits} Sum of two integers can be performed using an $n$-bit adder based on \texttt{full-adder} circuits. The cost of a full adder circuit is $2$ \texttt{XOR} to calculate the sum and $2$ \texttt{AND}, $1$ \texttt{XOR} and $1$ \texttt{OR} for the carry. Hence the total complexity is $3n$ \texttt{AND}, $5n$ \texttt{XOR}. 
+\paragraph{Sum of arbitrary integers}
 
 \begin{itemize}
 \item Sum of : 
@@ -168,7 +170,7 @@ Hence it uses $(n^2-1)$ \texttt{AND} gates and $n$ \texttt{OR} gates.
 \end{itemize}
 
 
-Sorting is tested on a sorting network where comparator gates are used. For insertion sort we would need $n(n-1)/2$ such gates. Each comparator is designed using the following algorithm. 
+Sorting is tested on a sorting network where comparator gates are used. Each comparator is designed using the following algorithm. 
 
 \restylealgo{algoruled}
 \linesnumbered
@@ -179,20 +181,21 @@ Sorting is tested on a sorting network where comparator gates are used. For inse
  aIsGreater=$0$\;
 
  \For{$i\leftarrow n-1$ \KwTo $0$}{
-     aIsGreater=aIsGreater $+\neg(b_i)a_i$ \;
+     $aIsGreater=aIsGreater +\neg(b_i)a_i$ \;
  }
 
 \For{$i\leftarrow 0$ \KwTo $n-1$}{
-     $Max_i$ = aIsGreater*$a_i$ + $\neg(aIsGreater)*b_i$ \;
-     $Min_i$ = $\neg(aIsGreater)*a_i$ + aIsGreater*$b_i$ \;
+     $Max_i = aIsGreater*a_i + \neg(aIsGreater)*b_i$ \;
+     $Min_i = \neg(aIsGreater)*a_i + aIsGreater*b_i$ \;
  }
 
-return($(Max_0,Max_1,\ldots, Max_{n-1}$), $(Min_0,Min_1,\ldots, Min_{n-1})$)
+return($Max$, $Min$)
  \caption{Comparator\label{Code:algo}}
 \end{algorithm}
 
-Each comparator gate uses $n$ \texttt{AND} gate and $n$ \texttt{OR} gates and $n$ \texttt{NOT} gates to find which one of the bit sequence is bigger and then to regenerate the maximum and the minuimum it would require $4n$ \texttt{AND} gates $2n$ \texttt{NOT} and \texttt{OR} gates.  
+Each comparator gate uses $n$ \texttt{AND} gates, $n$ \texttt{OR} gates and $n$ \texttt{NOT} gates to find the larger of the two bit sequences and then to regenerate the maximum and the minuimum $4n$ \texttt{AND} gates $2n$ \texttt{NOT} and \texttt{OR} gates i.e. $6n$ \texttt{AND} and \texttt{XOR} gates are required.  
 
+\paragraph{Insertion sort} $n(n-1)/2$ comparator gates are use for insertion sort.
 
 For each operation, we provide the initial algorithm and the results obtained. Observations based on the measurements are described. 
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
