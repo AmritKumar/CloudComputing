@@ -111,22 +111,29 @@ We present a study on variants of fully homomorphic schemes and the trade-off co
 \keywords{ Fully Homomorphic Encryption, Security, Cost} % NOT required for Proceedings
 
 \section{Introduction(1 page)}
-
-Partial HME, Gentry's scheme from SWHME to FHE via bootstrapping. The purpose fo FHE, the protocl in general. Remote processing of computations on encrypted input transforms a native program into another program which has a higher circuit depth. The objective of this article is to analyse the security-cost tradeoff of remote computations. The implementations that exist and the organisation of the article. With citations to the referenced articles and papers.
-
+The homomorphic encryption allows few operations on encrypted data. Gentry was the first to establidh a fully homomorphic encryption scheme based on ideal lattices which allows operations on encrypted data
+ but with a high cost. Since then many researches have been made trying to improve the schemes to establish more operations on encrypted data with less cost and better secutity in order to do computations on remote machines. 
+In this article we study the implementation of basic classes of operations and different aspects of 
+complexity-security, and we discuss the results of experimental measures based on several parameters.\\
+The Gentry FHE protocol consists on ``somewhat homomorphic'' scheme, ``squashing'' and ``bootstrapping''. (explain later). 
+There are variants of FHE schemes more optimized than Gentry's scheme, so we use in the experiments some open source implementations of these schemes.
 \section{Fully homomorphic scheme(1 page)}
 
 A general structure of the scheme.
 
 \subsection{Two Variants of Fully Homomorphic Encryption Scheme}
-
 A brief description of the two FHE schemes with their algorithmic complexity of the different stages in the scheme. 
--> Smart Vercautren
+-> Smart Vercauteren
 -> BGV
-
 Discuss the security of these schemes.
 
 
+
+\begin{itemize}
+\item Smart-Vercauteren scheme
+
+
+\end{itemize}
 \subsection{Considered Implementations}
 
 The library used, version, implementaion details, versions, references, modifications required, how-to-installl, how-to-use.Platforms accepted and other depedeices.
