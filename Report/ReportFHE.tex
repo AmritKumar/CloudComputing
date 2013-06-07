@@ -113,8 +113,10 @@ We present a study on variants of fully homomorphic schemes and the trade-off co
 
 (Motivation and significance of fully homomorphic encryption scheme such as Gentry's lattice-based scheme.  
 This work evaluates the efficiency of FHE implementations for operations varying from XOR to sort on remote machines. Trade-off between cost and security is analyzed.) \\\\\\
-A homomorphic encryption allows operations on ciphertexts which implies a known operation on plaintext, such as RSA: 
-\[\texttt{E}(\prod_{i=1}^{n}{a_i}) = \prod_{i=1}^{n}{\texttt{E}(a_i)}\] 
+A partially homomorphic encryption allows certain operations on ciphertexts such as addition or multiplication which implies a known operation on plaintext like RSA Encryption
+\[\texttt{E}(\prod_{i=1}^{n}{a_i}) = \prod_{i=1}^{n}{\texttt{E}(a_i)}\] \\
+then Gentry proved that there is a fully homomorphic encryption which allows both addition and multiplication on encrypted bits: 
+\[\texttt{FHE}(m1) + \texttt{FHE} (m2) = \texttt{FHE}(m1+m2) ;\ \ \ m1, m2 \in \left\{ 0, 1 \right\}\] 
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 \section{Gentry's fully homomorphic scheme}
  FHE\\\\\\\
