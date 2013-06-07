@@ -36,6 +36,12 @@ void test_sum_bits();
 
 void test_bit_majoritaire();
 
+void test_sum_integers();
+
+void test_min_max();
+
+void test_insertion_sort();
+
 void test_suite();
 
 #endif
