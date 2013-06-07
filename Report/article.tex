@@ -1,0 +1,198 @@
+% THIS IS SIGPROC-SP.TEX - VERSION 3.1
+% WORKS WITH V3.2SP OF ACM_PROC_ARTICLE-SP.CLS
+% APRIL 2009
+%
+% It is an example file showing how to use the 'acm_proc_article-sp.cls' V3.2SP
+% LaTeX2e document class file for Conference Proceedings submissions.
+% ----------------------------------------------------------------------------------------------------------------
+% This .tex file (and associated .cls V3.2SP) *DOES NOT* produce:
+%       1) The Permission Statement
+%       2) The Conference (location) Info information
+%       3) The Copyright Line with ACM data
+%       4) Page numbering
+% ---------------------------------------------------------------------------------------------------------------
+% It is an example which *does* use the .bib file (from which the .bbl file
+% is produced).
+% REMEMBER HOWEVER: After having produced the .bbl file,
+% and prior to final submission,
+% you need to 'insert'  your .bbl file into your source .tex file so as to provide
+% ONE 'self-contained' source file.
+%
+% Questions regarding SIGS should be sent to
+% Adrienne Griscti ---> griscti@acm.org
+%
+% Questions/suggestions regarding the guidelines, .tex and .cls files, etc. to
+% Gerald Murray ---> murray@hq.acm.org
+%
+% For tracking purposes - this is V3.1SP - APRIL 2009
+\documentclass{acm_proc_article-sp}
+
+\makeatletter
+\newif\if@restonecol
+\makeatother
+\let\algorithm\relax
+\let\endalgorithm\relax
+\usepackage{algorithm2e}
+
+\begin{document}
+\title{Analysis of Security-Cost Trade-off of Fully Homomorphic Encryption Schemes}
+
+%
+% You need the command \numberofauthors to handle the 'placement
+% and alignment' of the authors beneath the title.
+%
+% For aesthetic reasons, we recommend 'three authors at a time'
+% i.e. three 'name/affiliation blocks' be placed beneath the title.
+%
+% NOTE: You are NOT restricted in how many 'rows' of
+% "name/affiliations" may appear. We just ask that you restrict
+% the number of 'columns' to three.
+% Because of the available 'opening page real-estate'
+% we ask you to refrain from putting more than six authors
+% (two rows with three columns) beneath the article title.
+% More than six makes the first-page appear very cluttered indeed.
+%
+% Use the \alignauthor commands to handle the names
+% and affiliations for an 'aesthetic maximum' of six authors.
+% Add names, affiliations, addresses for
+% the seventh etc. author(s) as the argument for the
+% \additionalauthors command.
+% These 'additional authors' will be output/set for you
+% without further effort on your part as the last section in
+% the body of your article BEFORE References or any Appendices.
+
+\numberofauthors{2} %  in this sample file, there are a *total*
+% of EIGHT authors. SIX appear on the 'first-page' (for formatting
+% reasons) and the remaining two appear in the \additionalauthors section.
+%
+\author{
+% You can go ahead and credit any number of authors here,
+% e.g. one 'row of three' or two rows (consisting of one row of three
+% and a second row of one, two or three).
+%
+% The command \alignauthor (no curly braces needed) should
+% precede each author name, affiliation/snail-mail address and
+% e-mail address. Additionally, tag each line of
+% affiliation/address with \affaddr, and tag the
+% e-mail address with \email.
+%
+% 1st. author
+\alignauthor
+Kais Chaabouni \\
+       \affaddr{ENSIMAG}\\
+       \affaddr{Grenoble INP}\\
+       \affaddr{Grenoble, France}\\
+       \email{kais.chaabouni@ensimag.imag.fr}
+% 2nd. author
+\alignauthor 
+Amrit Kumar\\
+       \affaddr{ENSIMAG-Ecole Polytechnique}\\
+       \affaddr{Grenoble INP}\\
+       \affaddr{Grenoble, France}\\
+       \email{amrit.kumar@ensimag.imag.fr}
+}
+
+% There's nothing stopping you putting the seventh, eighth, etc.
+% author on the opening page (as the 'third row') but we ask,
+% for aesthetic reasons that you place these 'additional authors'
+% in the \additional authors block, viz.
+
+\date{30 July 1999}
+% Just remember to make sure that the TOTAL number of authors
+% is the number that will appear on the first page PLUS the
+% number that will appear in the \additionalauthors section.
+
+\maketitle
+
+\begin{abstract}
+We present a study on variants of fully homomorphic schemes and the trade-off cost/security of basic operations on bits, integers, strings... 
+\end{abstract}
+
+\keywords{ Fully Homomorphic Encryption, Security, Cost} % NOT required for Proceedings
+
+\section{Introduction(1 page)}
+
+Partial HME, Gentry's scheme from SWHME to FHE via bootstrapping. The purpose fo FHE, the protocl in general. Remote processing of computations on encrypted input transforms a native program into another program which has a higher circuit depth. The objective of this article is to analyse the security-cost tradeoff of remote computations. The implementations that exist and the organisation of the article. With citations to the referenced articles and papers.
+
+\section{Fully homomorphic scheme(1 page)}
+
+A general structure of the scheme.
+
+\subsection{Two Variants of Fully Homomorphic Encryption Scheme}
+
+A brief description of the two FHE schemes with their algorithmic complexity of the different stages in the scheme. 
+-> Smart Vercautren
+-> BGV
+
+Discuss the security of these schemes.
+
+
+\subsection{Considered Implementations}
+
+The library used, version, implementaion details, versions, references, modifications required, how-to-installl, how-to-use.Platforms accepted and other depedeices.
+
+\subsection{Intial set-up cost(The cost not depending on the actual program)}
+
+Can be integrated with subsection 2.1 
+
+\section{ Didactic example :  Maximum of two integer (1 page)}
+
+
+
+\subsection{Input Program for Fully Homomorphic Encryption Scheme}
+
+Details of the circuit or the program used to calculate the maximum of two bounded integers.
+
+
+\subsection{Theoretical Cost with the Schemes}
+
+Analyse the cost of the program wrt SV, BGV. 
+
+\subsection{Experimental Analysis}
+
+Once for all analysis of common operations(KeyGen, Encrypt, Decrypt of 1 bit) varying the algorithmic and security parameters.
+
+
+Measurements taken are CPU time, Wall Time, Memory Usage by varying the input size  and the algorithmic parameters. Noise reduction threshold.
+
+\paragraph{KeyGen}
+
+
+\paragraph{Encryption and Decryption}
+
+\section{Choice of Benchmarks}
+
+3 different classes of problems : 
+\begin{itemize}
+\item Operations on bits,
+ \item operation on integers (possibility of extension on blocks and comparision with RSA and 
+ \item branching
+\end{itemize}
+
+For each problem we propse the program, analyse their cost and eventually on security.
+
+Why certain other programs cannot be executed under homomorphic encryption.
+
+\section{Evaluation on the Benchmarks (1 page)}
+
+Measurements on varying the parameters or the plaintext space. Evaluation of program dependent properties. 
+
+\section{Analysis of the results}
+
+Anlayze the results previously obtained and its impact on security and complexity. Comparisions of security-cost tradeoff with other schemes like RSA.
+\section{Conclusion}
+Conclusion\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\bibliographystyle{abbrv}
+\bibliography{}  % sigproc.bib is the name of the Bibliography in this case
+% You must have a proper ".bib" file
+%  and remember to run:
+% latex bibtex latex latex
+% to resolve all references
+%
+% ACM needs 'a single self-contained file'!
+%
+%APPENDICES are optional
+%\balancecolumns
+\balancecolumns
+% That's all folks!
+\end{document}
