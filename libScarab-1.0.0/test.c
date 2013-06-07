@@ -88,45 +88,48 @@ void test_aIsGreater(mpz_t res, fmpz_poly_t polya, fmpz_poly_t polyb, fhe_pk_t p
 	long nbits = fmpz_poly_degree(polya)+1;
 	mpz_t a_k;
 	mpz_t b_k;
-	mpz_t tmp;
+	mpz_t tmp1;
+	mpz_t anot;
+	mpz_t bnot;
+	mpz_t tmp2;
+	mpz_t count;
 
 	mpz_init(a_k);
 	mpz_init(b_k);
-	mpz_init(anot);
-	mpz_init(bnot);
 	mpz_init(tmp1);
 	mpz_init(tmp2);
-	mpz_init(count);
-	mpz_init(final);
-	
+	mpz_init(anot);
+	mpz_init(bnot);
+	mpz_init(count);	
+
 	mpz_t aIsGreater;
 	mpz_init(aIsGreater);
 
 	fhe_encrypt(aIsGreater, pk, 0);	
 	fhe_encrypt(count, pk, 1);
-	fhe_encrypt(tmp1,pk,0);
-	fhe_encrypt(tmp2,pk,0);
-	
+
 	for(long k=nbits-1;k>=0;k--){
 
 		fmpz_poly_get_coeff_mpz(a_k, polya,k);	
 		fmpz_poly_get_coeff_mpz(b_k, polyb,k);
-
+		
 		not(anot, a_k, pk);
-		not(bnot, b_k, pk);
+		not(bnot, b_k, pk);	
 
-		fhe_mul(tmp1,a_k,b_k, pk);
-		fhe_mul(tmp2,anot, bnot, pk);
+		fhe_mul(tmp1, a_k, b_k, pk);
+		fhe_mul(tmp2, anot, bnot,pk); 
+		or(tmp1, tmp2, tmp1, pk); //Ek
+
+		fhe_mul(tmp2, a_k, bnot, pk);
+		fhe_mul(tmp2, tmp2, count, pk);		
 		
-		fhe_add(tmp1, tmp1, tmp2, pk);
-		fhe_mul(count,count, tmp1, pk );
-		
-		fhe_mul(aIsGreater,a_k, bnot, pk);
-		fhe_mul(aIsGreater, aIsGreater,count,pk);
-		fhe_add(tmp1, tmp1, aIsGreater, pk);
-		
+		fhe_mul(count, count, tmp1,pk);		
+		or(aIsGreater,aIsGreater, tmp2,pk);		
 	}
-	mpz_set(res,tmp1);
+	mpz_set(res,aIsGreater);
+	mpz_clear(anot);
+	mpz_clear(bnot);
+	mpz_clear(count);
 	mpz_clear(a_k);
 	mpz_clear(b_k);
 	mpz_clear(tmp1);
@@ -135,7 +138,7 @@ void test_aIsGreater(mpz_t res, fmpz_poly_t polya, fmpz_poly_t polyb, fhe_pk_t p
 }
 
 
-void min_max(mpz_t *min, mpz_t *max, fmpz_poly_t poly_c1, fmpz_poly_t poly_c2, fhe_pk_t pk, fhe_sk_t sk){
+void min_max(mpz_t *min, mpz_t *max, fmpz_poly_t poly_c1, fmpz_poly_t poly_c2, fhe_pk_t pk){
 	
 
 	int nbits = fmpz_poly_degree(poly_c1)+1; 
@@ -155,7 +158,7 @@ void min_max(mpz_t *min, mpz_t *max, fmpz_poly_t poly_c1, fmpz_poly_t poly_c2, f
 
 	test_aIsGreater(aIsGreater,poly_c1,poly_c2,pk);
 
-	printf("Is a greater than b ? Ans : %i  \n", fhe_decrypt(aIsGreater,sk));
+	//printf("Is a greater than b ? Ans : %i  \n", fhe_decrypt(aIsGreater,sk));
 	
 	for(k=0;k<nbits;k++){
 		
@@ -341,8 +344,9 @@ void test_min_max(){
 
 
 void test_insertion_sort(){   // Generate n random numbers of nbits each and sort them
-  	int n = 4;
-	int nbits = 4;
+	int n = 4; // Nombre d'entiers à trier
+	int nbits = 4; // Nombre de bit de chaque entier
+	int list [] = {8,13,11,9};  // List d'entiers à trier
 
 	fmpz_poly_t * poly_nums;
 	poly_nums = malloc(sizeof(fmpz_poly_t) * n);
@@ -363,8 +367,6 @@ void test_insertion_sort(){   // Generate n random numbers of nbits each and sor
 	mpz_init(c0);
 
 
-	int list [] = {11,9,12,13}; 	
-	
 	////////////// Encryption of the bit sequennces //////////
 	for(int k = 0; k < n ; k++){
 		i=0;
@@ -383,27 +385,26 @@ void test_insertion_sort(){   // Generate n random numbers of nbits each and sor
 		}while(aux!= 0);
 
 	}
-	
-	mpz_t tmp;
-	
-	mpz_init(tmp);
-	int k = 0;
 
-	printf("Decrypting the encoded polynomials \n");
-	for(int i = 0 ;i<n;i++){
-	  printf("\n the %dth integer is : \n ", i);	
-	  for (k=0;k<nbits;k++){
-	    fmpz_poly_get_coeff_mpz(tmp, poly_nums[i],k);
-	    printf(" %i ", fhe_decrypt(tmp,sk));
-	  } 
-	}	
+	mpz_t tmp;	
+	mpz_init(tmp);
 	
-	printf("\n");
+	int k;
+	for(i=0;i<n;i++){
+		printf(" \n The %d'th number is \n", i);
+		for(k=0;k<nbits;k++){
+			fmpz_poly_get_coeff_mpz(tmp, poly_nums[i],k);
+			printf(" %i ", fhe_decrypt(tmp, sk));
+	
+	}
+	
+	}
 	
 
 
 	/////////// Evaluation ////////////////////
-				
+		
+	
 	mpz_t * max;
 	mpz_t * min;
 	max = malloc(sizeof(mpz_t) * nbits);
@@ -413,33 +414,12 @@ void test_insertion_sort(){   // Generate n random numbers of nbits each and sor
 		mpz_init(min[i]);
 	}
 	
-	min_max(min,max, poly_nums[0], poly_nums[2],pk, sk);
-	
-	for (int t=0;t<nbits;t++) 
-	  printf("max at i= %d  max = %i \n", t,fhe_decrypt(max[t],sk));
-			
-	 printf("\n");
-			
-      for (int t=0;t<nbits;t++)
-	 printf("min at i=%d  min = %i \n", t,fhe_decrypt(min[t],sk));
 
-	/*
 	i=n-2;
 	
 	while(i>=0){
-	  printf("In the %d while iteration \n", i);
 		for(int j=0;j<=i;j++){
-		  printf("In the inner loop j = %d iteration \n",j);
 			min_max(min, max, poly_nums[j], poly_nums[j+1],pk);
-			for (int t=0;t<nbits;t++){
-			  printf("max at i= %d  max = %i \n", t,fhe_decrypt(max[t],sk));
-			} 
-			printf("\n");
-			
-			for (int s=0;s<nbits;s++)
-			  printf("min at i=%d  min = %i \n", s,fhe_decrypt(min[s],sk));
-			printf("\n");
-
 			for(k=0;k<n;k++){
 				fmpz_poly_set_coeff_mpz(poly_nums[j], k, min[k]);
 				fmpz_poly_set_coeff_mpz(poly_nums[j+1],k, max[k]);
@@ -450,18 +430,21 @@ void test_insertion_sort(){   // Generate n random numbers of nbits each and sor
 	
 	}
 
+
+	
 	//////////////// Decryption ///////////////////////////
 	
 	for (i=0;i<n;i++){
-		printf("\n the %dth integer is : \n ", i);	
+		printf(" \n the %dth integer is : \n ", i);	
 		for (k=0;k<nbits;k++){
-		  fmpz_poly_get_coeff_mpz(tmp, poly_nums[i],k);
-		  printf(" %i ", fhe_decrypt(tmp,sk));
-
+			fmpz_poly_get_coeff_mpz(tmp, poly_nums[i],k);
+			printf(" %i ", fhe_decrypt(tmp,sk));
 		} 
-		}*/	
-	printf("\n");
 		
+	}
+	
+	printf("\n");
+
 	for(k=0;k<nbits;k++){
 		mpz_clear(max[k]);
 		mpz_clear(min[k]);
@@ -474,11 +457,8 @@ void test_insertion_sort(){   // Generate n random numbers of nbits each and sor
 	fhe_sk_clear(sk);	
 	mpz_clear(c0);
 	mpz_clear(tmp);
-
 	
 }
-
-/*
 
 void test_sum_integers(){	
 
@@ -583,14 +563,11 @@ void test_sum_integers(){
 	mpz_clear(a_k);
 	mpz_clear(b_k); 
 }
-*/
-/*
+
 
 void test_xor_bits(){
-	int  aux, i;
+	int m, aux;
 	mpz_t c0, c1;
-	fmpz_poly_t poly_c;
-	fmpz_poly_init(poly_c);
 	mpz_init(c0);
 	mpz_init(c1);
 	fhe_pk_t pk;
@@ -598,34 +575,25 @@ void test_xor_bits(){
 	fhe_pk_init(pk);
 	fhe_sk_init(sk);
 	fhe_keygen(pk, sk);
-	//m= 13;	
-	for(int m=13; m < 27; m++){
-		aux=m;
-		i=0;
+	m= 13;	
+	for(int i=13; i < 27; i++){
+		m=i;
 		printf("--------->%i\n", m % 2);
-		fhe_encrypt(c0, pk, aux % 2);
-		fmpz_poly_set_coeff_mpz ( poly_c , i , c0 );
+		fhe_encrypt(c0, pk, m % 2);
+		aux = m;	
 		aux = aux >> 1;
 		do {
 			printf("--------->%i\n", aux % 2);
-			fhe_encrypt(c0, pk, aux % 2);
-			i=i+1;
-			fmpz_poly_set_coeff_mpz ( poly_c , i , c0 );
+			fhe_encrypt(c1, pk, aux % 2);
 			aux = aux >> 1;
-		}while(aux != 0);
-		fmpz_poly_get_coeff_mpz ( c0, poly_c, i);
-		i=i-1;
-		while(i>=0){
-			fmpz_poly_get_coeff_mpz ( c1, poly_c, i);
 			fhe_add(c0, c0, c1, pk);
-			i=i-1;
-		}
+		}while(aux != 0);
+////
 		aux = fhe_decrypt(c0, sk);
 		printf("///////////////-----------!!!!!!  xor bits de %i est %i \n", m, aux);
 	}
 	mpz_clear(c0);
-	mpz_clear(c1);	
-	fmpz_poly_clear(poly_c);
+	mpz_clear(c1);
 	fhe_pk_clear(pk);
 	fhe_sk_clear(sk);
 }
@@ -773,9 +741,9 @@ void test_bit_majoritaire(){
 	fhe_sk_clear(sk);
 }
 
-*/
 
-/*void test_sum_bits(){
+/*
+void test_sum_bits(){
 
 	printf("FULLADD\n");
 	mpz_t c0, c1, ci;
@@ -813,10 +781,10 @@ void test_bit_majoritaire(){
 
 	}while(aux != 0);
 
-*/
 
 
-/*
+
+
 	int m, m1, aux;
 	mpz_t c0, c1, co, ci;
 	mpz_init(c0);
@@ -856,7 +824,7 @@ void test_bit_majoritaire(){
 
 }
 */
-/*
+
 void
 test_encryt_decrypt()
 {
@@ -1136,4 +1104,4 @@ test_fully_homomorphic()
 	mpz_clear(temp);
 	
 	printf("PASSED.\n");
-}*/
+}
