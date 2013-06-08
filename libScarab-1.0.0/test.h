@@ -42,6 +42,12 @@ void test_min_max();
 
 void test_insertion_sort();
 
+void test_oddeven_merger_sort();
+
+void test_bitonic_sort();
+
 void test_suite();
+
+void test_majority_bit();
 
 #endif

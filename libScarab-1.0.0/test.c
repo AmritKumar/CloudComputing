@@ -26,8 +26,10 @@
 	fhe_add(temp, __a, __b, pk);					\
 	assert(fhe_decrypt(temp, sk) == __check);
 void debug_test_bit_majoritaire();
-void
-test_suite()
+
+
+
+void test_suite()
 {
 	//test_fully_homomorphic();
 	//test_homomorphic();
@@ -41,7 +43,8 @@ test_suite()
 	//test_sum_integers();
 	//test_min_max();
 	//test_insertion_sort();
-	test_oddeven_merger_sort();
+	//test_oddeven_merger_sort();
+	test_bitonic_sort();
 	//test_majority_bit();
 	//debug_test_bit_majoritaire();
 }
@@ -480,23 +483,147 @@ void test_oddeven_merger_sort(){
 	}
 	
 	printf("\n");
-	
-		
-		
-				
-		
-
 
 
 }
 
-
 /*
-void test_bitonic_sort(){ // Sorts a btonic array of 2n elements
+void bitonicMerge(fmpz_poly_t * poly_nums, int nbits , int lo, int n, int dir, fhe_sk_t sk, fhe_pk_t pk ){
 
+
+	mpz_t * max;
+	mpz_t * min;
+	max = malloc(sizeof(mpz_t) * nbits);
+	min = malloc(sizeof(mpz_t) * nbits);
+	for(int i=0;i<nbits;i++){
+		mpz_init(max[i]);
+		mpz_init(min[i]);
+	}
+
+
+
+	if(n>1){
+		int m = n/2;
+		for(int i = lo; i<lo+m;i++){
+							
+			min_max(min, max, poly_nums[i], poly_nums[i+m], pk, nbits);		
+			for(int k=0;k<nbits;k++){
+				fmpz_poly_set_coeff_mpz(poly_nums[i], k, min[k]);
+				fmpz_poly_set_coeff_mpz(poly_nums[i+m],k, max[k]);
+			}
+
+			
+		
+		}
+		
+		bitonicMerge(poly_nums, nbits, lo, m, dir, sk, pk);
+		bitonicMerge(poly_nums, nbits, lo+m, m, dir, sk, pk);
+		
+	
+	}
+
+}
+
+*/
+
+
+
+
+
+void bitonicMergeUp(fmpz_poly_t *poly_nums, int  nbits, int n,  int lo , int  high, fhe_sk_t sk, fhe_pk_t pk){
+	if(high==0) return;
+	
+	//////////// SWAP //////////
+
+	mpz_t * max;
+	mpz_t * min;
+	max = malloc(sizeof(mpz_t) * nbits);
+	min = malloc(sizeof(mpz_t) * nbits);
+	for(int i=0;i<nbits;i++){
+		mpz_init(max[i]);
+		mpz_init(min[i]);
+	}
+
+
+	for(int i = 0; i<high;i++){
+		min_max(min, max, poly_nums[i+lo], poly_nums[i+lo+high], pk, nbits);		
+		for(int k=0;k<nbits;k++){
+			fmpz_poly_set_coeff_mpz(poly_nums[i+lo], k, min[k]);
+			fmpz_poly_set_coeff_mpz(poly_nums[i+lo+high],k, max[k]);
+		}
+		
+		
+	}
+
+	bitonicMergeUp(poly_nums, nbits, n, lo, high/2,  sk, pk);
+	bitonicMergeUp(poly_nums, nbits, n, lo+high, high/2,  sk, pk);
+	for(int k=0;k<nbits;k++){
+		mpz_clear(max[k]);
+		mpz_clear(min[k]);
+	}
+	
+				
+}
+
+void bitonicMergeDown(fmpz_poly_t *poly_nums, int  nbits, int n,  int lo , int  high, fhe_sk_t sk, fhe_pk_t pk){
+	if(high==0) return;
+
+	//////////// SWAP //////////////////
+
+	mpz_t * max;
+	mpz_t * min;
+	max = malloc(sizeof(mpz_t) * nbits);
+	min = malloc(sizeof(mpz_t) * nbits);
+	for(int i=0;i<nbits;i++){
+		mpz_init(max[i]);
+		mpz_init(min[i]);
+	}
+
+
+	for(int i = 0; i<high;i++){
+		min_max(min, max, poly_nums[i+lo], poly_nums[i+lo+high], pk, nbits);		
+		for(int k=0;k<nbits;k++){
+			fmpz_poly_set_coeff_mpz(poly_nums[i+lo+high], k, min[k]);
+			fmpz_poly_set_coeff_mpz(poly_nums[i+lo],k, max[k]);
+		}
+			
+	}
+
+	bitonicMergeDown(poly_nums, nbits, n, lo, high/2,  sk, pk);
+	bitonicMergeDown(poly_nums, nbits, n, lo+high, high/2,  sk, pk);
+	for(int k=0;k<nbits;k++){
+		mpz_clear(max[k]);
+		mpz_clear(min[k]);
+	}
+	
+}
+
+
+void bitonicSortDown(fmpz_poly_t *poly_nums, int  nbits, int n,  int lo , int  high, fhe_sk_t sk, fhe_pk_t pk){
+	if(high==1) return;
+
+	bitonicSortUp(poly_nums, nbits, n, lo, high/2 , sk, pk);
+	bitonicSortDown(poly_nums, nbits, n, lo+high/2, high/2, sk, pk );
+	bitonicMergeDown(poly_nums, nbits, n, lo, high/2,  sk, pk);
+
+}
+
+void bitonicSortUp(fmpz_poly_t *poly_nums, int  nbits, int n,  int lo , int  high, fhe_sk_t sk, fhe_pk_t pk){
+	if(high==1) return;
+
+	bitonicSortUp(poly_nums, nbits, n, lo, high/2 , sk, pk);
+	bitonicSortDown(poly_nums, nbits, n, lo+high/2, high/2,  sk, pk );
+	bitonicMergeUp(poly_nums, nbits, n, lo, high/2,  sk, pk);
+
+}
+
+
+
+
+void test_bitonic_sort(){ // Sorts a bitonic array of 2^n elements
 	int n = 8; // Nombre d'entiers à trier
 	int nbits = 6; // Size in number of bits
-	int list [] = {2,8,19,32,16,13,5,2};  // List d'entiers à trier
+	int list [] ={5, 2, 11, 7, 18, 4, 5, 9}; // {8,13,19,32,24,10,6,5};  // List d'entiers à trier
 
 	fmpz_poly_t * poly_nums;
 	poly_nums = malloc(sizeof(fmpz_poly_t) * n);
@@ -551,64 +678,36 @@ void test_bitonic_sort(){ // Sorts a btonic array of 2n elements
 	
 	printf("\n");
 	
-	recursive_merge_sort(poly_nums, n, nbits, sk);
+
+	////////////////// Bitonic Sorting : sort from the index 0 till n //////////////
+
+	bitonicSortUp(poly_nums, nbits, n, 0, n, sk, pk);
+
+	////////////// Decryption /////////////////////
 
 
-	////////////////// Bitonic Sort /////////////////////
-		
-	mpz_t * max;
-	mpz_t * min;
-	max = malloc(sizeof(mpz_t) * nbits);
-	min = malloc(sizeof(mpz_t) * nbits);
-	for(i=0;i<nbits;i++){
-		mpz_init(max[i]);
-		mpz_init(min[i]);
+		for(i=0;i<n;i++){
+		printf(" \n The %d'th number is \n", i);
+		for(k=0;k<nbits;k++){
+			fmpz_poly_get_coeff_mpz(tmp, poly_nums[i],k);
+			printf(" %i ", fhe_decrypt(tmp, sk));
+		}
+	
 	}
 	
-	int  n= 2n/2;
-	for(i=0;i<n;i++){
-	
-		min_max(min,max, poly_nums[i], poly_num[i+n], pk, nbits);
-		for(int k=0;k<nbits;k++){
-				fmpz_poly_set_coeff_mpz(poly_nums[i], k, min[k]);
-				fmpz_poly_set_coeff_mpz(poly_nums[i+n],k, max[k]);
-		}
-	}
-
-		/////// Merger 1 ////
-
-
-		////// Even sorter ///////////
-
-			for(i=0;i<n; i=2*i){
-				min_max(min,max, poly_nums[i], poly_num[i+n], pk, nbits);
-				for(int k=0;k<nbits;k++){
-					fmpz_poly_set_coeff_mpz(poly_nums[i], k, min[k]);
-					fmpz_poly_set_coeff_mpz(poly_nums[i+n],k, max[k]);
-				}
-			}
+	printf("\n");	
 		
-		/// Odd sorter ////
-
-		for(i=1;i<n; i=2*i+1){
-			min_max(min,max, poly_nums[i], poly_num[i+n], pk, nbits);
-			for(int k=0;k<nbits;k++){
-				fmpz_poly_set_coeff_mpz(poly_nums[i], k, min[k]);
-				fmpz_poly_set_coeff_mpz(poly_nums[i+n],k, max[k]);
-			}
-		}
+	for(k=0;k<n;k++)
+		fmpz_poly_clear( poly_nums[k]);
+	
+	fhe_pk_clear(pk);
+	fhe_sk_clear(sk);	
+	mpz_clear(c0);
+	mpz_clear(tmp);
 				
-		
-		
-		
-				
-		
-	
-		////// Merger 2 /////		
-	
 
 
-}*/
+}
 
 void test_insertion_sort(){   // Generate n random numbers of nbits each and sort them
 	int n = 5; // Nombre d'entiers à trier
