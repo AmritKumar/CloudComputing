@@ -1,39 +1,13 @@
-% THIS IS SIGPROC-SP.TEX - VERSION 3.1
-% WORKS WITH V3.2SP OF ACM_PROC_ARTICLE-SP.CLS
-% APRIL 2009
-%
-% It is an example file showing how to use the 'acm_proc_article-sp.cls' V3.2SP
-% LaTeX2e document class file for Conference Proceedings submissions.
-% ----------------------------------------------------------------------------------------------------------------
-% This .tex file (and associated .cls V3.2SP) *DOES NOT* produce:
-%       1) The Permission Statement
-%       2) The Conference (location) Info information
-%       3) The Copyright Line with ACM data
-%       4) Page numbering
-% ---------------------------------------------------------------------------------------------------------------
-% It is an example which *does* use the .bib file (from which the .bbl file
-% is produced).
-% REMEMBER HOWEVER: After having produced the .bbl file,
-% and prior to final submission,
-% you need to 'insert'  your .bbl file into your source .tex file so as to provide
-% ONE 'self-contained' source file.
-%
-% Questions regarding SIGS should be sent to
-% Adrienne Griscti ---> griscti@acm.org
-%
-% Questions/suggestions regarding the guidelines, .tex and .cls files, etc. to
-% Gerald Murray ---> murray@hq.acm.org
-%
-% For tracking purposes - this is V3.1SP - APRIL 2009
-\documentclass{acm_proc_article-sp}
 
+\documentclass{acm_proc_article-sp}
 \makeatletter
 \newif\if@restonecol
 \makeatother
 \let\algorithm\relax
 \let\endalgorithm\relax
-\usepackage{algorithm2e}
 
+\usepackage{listings}
+\usepackage{algorithm2e}
 \begin{document}
 \title{Analysis of Security-Cost Trade-off of Fully Homomorphic Encryption Schemes}
 
@@ -66,17 +40,6 @@
 % reasons) and the remaining two appear in the \additionalauthors section.
 %
 \author{
-% You can go ahead and credit any number of authors here,
-% e.g. one 'row of three' or two rows (consisting of one row of three
-% and a second row of one, two or three).
-%
-% The command \alignauthor (no curly braces needed) should
-% precede each author name, affiliation/snail-mail address and
-% e-mail address. Additionally, tag each line of
-% affiliation/address with \affaddr, and tag the
-% e-mail address with \email.
-%
-% 1st. author
 \alignauthor
 Kais Chaabouni \\
        \affaddr{ENSIMAG}\\
@@ -101,9 +64,7 @@ Amrit Kumar\\
 % Just remember to make sure that the TOTAL number of authors
 % is the number that will appear on the first page PLUS the
 % number that will appear in the \additionalauthors section.
-
 \maketitle
-
 \begin{abstract}
 We present a study on variants of fully homomorphic schemes and the trade-off cost/security of basic operations on bits, integers, strings... 
 \end{abstract}
@@ -118,9 +79,7 @@ complexity-security, and we discuss the results of experimental measures based o
 The Gentry FHE protocol consists on ``somewhat homomorphic'' scheme, ``squashing'' and ``bootstrapping''. (explain later). 
 There are variants of FHE schemes more optimized than Gentry's scheme, so we use in the experiments some open source implementations of these schemes.
 \section{Fully homomorphic scheme(1 page)}
-
 A general structure of the scheme.
-
 \subsection{Two Variants of Fully Homomorphic Encryption Scheme}
 A brief description of the two FHE schemes with their algorithmic complexity of the different stages in the scheme. 
 -> Smart Vercauteren
@@ -169,20 +128,180 @@ Measurements taken are CPU time, Wall Time, Memory Usage by varying the input si
 
 \section{Choice of Benchmarks}
 
-3 different classes of problems : 
+The benchmark functions and problems on which the implementations were evaluated are categorized into three classes : functions operating on bits, functions operating directly on integers or block of bits and functions where branching is required i.e \texttt{if-then-else} condition is evaluated. 
+
+Functions operating on bits provide information on the tradeoff for calculations with bits, while when operating directly on integers, the tradeoff is obtained on size of integers. we note that the first two categories of functions can be evaluated using straight-line-programs. For others we choose evaluation of \texttt{if-then-else} condition on encrypted data  wich woukd make the evlaluation circuit longer than compared to the same evaluation on unencrypted data. The functions evaluated are : 
+
 \begin{itemize}
-\item Operations on bits,
- \item operation on integers (possibility of extension on blocks and comparision with RSA and 
- \item branching
+
+\item XOR of bits
+\item Sum of : 
+
+	\begin{itemize}
+
+		\item  bounded integers
+
+		\item unbounded integers
+
+ 	\end{itemize}
+\item Majority bit
+
+\item sorting with the following methods :
+
+	\begin{itemize}
+
+		\item Insertion sort
+
+		\item Odd-Even Merge sort
+
+		\item Bitonic sort
+
+	\end{itemize}
+
 \end{itemize}
 
-For each problem we propse the program, analyse their cost and eventually on security.
+We include the program used to evalute the above functons and their cost in terms of \texttt{XOR} and \texttt{AND} gates. 
 
-Why certain other programs cannot be executed under homomorphic encryption.
+\textbf{XOR of $n$-bits :} \texttt{XOR} of $n$-bits requires $n-1$ \texttt{XOR} gates. 
 
-\section{Evaluation on the Benchmarks (1 page)}
+\textbf{Sum of integers of $n$-bits :} Sum of two integers is performed using an $n$ \texttt{full-adder} circuits. The cost of a full adder circuit is $2$ \texttt{XOR} to calculate the sum and $2$ \texttt{AND}, $1$ \texttt{XOR} and $1$ \texttt{OR} for the carry. Hence the total complexity is $3n$ \texttt{AND}, $5n$ \texttt{XOR}. 
 
+\textbf{Sum of arbitrary integers}
+
+\textbf{Majority of $n$-bits :} Majority bit is evaluated by obtaining the sum of the bits.
+
+Sorting is tested on a sorting network where comparator gates are used. Each comparator is designed using the following algorithm. 
+
+\restylealgo{algoruled}
+
+\linesnumbered
+
+\begin{algorithm}[H]
+
+ \SetVline
+
+ \KwData{a:=$(a_0,a_1,\ldots, a_{n-1}$), b:=$(b_0,b_1,\ldots, b_{n-1})$ }
+
+ \KwResult{Return Max(a,b) and Min(a,b)}
+
+ $aIsGreater \leftarrow 0$\;
+ $bitsEqual \leftarrow 1$\;
+
+	
+ \For{$i\leftarrow n-1 $ \KwTo $0$}{
+						
+     $aIsGreater \leftarrow (aIsGreater +\neg(b_i)a_i)* bitEqual$ \;
+     $bitEqual \leftarrow bitEqual*(a_ib_i + \neg(a_i)*\neg(b_i))$		       	
+ }
+
+\For{$i\leftarrow 0$ \KwTo $n-1$}{
+
+     $Max_i \leftarrow aIsGreater*a_i + \neg(aIsGreater)*b_i$ \;
+
+     $Min_i \leftarrow a \neg(aIsGreater)*a_i + aIsGreater*b_i$ \;
+
+ }
+
+
+
+return($Max$, $Min$)
+
+ \caption{Comparator\label{Code:algo}}
+
+\end{algorithm}
+
+
+
+Each comparator gate uses $n$ \texttt{AND} gates, $n$ \texttt{OR} gates and $n$ \texttt{NOT} gates to find the larger of the two bit sequences and then to regenerate the maximum and the minuimum $4n$ \texttt{AND} gates $2n$ \texttt{NOT} and \texttt{OR} gates i.e. $6n$ \texttt{AND} and \texttt{XOR} gates are required.  
+
+\textbf{Insertion sort :} $n(n-1)/2$ comparator gates are used for insertion sort.
+
+\textbf{Odd-Even Merge sort :} The following program is used to perform Odd-Even merge sort.
+
+\lstset{                                    % line wrapping on
+  language=C,
+  frame=lines,
+  captionpos=b
+ }
+
+
+\renewcommand{\lstlistingname}{Code}
+
+
+\begin{figure}
+\begin{lstlisting}[caption=Odd-Even Merge Sort]
+
+ OddEvenMergeSort(int lo, int n)
+if (n>1)
+        {
+            int m=n/2;
+            oddEvenMergeSort(lo, m);
+            oddEvenMergeSort(lo+m, m);
+            oddEvenMerge(lo, n, 1);
+        }
+oddEvenMerge(int lo, int n, int r)
+    {
+        int m=r*2;
+        if (m<n)
+        {
+	    //even subsequence ;		
+            oddEvenMerge(lo, n, m); 
+            //odd subsequence ;
+	    oddEvenMerge(lo+r, n, m);    
+            for (int i=lo+r; i+r<lo+n; i+=m)
+                compare(i, i+r);
+        }
+        else
+            compare(lo, lo+r);
+    }
+
+
+\end{lstlisting} 
+
+\end{figure}
+
+
+\textbf{Bitonic Sort}
+\begin{figure}
+\begin{lstlisting}[caption=Bitonic Sort]
+
+sortup( int m, int n) {//from m to m+n
+    if (n==1) return;
+    sortup(m,n/2);
+    sortdown(m+n/2,n/2);
+    mergeup(m,n/2);
+}
+ sortdown(int m, int n) {//from m to m+n
+    if (n==1) return;
+    sortup(m,n/2);
+    sortdown(m+n/2,n/2);
+    mergedown(m,n/2);
+}
+
+mergeup(int m, int n) {
+    if (n==0) return;
+    
+    for (i=0 : n) {
+         compare(m+i,m+i+n);
+    }
+    mergeup(m,n/2);
+    mergeup(m+n,n/2);
+}
+mergedown( int m,  int n) {
+    if (n==0) return;
+    for (i=0 : n) {
+        compare(m+i,m+i+n);
+    }
+    mergedown(m,n/2);
+    mergedown(m+n,n/2);
+}
+\end{lstlisting}
+\caption{Bitonic Search}
+\end{figure}
 Measurements on varying the parameters or the plaintext space. Evaluation of program dependent properties. 
+
+
+
 
 \section{Analysis of the results}
 
