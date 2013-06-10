@@ -177,44 +177,62 @@ For the Smart-Vercauteren implementation we use the library libScarab v1.0.0 whi
 
 Can be integrated with subsection 2.1 
 
-\section{ Didactic example :  Min-Max of two integers (1 page)}
-Min-Max of two bounded integers of n-btis.
+\section{ Didactic example :  Min-Max (1 page)}
+Min-Max of sequence of n-btis with arithmetic operations and without branching.
 \subsection{Input Program for Fully Homomorphic Encryption Scheme}
-\texttt{aIsGreater}($a=(a_{n-1},\ldots,a_0), b=(b_{n-1},\ldots,b_0)$):
-\begin{itemize}
-\item G= encrypt($0, PK$); Count= encrypt($1, PK$) \\
-for $i \in $nbits-1 .. $0$
-\begin{itemize}
-\item tmp1= or($a_i.b_i , \neg(a_i).\neg(b_i)$)
-\item tmp2= $a_i.\neg(b_i).$Count
-\item Count= Count . tmp1
-\item G= or(G, tmp2)
-\end{itemize}
-\end{itemize}
-\texttt{min\_max}: 
-\begin{itemize}
-\item G= aIsGreater(a, b) 
-\item $max_i$ = or($a_i.G, b_i. \neg{G}$)
-\item $min_i$ = or($a_i.\neg{G}, b_i.G$)
-\end{itemize}
+
+
+\restylealgo{algoruled}
+
+\linesnumbered
+
+\begin{algorithm}[H]
+
+\SetVline
+
+ \KwData{a:=$(a_0,a_1,\ldots, a_{n-1}$), b:=$(b_0,b_1,\ldots, b_{n-1})$ }
+
+ \KwResult{Return Max(a,b) and Min(a,b)}
+
+ $aIsGreater \leftarrow 0$\;
+ $bitsEqual \leftarrow 1$\;
+	
+ \For{$i\leftarrow n-1 $ \KwTo $0$}{
+						
+     $aIsGreater \leftarrow (aIsGreater +\neg(b_i)a_i)* bitEqual$ \;
+     $bitEqual \leftarrow bitEqual*(a_ib_i + \neg(a_i)*\neg(b_i))$		       	
+ }
+
+\For{$i\leftarrow 0$ \KwTo $n-1$}{
+
+     $Max_i \leftarrow aIsGreater*a_i + \neg(aIsGreater)*b_i$ \;
+
+     $Min_i \leftarrow a \neg(aIsGreater)*a_i + aIsGreater*b_i$ \;
+
+ }
+
+
+
+return($Max$, $Min$)
+
+ \caption{Min-Max\label{Code:algo}}
+
+\end{algorithm}
 
 \subsection{Theoretical Cost with the Schemes}
 
-Analyse the cost of the program wrt SV, BGV.
-
-The cost of this algorithm \texttt{aIsGreater} is:\\
+The cost \texttt{aIsGreater} is:\\
  $2*encrypt+n*(3*encrypt+7*add+7*mul)$ .\\
 The cost of this algorithm \texttt{min\_max} is:\\
 $ encrypt+aIsGreater+2*n*(encrypt+3add+3mull)$\\
-Thus this algorithm has $O(n^2)$ complexity. 
+Thus this algorithm has $\theta(n)$ complexity. 
 
 \subsection{Experimental Analysis}
 
-Once for all analysis of common operations(KeyGen, Encrypt, Decrypt of 1 bit) varying the algorithmic and security parameters.
-
-
-Measurements taken are CPU time, Wall Time, Memory Usage by varying the input size  and the algorithmic parameters. Noise reduction threshold.
+Measurements taken are CPU time, Wall Time, Memory Usage by varying the input size  and the algorithmic parameters. Noise reduction threshold.\\
+Here we estimate the performance of this program in terms of run time for KeyGen, Encrypt, Decrypt and the Min-Max algorithm.
 \begin{itemize}
+
 \item KeyGen\\
 The measured time execution for KeyGen($N, \mu$)  for fixed values of parameters: $N=8$ and $\mu = 4$ shows a variation from 0.31 s to 13.41 s with mean = 2.726 s.\\
 \item {Encryption and Decryption}\\

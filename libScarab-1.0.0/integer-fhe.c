@@ -27,7 +27,6 @@ fhe_keygen(fhe_pk_t pk, fhe_sk_t sk)
 	// set f = x^n + 1
 	fmpz_poly_set_coeff_ui(F, N, 1);
 	fmpz_poly_set_coeff_ui(F, 0, 1);
-	
 	fmpz_poly_t G;
 	fmpz_poly_init(G);
 	
