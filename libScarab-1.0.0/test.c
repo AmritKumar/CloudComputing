@@ -41,23 +41,22 @@ void test_suite()
 	//test_sum_bits();
 	//test_bit_majoritaire();
 	//test_sum_integers();
-	//test_min_max();
+	test_min_max();
 	//test_insertion_sort();
 	//test_oddeven_merger_sort();
-	test_bitonic_sort();
+	//test_bitonic_sort();
 	//test_majority_bit();
 	//debug_test_bit_majoritaire();
+	//test_keygen();
 }
-
-void debug_or(mpz_t res, mpz_t a, mpz_t b){
-	mpz_t aux1, aux2;
-	mpz_init(aux1);
-	mpz_init(aux2);
-	mpz_add(aux1, a, b);
-	mpz_mul(aux2, a, b);
-	mpz_add(res, aux1, aux2);
-	mpz_clear(aux1);
-	mpz_clear(aux2);
+void test_keygen(){
+	fhe_pk_t pk;
+	fhe_sk_t sk;
+	fhe_pk_init(pk);
+	fhe_sk_init(sk);
+	fhe_keygen(pk, sk);
+	fhe_pk_clear(pk);
+	fhe_sk_clear(sk);
 }
 
 void or(mpz_t res, mpz_t a, mpz_t b, fhe_pk_t pk){
@@ -71,13 +70,6 @@ void or(mpz_t res, mpz_t a, mpz_t b, fhe_pk_t pk){
 	mpz_clear(aux2);
 }
 
-void debug_not(mpz_t res, mpz_t a){
-	mpz_t c1;
-	mpz_init(c1);
-	mpz_set_ui(c1, 1);
-	mpz_sub(res, c1, a);
-	mpz_clear(c1);
-}
 void not(mpz_t res, mpz_t a, fhe_pk_t pk){
 	mpz_t aux, c1;
 	mpz_init(aux);
@@ -87,8 +79,6 @@ void not(mpz_t res, mpz_t a, fhe_pk_t pk){
 	mpz_clear(aux);
 	mpz_clear(c1);
 }
-
-
 
 void test_aIsGreater(mpz_t res, fmpz_poly_t polya, fmpz_poly_t polyb, fhe_pk_t pk, int nbits){
 
@@ -179,7 +169,6 @@ void min_max(mpz_t *min, mpz_t *max, fmpz_poly_t poly_c1, fmpz_poly_t poly_c2, f
 		fmpz_poly_get_coeff_mpz(a_k, poly_c1,k);	
 		fmpz_poly_get_coeff_mpz(b_k, poly_c2,k);
 			
-
 		fhe_mul(b_k, b_k, aIsGreater,pk);
 		not(tmp, aIsGreater,pk);
 		fhe_mul(a_k, a_k, tmp,pk);
@@ -207,7 +196,8 @@ void min_max(mpz_t *min, mpz_t *max, fmpz_poly_t poly_c1, fmpz_poly_t poly_c2, f
 void test_min_max(){
 	
 	unsigned a ,b, aux1, aux2;
-	a=80; b=120;   // Integers to be compared suppposed to be of the same size
+	a=3; b=2;   // Integers to be compared suppposed to be of the same size
+	printf("a = %d et b = %d\n", a, b);
 	aux1 = a ; aux2=b;
 	int i = 0;
 	int nbits = 7;   // Number of bits in the binary representation of the integers
@@ -319,14 +309,27 @@ void test_min_max(){
 	
 	//////////////// Decryption ///////////////////////////
 	
-	for (k=0;k<nbits;k++){
-		printf("The bit at the  %d  place is  max = %i \n", k,fhe_decrypt(max[k],sk));
-	} 
+	//for (k=0;k<nbits;k++){
+	//	printf("The bit at the  %d  place is  max = %i \n", k,fhe_decrypt(max[k],sk));
+	//} 
 	
-	for (k=0;k<nbits;k++){
-		printf("The bit at the  %d  place is  min = %i \n", k,fhe_decrypt(min[k],sk));
-	} 
+	//for (k=0;k<nbits;k++){
+	//	printf("The bit at the  %d  place is  min = %i \n", k,fhe_decrypt(min[k],sk));
+	//} 
 
+	aux1= 0; aux2= 0;
+	unsigned d;
+	for(k=nbits; k>=0 ;k--){
+		d =  fhe_decrypt(max[k],sk);
+		aux1= (aux1 * 2) + d;
+		
+	}
+	printf("le max est: %d \n", aux1);
+	for(k=nbits; k>=0 ;k--){
+		d= fhe_decrypt(min[k],sk);
+		aux2= (aux2 * 2) +d;
+	}
+	printf("le min est: %d\n", aux2);
 
 	for(k=0;k<nbits;k++){
 		mpz_clear(max[k]);
@@ -1154,79 +1157,7 @@ void test_xor_bits(){
 	fhe_pk_clear(pk);
 	fhe_sk_clear(sk);
 }
-void debug_test_bit_majoritaire(){
-	int a, res, aux, i;
-	a=11;
-	mpz_t c0;
-	fmpz_poly_t poly_c;
-	for(int s=19; s< 20; s++){
-		a=s;
-		i=0;
-		mpz_init(c0);
-		fmpz_poly_init( poly_c );
-		printf("--------->%i\n", a % 2);
-		mpz_set_ui(c0,  a % 2);
-		fmpz_poly_set_coeff_mpz( poly_c , i , c0 );
-		aux = a;	
-		aux = aux >> 1;
-		do {
-			printf("--------->%i\n", aux % 2);
-			mpz_set_ui(c0,  aux % 2);
-			i=i+1;
-			fmpz_poly_set_coeff_mpz ( poly_c , i , c0 );
-			aux = aux >> 1;
 
-		}while(aux != 0);
-		mpz_t tmp1, tmp2, tmp3;
-		mpz_init(tmp1);
-		mpz_init(tmp2);
-		mpz_init(tmp3);
-		int k;
-//première itération
-		fmpz_poly_get_coeff_mpz ( tmp3 , poly_c , 0 );
-		gmp_printf ("P(0)= %Zd\n", tmp3);
-//
-		for(int j=1; j<= i; j++){
-			fmpz_poly_get_coeff_mpz ( tmp2 , poly_c , j );
-			gmp_printf ("P( %i ) = %Zd\n", j, tmp2);
-			mpz_mul(tmp3, tmp3, tmp2);
-			gmp_printf (" %Zd\n", tmp3);
-		}
-//
-		for(int j= i; j>=0; j--){
-			fmpz_poly_get_coeff_mpz ( tmp1 , poly_c , j );
-			gmp_printf ("P( %i ) = %Zd\n", j, tmp1);
-			debug_not(tmp1, tmp1);
-			gmp_printf ("notP( %i ) = %Zd\n", j, tmp1);
-
-			k=j-1;
-			while(k >=0){
-				fmpz_poly_get_coeff_mpz ( tmp2 , poly_c , k );
-				gmp_printf ("P( %i ) = %Zd\n", k, tmp2);
-				mpz_mul(tmp1, tmp1, tmp2);
-				gmp_printf ("!! %Zd\n", tmp1);
-				k=k-1;
-			}
-			k= j+1;
-			while(k <= i){
-				fmpz_poly_get_coeff_mpz ( tmp2 , poly_c , k );
-				gmp_printf ("P( %i ) = %Zd\n",k, tmp2);
-				mpz_mul(tmp1, tmp1, tmp2);
-				gmp_printf (" %Zd\n", tmp1);
-				k=k+1;
-			}
-			debug_or(tmp3, tmp1, tmp3);
-			gmp_printf (" %Zd\n", tmp3);
-		}
-
-		res = mpz_get_ui(tmp3);
-		printf("le bit majoritaire de %d est res = %i \n", a, res);
-		mpz_clear(tmp1);
-		mpz_clear(tmp2);
-		mpz_clear(tmp3);
-		fmpz_poly_clear( poly_c );
-	}
-}
 void test_bit_majoritaire(){
 	unsigned a, res, aux;
 	int i;
