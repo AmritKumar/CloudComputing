@@ -25,9 +25,9 @@
 #define ASSERT_HOMADD(__a, __b, __check)			\
 	fhe_add(temp, __a, __b, pk);					\
 	assert(fhe_decrypt(temp, sk) == __check);
-void debug_test_bit_majoritaire();
 
 
+void test_keygen();
 
 void test_suite()
 {
@@ -46,9 +46,9 @@ void test_suite()
 	//test_oddeven_merger_sort();
 	//test_bitonic_sort();
 	//test_majority_bit();
-	//debug_test_bit_majoritaire();
 	//test_keygen();
 }
+
 void test_keygen(){
 	fhe_pk_t pk;
 	fhe_sk_t sk;
@@ -58,6 +58,7 @@ void test_keygen(){
 	fhe_pk_clear(pk);
 	fhe_sk_clear(sk);
 }
+
 
 void or(mpz_t res, mpz_t a, mpz_t b, fhe_pk_t pk){
 	mpz_t aux1, aux2;
@@ -136,7 +137,6 @@ void test_aIsGreater(mpz_t res, fmpz_poly_t polya, fmpz_poly_t polyb, fhe_pk_t p
 
 void min_max(mpz_t *min, mpz_t *max, fmpz_poly_t poly_c1, fmpz_poly_t poly_c2, fhe_pk_t pk, int nbits){
 	
-	
 	mpz_t a_k;
 	mpz_t b_k;
 	mpz_t tmp;
@@ -196,11 +196,11 @@ void min_max(mpz_t *min, mpz_t *max, fmpz_poly_t poly_c1, fmpz_poly_t poly_c2, f
 void test_min_max(){
 	
 	unsigned a ,b, aux1, aux2;
-	a=3; b=2;   // Integers to be compared suppposed to be of the same size
+	a=1450; b=1030;  
 	printf("a = %d et b = %d\n", a, b);
 	aux1 = a ; aux2=b;
 	int i = 0;
-	int nbits = 7;   // Number of bits in the binary representation of the integers
+	int nbits;   // Number of bits in the binary representation of the integers
 	mpz_t c0, c1;
 	
 	fhe_pk_t pk;
@@ -239,19 +239,23 @@ void test_min_max(){
 		aux1 = aux1 >> 1;
 		aux2 = aux2 >> 1;
 
-	}while(aux1 != 0 && aux2 !=0);
+	}while(aux1 != 0 || aux2 !=0);
 
 
 	/////////// Evaluation ////////////////////
-	
-	mpz_t * max;
-	mpz_t * min;
-	max = malloc(sizeof(mpz_t) * nbits);
-	min = malloc(sizeof(mpz_t) * nbits);
-	for(i=0;i<nbits;i++){
-		mpz_init(max[i]);
-		mpz_init(min[i]);
-	}
+	nbits= i +1;
+	fmpz_poly_t max;
+	fmpz_poly_t min;
+	//mpz_t * max;
+	//mpz_t * min;
+	fmpz_poly_init(max);
+	fmpz_poly_init(min);
+	//max = malloc(sizeof(mpz_t) * nbits);
+	//min = malloc(sizeof(mpz_t) * nbits);
+	//for(i=0;i<nbits;i++){
+	//	mpz_init(max[i]);
+	//	mpz_init(min[i]);
+	//}
 	
 	mpz_t a_k;
 	mpz_t b_k;
@@ -291,18 +295,19 @@ void test_min_max(){
 		fhe_mul(b_k, b_k, tmp,pk);
 		or(tmp, a_k,b_k, pk);	
 
-		mpz_set(max[k],tmp);
+		fmpz_poly_set_coeff_mpz(max , k , tmp) ;
+		//mpz_set(max[k],tmp);
 
 		fmpz_poly_get_coeff_mpz(a_k, poly_c1,k);	
 		fmpz_poly_get_coeff_mpz(b_k, poly_c2,k);
 			
-
 		fhe_mul(b_k, b_k, aIsGreater,pk);
 		not(tmp, aIsGreater,pk);
 		fhe_mul(a_k, a_k, tmp,pk);
 		or(tmp, a_k,b_k, pk);
 
-		mpz_set(min[k],tmp);		
+		fmpz_poly_set_coeff_mpz(min , k , tmp) ;
+		//mpz_set(min[k],tmp);		
 			
 	}
 
@@ -319,22 +324,24 @@ void test_min_max(){
 
 	aux1= 0; aux2= 0;
 	unsigned d;
-	for(k=nbits; k>=0 ;k--){
-		d =  fhe_decrypt(max[k],sk);
+	for(k=nbits-1; k>=0 ;k--){
+		fmpz_poly_get_coeff_mpz(tmp, max ,k);
+		d =  fhe_decrypt(tmp,sk);
 		aux1= (aux1 * 2) + d;
 		
 	}
 	printf("le max est: %d \n", aux1);
-	for(k=nbits; k>=0 ;k--){
-		d= fhe_decrypt(min[k],sk);
+	for(k=nbits-1; k>=0 ;k--){
+		fmpz_poly_get_coeff_mpz(tmp, min ,k);
+		d= fhe_decrypt(tmp,sk);
 		aux2= (aux2 * 2) +d;
 	}
 	printf("le min est: %d\n", aux2);
 
-	for(k=0;k<nbits;k++){
-		mpz_clear(max[k]);
-		mpz_clear(min[k]);
-	}
+	//for(k=0;k<nbits;k++){
+	//	mpz_clear(max[k]);
+	//	mpz_clear(min[k]);
+	//}
 	
 	fmpz_poly_clear( poly_c1 );
 	fmpz_poly_clear( poly_c2 ); 
@@ -346,7 +353,8 @@ void test_min_max(){
 	mpz_clear(a_k);
 	mpz_clear(b_k); 
 	mpz_clear(tmp);
-
+	fmpz_poly_init(max);
+	fmpz_poly_init(min);
 }
 
 
