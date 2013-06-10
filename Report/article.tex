@@ -1,41 +1,45 @@
-% THIS IS SIGPROC-SP.TEX - VERSION 3.1
-% WORKS WITH V3.2SP OF ACM_PROC_ARTICLE-SP.CLS
-% APRIL 2009
-%
-% It is an example file showing how to use the 'acm_proc_article-sp.cls' V3.2SP
-% LaTeX2e document class file for Conference Proceedings submissions.
-% ----------------------------------------------------------------------------------------------------------------
-% This .tex file (and associated .cls V3.2SP) *DOES NOT* produce:
-%       1) The Permission Statement
-%       2) The Conference (location) Info information
-%       3) The Copyright Line with ACM data
-%       4) Page numbering
-% ---------------------------------------------------------------------------------------------------------------
-% It is an example which *does* use the .bib file (from which the .bbl file
-% is produced).
-% REMEMBER HOWEVER: After having produced the .bbl file,
-% and prior to final submission,
-% you need to 'insert'  your .bbl file into your source .tex file so as to provide
-% ONE 'self-contained' source file.
-%
-% Questions regarding SIGS should be sent to
-% Adrienne Griscti ---> griscti@acm.org
-%
-% Questions/suggestions regarding the guidelines, .tex and .cls files, etc. to
-% Gerald Murray ---> murray@hq.acm.org
-%
-% For tracking purposes - this is V3.1SP - APRIL 2009
-\documentclass{acm_proc_article-sp}
 
+\documentclass{acm_proc_article-sp}
 \makeatletter
 \newif\if@restonecol
 \makeatother
 \let\algorithm\relax
 \let\endalgorithm\relax
+\usepackage{hyperref}
+\usepackage[all]{hypcap}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{listings}
 \usepackage{algorithm2e}
+\hypersetup{
+  bookmarks=true,         % show bookmarks bar?
+  unicode=false,          % non-Latin characters in Acrobat’s bookmarks
+  pdftoolbar=true,        % show Acrobat’s toolbar?
+  pdfmenubar=true,        % show Acrobat’s menu?
+  pdffitwindow=false,     % window fit to page when opened
+  pdfstartview={FitH},    % fits the width of the page to the window
+  pdftitle={My title},    % title
+  pdfauthor={Author},     % author
+  pdfsubject={Subject},   % subject of the document
+  pdfcreator={Creator},   % creator of the document
+  pdfproducer={Producer}, % producer of the document
+  pdfkeywords={keyword1} {key2} {key3}, % list of keywords
+  pdfnewwindow=true,      % links in new window
+  colorlinks=true,       % false: boxed links; true: colored links
+  linkcolor=cyan,          % color of internal links (change box color with linkbordercolor)
+  citecolor=green,        % color of links to bibliography
+  filecolor=magenta,      % color of file links
+  urlcolor=cyan           % color of external links
+}
 
+
+
+
+\usepackage{listings}
+\usepackage{algorithm2e}
+\usepackage{verbatim}
 \begin{document}
 \title{Analysis of Security-Cost Trade-off of Fully Homomorphic Encryption Schemes}
+
 
 %
 % You need the command \numberofauthors to handle the 'placement
@@ -66,17 +70,6 @@
 % reasons) and the remaining two appear in the \additionalauthors section.
 %
 \author{
-% You can go ahead and credit any number of authors here,
-% e.g. one 'row of three' or two rows (consisting of one row of three
-% and a second row of one, two or three).
-%
-% The command \alignauthor (no curly braces needed) should
-% precede each author name, affiliation/snail-mail address and
-% e-mail address. Additionally, tag each line of
-% affiliation/address with \affaddr, and tag the
-% e-mail address with \email.
-%
-% 1st. author
 \alignauthor
 Kais Chaabouni \\
        \affaddr{ENSIMAG}\\
@@ -101,26 +94,28 @@ Amrit Kumar\\
 % Just remember to make sure that the TOTAL number of authors
 % is the number that will appear on the first page PLUS the
 % number that will appear in the \additionalauthors section.
-
 \maketitle
-
 \begin{abstract}
-We present a study on variants of fully homomorphic schemes and the trade-off cost/security of basic operations on bits, integers, strings... 
+This paper presents an analysis of security-cost trade-off for homomorphic encryption schemes. Analysis is based on the measurements taken on the evaluation of certain functions on two  variants of fully homomorphic encryption schemes. These functions either operate on bits, on integers (of bounded and unbounded size)  or involve \texttt{if-then-else} branching. 
 \end{abstract}
 
-\keywords{ Fully Homomorphic Encryption, Security, Cost} % NOT required for Proceedings
+\keywords{ Fully Homomorphic Encryption, Security, Cost.} % NOT required for Proceedings
 
 \section{Introduction(1 page)}
-The homomorphic encryption allows few operations on encrypted data. Gentry was the first to establidh a fully homomorphic encryption scheme based on ideal lattices which allows operations on encrypted data
- but with a high cost. Since then many researches have been made trying to improve the schemes to establish more operations on encrypted data with less cost and better secutity in order to do computations on remote machines. 
+
+The notion of \textit{fully homomorphic encryption scheme}, orginally called a \textit{privacy homomorphism} was introduced by Rivest et al. \cite{rivest78} shortly after the invention of the RSA by Rivest, Shamir and Adleman \cite{Rivest78amethod}.  Basic RSA is a multiplicative homomorphic encryption scheme -- i.e. given the public parameters $pk:=(e, N)$ and two messages $m_0, m_1$, their encryption $c_0, c_1$ verify $c_0c_1=(m_0m_1)^e \ \textrm {mod}\ N$. With a fully homomorphic encryption scheme : a scheme $\mathcal{E}$ with an efficient algorithm $Eval_\mathcal{E}$ that evaluates any circuit $C$ on any ciphertexts $c_i \leftarrow Encrypt(pk, m_i)$; one can arbitrarily compute any function on encrypted data without the decryption key. However prior to \cite{homenc}, we did not have a viable construction.
+
+As an application, such schemes can be used to query data on a remote machine. A user prepares his encrypted data $c_0, c_1, \ldots, c_{n-1}$  and a description of the function(or a query) i.e. a circuit $C$ he wants to evaluate and sends them to the remote machine. The machine transforms the circuit into $C^{'}$ so that it can evaluate the same function but on encrypted data, performs the operation and returns the encrypted result to the user. The user eventually decrypts the result.  
+
+The homomorphic encryption scheme proposed by Gentry \cite{homenc} is based on ideal lattices which allows operations on encrypted data
+but with a high cost depending on the depth of the circuit representing the $Eval$ function. Since then, researchers have improved and proposed other schemes such as \cite{cryptoeprint:2009:571} and \cite{cryptoeprint:2011:277} which decrease the circuit complexity. In this article we expermentally evaluate implementation of these two schemes and analyze the cost-security trade-off for $Eval$ varying from \texttt{XOR} of the bits of an $n$ bit integer to sum of bounded and unbounded integers to sorting of $n$ integers. Three different sorting algorithms are tested.   
+
 In this article we study the implementation of basic classes of operations and different aspects of 
 complexity-security, and we discuss the results of experimental measures based on several parameters.\\
 The Gentry FHE protocol consists on ``somewhat homomorphic'' scheme, ``squashing'' and ``bootstrapping''. (explain later). 
 There are variants of FHE schemes more optimized than Gentry's scheme, so we use in the experiments some open source implementations of these schemes.
 \section{Fully homomorphic scheme(1 page)}
-
 A general structure of the scheme.
-
 \subsection{Two Variants of Fully Homomorphic Encryption Scheme}
 A brief description of the two FHE schemes with their algorithmic complexity of the different stages in the scheme. 
 -> Smart Vercauteren
@@ -131,7 +126,7 @@ Discuss the security of these schemes.
 
 \begin{itemize}
 \item Smart-Vercauteren scheme:\\
-The scheme has 3 parameters: ($N, \nu, \mu$ ). The somewhat homomorphic scheme uses 5 algorithms: (\texttt{KeyGen}, \texttt{Encrypt}, \texttt{Decrypt}, \texttt{Add}, \texttt{Mult}}).
+The scheme \cite{cryptoeprint:2009:571} has 3 parameters: ($N, \nu, \mu$ ). The somewhat homomorphic scheme uses 5 algorithms: (\texttt{KeyGen}, \texttt{Encrypt}, \texttt{Decrypt}, \texttt{Add}, \texttt{Mult}).
 \begin{itemize}
 \item \texttt{KeyGen}:
 \begin{itemize}
@@ -236,28 +231,201 @@ The measured time execution for KeyGen($N, \mu$)  for fixed values of parameters
 \end{itemize}
 \section{Choice of Benchmarks}
 
-3 different classes of problems : 
-\begin{itemize}
-\item Operations on bits,
- \item operation on integers (possibility of extension on blocks and comparision with RSA and 
- \item branching
-\end{itemize}
+The benchmark problems on which the implementations were evaluated are categorized into three classes : functions operating on bits, functions operating directly on integers or block of bits and functions where branching is required i.e \texttt{if-then-else} condition is evaluated. 
 
-For each problem we propse the program, analyse their cost and eventually on security.
+Functions operating on bits provide information on the tradeoff for bitwise operations, while when operating directly on integers, the tradeoff is obtained as a function of the size of integers. The first two categories of functions can be evaluated using straight-line programs. For others, evaluation of \texttt{if-then-else} condition on encrypted data is choosen.  The evaluation circuit in this case is longer than the one on non-encrypted data. Hence, this provides information on increase in size of the circuit(when passing from non-encrypted to enrypted data). The addressed problems are : 
 
-Why certain other programs cannot be executed under homomorphic encryption.
+1. \textbf{XOR of bits}\\
+2. \textbf{Sum of :}  
+\newline\noindent
+\phantom{x}\hspace{3ex} a) bounded integers 
+ b) unbounded integers\\ 
+3. \textbf{Majority bit} \\
+4. \textbf{Sorting : } \newline\noindent
+\phantom{x}\hspace{3ex} a) Insertion sort b) Oddd-Even Merge sort \\
+	\phantom{x}\hspace{3ex} 	    c) Bitonic sort 
 
-\section{Evaluation on the Benchmarks (1 page)}
+The implementations are evaluated on different sorting algorithms to compare the changes in the evaluation circuits.
 
-Measurements on varying the parameters or the plaintext space. Evaluation of program dependent properties. 
+\subsection{Theoretical Size of Evaluation Circuit}
+As the implementations provide addition and multiplicaion of ciphertexts,  size in terms of \texttt{XOR} and \texttt{AND} gates are provided for each problem. 
+
+\textbf{XOR of $n$-bits :} \texttt{XOR} of $n$-bits requires $n-1$ \texttt{XOR} gates. 
+
+\textbf{Sum of integers of $n$-bits :} Sum of two integers is performed using an $n$ \texttt{full-adder} circuits. The cost of a full adder circuit is $2$ \texttt{XOR} to calculate the sum and $2$ \texttt{AND}, $1$ \texttt{XOR} and $1$ \texttt{OR} for the carry. Hence the total complexity is $3n$ \texttt{AND}, $5n$ \texttt{XOR}. 
+
+\textbf{Sum of arbitrary integers}
+
+\textbf{Majority of $n$-bits :} Majority bit is evaluated by obtaining the sum of the bits.
+
+\textbf{Sorting :}
+Sorting is tested on a sorting network where comparator gates are used. Each comparator is designed using the following algorithm. 
+
+\restylealgo{algoruled}
+
+\linesnumbered
+
+\begin{algorithm}[H]
+
+ \SetVline
+
+ \KwData{a:=$(a_0,a_1,\ldots, a_{n-1}$), b:=$(b_0,b_1,\ldots, b_{n-1})$ }
+
+ \KwResult{Return Max(a,b) and Min(a,b)}
+
+ $aIsGreater \leftarrow 0$\;
+ $bitsEqual \leftarrow 1$\;
+
+	
+ \For{$i\leftarrow n-1 $ \KwTo $0$}{
+						
+     $aIsGreater \leftarrow (aIsGreater +\neg(b_i)a_i)* bitEqual$ \;
+     $bitEqual \leftarrow bitEqual*(a_ib_i + \neg(a_i)*\neg(b_i))$		       	
+ }
+
+\For{$i\leftarrow 0$ \KwTo $n-1$}{
+
+     $Max_i \leftarrow aIsGreater*a_i + \neg(aIsGreater)*b_i$ \;
+
+     $Min_i \leftarrow a \neg(aIsGreater)*a_i + aIsGreater*b_i$ \;
+
+ }
+
+
+
+return($Max$, $Min$)
+
+ \caption{Comparator\label{Code:algo}}
+
+\end{algorithm}
+
+
+
+A comparator gate uses $n$ \texttt{AND} gates, $n$ \texttt{OR} gates and $n$ \texttt{NOT} gates to find the larger of the two bit sequences and then to regenerate the maximum and the minuimum $4n$ \texttt{AND} gates and $2n$ \texttt{NOT} and \texttt{OR} gates i.e. $6n$ \texttt{AND} and \texttt{XOR} gates are required. We note that reconstruction of Max and  Min is not required when working on non-encrypted data. Hence, this increases the size of the transformed program operating on encrypted data.
+
+\textbf{Insertion sort :} When allowing for parallel comparators, bubble sort and insertion sort are identical. Hence $n(n-1)/2$ comparator gates are used for insertion sort.
+
+\textbf{Odd-Even Merge sort :} \autoref{oesort} and \autoref{oemerge} are used to perform Odd-Even merge sort and hence  $n/2(log(n)-1) + 1 $ comparator gates are required. 
+
+
+\textbf{Bitonic Sort :} \autoref{bitsort} and \autoref{bitmerge} are used to perform Bitonic Sort and hence $log(n) · (log(n)+1) / 2 $ gates are required.
+
+
+\lstset{                                    % line wrapping on
+  language=C,
+  frame=lines,
+  captionpos=b
+ }
+
+
+\renewcommand{\lstlistingname}{Code}
 
 \section{Analysis of the results}
 
 Anlayze the results previously obtained and its impact on security and complexity. Comparisions of security-cost tradeoff with other schemes like RSA.
 \section{Conclusion}
-Conclusion\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-\bibliographystyle{abbrv}
-\bibliography{}  % sigproc.bib is the name of the Bibliography in this case
+
+
+
+\bibliographystyle{alpha}
+\bibliography{article}  
+
+%\begin{comment}
+\section{Appendix}
+
+ The programs used for Odd-Even Merge sort and Bitonic sort are provided below : 
+
+
+\begin{figure}[h]
+\begin{lstlisting}[label = oesort ]
+
+ OddEvenMergeSort(int lo, int n)
+if (n > 1)
+        {
+            int m = n/2;
+            oddEvenMergeSort(lo, m);
+            oddEvenMergeSort(lo + m, m);
+            oddEvenMerge(lo, n, 1);
+        }
+
+\end{lstlisting}
+\caption{Odd-Even Merge Sort : sort from index lo to n }
+\end{figure}
+
+
+\begin{figure}
+\begin{lstlisting}[label = oemerge ]
+
+oddEvenMerge(int lo, int n, int r)
+    {
+        int m = r*2;
+        if (m < n)
+        {
+	    //even subsequence ;		
+            oddEvenMerge(lo, n, m); 
+            //odd subsequence ;
+	    oddEvenMerge(lo+r, n, m); 
+	    int i = lo+r;   
+            for (;i + r < lo + n;){
+		compare(i, i + r);
+		i += m;
+	    }
+        }
+        else
+            compare(lo, lo + r);
+    }
+
+
+\end{lstlisting} 
+\caption{Odd-Even Merge Sort : merging function}
+\end{figure}
+
+\begin{figure}
+\begin{lstlisting}[label=bitsort]
+
+sortup( int m, int n) {//from m to m+n
+    if (n == 1) return;
+    sortup(m, n/2);
+    sortdown(m + n/2, n/2);
+    mergeup(m, n/2);
+}
+ sortdown(int m, int n) {//from m to m+n
+    if (n == 1) return;
+    sortup(m, n/2);
+    sortdown(m + n/2, n/2);
+    mergedown(m, n/2);
+}
+\end{lstlisting}
+\caption{Bitonic Sort : sort form m to n}
+\end{figure}
+
+\begin{figure}[t]
+\begin{lstlisting}[label=bitmerge]
+mergeup(int m, int n) {  
+    if (n == 0) return;
+    
+    for (i = 0 : n)
+        // Increasing Comparator
+	 compare(m + i,m + i + n);
+    mergeup(m, n/2);
+    mergeup(m + n,n/2);
+}
+
+mergedown( int m,  int n) { 
+    if (n == 0) return;
+    for (i = 0 : n) 
+        // Decreasing Comparator
+	compare(m + i, m + i + n); 
+    mergedown(m, n/2);
+    mergedown(m + n, n/2);
+}
+\end{lstlisting}
+\caption{Bitonic Merge} 
+\end{figure} 
+%\begin{comment}
+
+
+% sigproc.bib is the name of the Bibliography in this case
 % You must have a proper ".bib" file
 %  and remember to run:
 % latex bibtex latex latex
