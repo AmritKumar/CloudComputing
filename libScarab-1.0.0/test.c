@@ -46,6 +46,7 @@ void test_suite()
 	//test_oddeven_merger_sort();
 	//test_bitonic_sort();
 	//test_majority_bit();
+
 	//test_keygen();
 }
 
@@ -200,7 +201,9 @@ void test_min_max(){
 	printf("a = %d et b = %d\n", a, b);
 	aux1 = a ; aux2=b;
 	int i = 0;
+
 	int nbits;   // Number of bits in the binary representation of the integers
+
 	mpz_t c0, c1;
 	
 	fhe_pk_t pk;
@@ -497,46 +500,6 @@ void test_oddeven_merger_sort(){
 
 
 }
-
-/*
-void bitonicMerge(fmpz_poly_t * poly_nums, int nbits , int lo, int n, int dir, fhe_sk_t sk, fhe_pk_t pk ){
-
-
-	mpz_t * max;
-	mpz_t * min;
-	max = malloc(sizeof(mpz_t) * nbits);
-	min = malloc(sizeof(mpz_t) * nbits);
-	for(int i=0;i<nbits;i++){
-		mpz_init(max[i]);
-		mpz_init(min[i]);
-	}
-
-
-
-	if(n>1){
-		int m = n/2;
-		for(int i = lo; i<lo+m;i++){
-							
-			min_max(min, max, poly_nums[i], poly_nums[i+m], pk, nbits);		
-			for(int k=0;k<nbits;k++){
-				fmpz_poly_set_coeff_mpz(poly_nums[i], k, min[k]);
-				fmpz_poly_set_coeff_mpz(poly_nums[i+m],k, max[k]);
-			}
-
-			
-		
-		}
-		
-		bitonicMerge(poly_nums, nbits, lo, m, dir, sk, pk);
-		bitonicMerge(poly_nums, nbits, lo+m, m, dir, sk, pk);
-		
-	
-	}
-
-}
-
-*/
-
 
 
 
@@ -839,7 +802,7 @@ void test_insertion_sort(){   // Generate n random numbers of nbits each and sor
 	
 }
 
-void test_sum_mpz_t(fmpz_poly_t sum_result, fmpz_poly_t poly_c1, fmpz_poly_t poly_c2, fhe_pk_t pk){	
+void test_sum_mpz_t(fmpz_poly_t sum_result, fmpz_poly_t poly_c1, fmpz_poly_t poly_c2, fhe_pk_t pk , fhe_sk_t sk ){	
 /*
 	unsigned a ,b, aux1, aux2;
 	a=29; b=96;   // Integers to be added
@@ -888,22 +851,40 @@ void test_sum_mpz_t(fmpz_poly_t sum_result, fmpz_poly_t poly_c1, fmpz_poly_t pol
 
 */	/////////// Evaluation ////////////////////
 	int nbits;
-	if(fmpz_poly_degree(poly_c1)>=fmpz_poly_degree(poly_c2))	
+	//printf("degree of the first polynomials is %d \n ",fmpz_poly_degree(poly_c1));
+	//printf("degree of the second polynomial is %d \n ",fmpz_poly_degree(poly_c2));
+	if(fmpz_poly_degree(poly_c1)>fmpz_poly_degree(poly_c2))	
 		nbits = fmpz_poly_degree(poly_c1)+1;
-	nbits = fmpz_poly_degree(poly_c2)+1;
+	else nbits = fmpz_poly_degree(poly_c2)+1;
 	
+	//printf("nbits of the sum would be %d", nbits);
+		
 	/*mpz_t * sum_result;
 	sum_result = malloc(sizeof(mpz_t) * (nbits+1));
 	for(i=0;i<nbits+1;i++)
 	mpz_init(sum_result[i]);*/
 
+	mpz_t tmp;
+	mpz_init(tmp);
+
+	//printf("\n In the sum function : The input polynomials are : \n");
+/*
+	for (int j=fmpz_poly_degree(poly_c1);j>=0;j--){
+		fmpz_poly_get_coeff_mpz(tmp,poly_c1,j);
+		printf(" %i ", fhe_decrypt(tmp,sk));
+	}
+	printf(" AND \n");
+
+	for (int j=fmpz_poly_degree(poly_c2);j>=0;j--){
+		fmpz_poly_get_coeff_mpz(tmp,poly_c2,j);
+		printf(" %i ", fhe_decrypt(tmp,sk));
+	}
+*/	
+
 	mpz_t a_k;
 	mpz_t b_k;
 	mpz_t c_in;
 	mpz_t c_out;
-	mpz_t tmp;
-
-	mpz_init(tmp);
 	mpz_init(a_k);
 	mpz_init(b_k);
 	mpz_init(c_in);	
@@ -915,12 +896,13 @@ void test_sum_mpz_t(fmpz_poly_t sum_result, fmpz_poly_t poly_c1, fmpz_poly_t pol
 	for(k=0;k<nbits;k++){
 		fmpz_poly_get_coeff_mpz(a_k, poly_c1,k);	
 		fmpz_poly_get_coeff_mpz(b_k, poly_c2,k);
-		//printf("for k = %d,  a_k is %i \n", k, fhe_decrypt(a_k,sk));
-		//printf("for k = %d, b_k is %i  \n ", k, fhe_decrypt(b_k, sk));
+//		printf("for k = %d,  a_k is %i ", k, fhe_decrypt(a_k,sk));
+//		printf(" b_k is %i  \n ", fhe_decrypt(b_k, sk));
 		//printf("b's bit is %i \n", fhe_decrypt(b_k, sk));
 		fhe_fulladd(tmp, c_out, a_k, b_k, c_in, pk);
-		//printf("sum at %d th loop is %i \n", k, fhe_decrypt(sum_result[k], sk));
-		//printf("Carry at %d th loop is %i \n", k, fhe_decrypt(c_out, sk));
+	//	fmpz_poly_get_coeff_mpz(a_k, sum_result, k);
+//		printf("sum at %d th loop is %i \n", k, fhe_decrypt(tmp, sk));
+//		printf("Carry at %d th loop is %i \n", k, fhe_decrypt(c_out, sk));
 		fmpz_poly_set_coeff_mpz(sum_result,k,tmp);
 		mpz_set(c_in, c_out);
 					
@@ -929,11 +911,13 @@ void test_sum_mpz_t(fmpz_poly_t sum_result, fmpz_poly_t poly_c1, fmpz_poly_t pol
 	fmpz_poly_set_coeff_mpz(sum_result, nbits, c_out);
 	
 	//////////////// Decryption ///////////////////////////
-	
-	/*for (k=0;k<nbits+1;k++){
-		printf("The bit at the  %d  place is  sum_res = %i \n", k,fhe_decrypt(sum_result[k],sk));
-	} */
+	//printf("\n The sum is \n");
 
+	//for (k=fmpz_poly_degree(sum_result);k>=0;k--){
+	//	fmpz_poly_get_coeff_mpz(tmp, sum_result, k);
+		//printf(" %i ",fhe_decrypt(tmp,sk));
+	//} 
+	//printf("\n Exiting Sum function \n");
 	//for(k=0;k<nbits+1;k++)
 	//	mpz_clear(sum_result[k]);
 
@@ -951,12 +935,14 @@ void test_sum_mpz_t(fmpz_poly_t sum_result, fmpz_poly_t poly_c1, fmpz_poly_t pol
 
 void test_majority_bit(){
 	
-	unsigned a ,aux;
-	a=4;  // 
-	aux= a; 
+	unsigned a ,aux1, aux2;
+	a=35;  // 
+	aux1= a; 
 	int i = 0;
-	
+	int nbits=6;
+	aux2=nbits;
 	mpz_t c0;
+	mpz_t c1;
 	
 	fhe_pk_t pk;
 	fhe_sk_t sk;
@@ -965,28 +951,46 @@ void test_majority_bit(){
 	fhe_keygen(pk, sk);
 	
 	fmpz_poly_t poly_c1;
-		
+	fmpz_poly_t poly_c2;	
 	
 	mpz_init(c0);
+	mpz_init(c1);
+
 	fmpz_poly_init(poly_c1);
+	fmpz_poly_init(poly_c2);
 	
 	////// Encryption of the bit sequences ////////////////
 	fhe_encrypt(c0, pk, a % 2);
+	fhe_encrypt(c1, pk, nbits % 2);
 	
 	fmpz_poly_set_coeff_mpz( poly_c1 , i , c0 );
-		
-	aux = aux >> 1;
+	fmpz_poly_set_coeff_mpz(poly_c2, i, c1);		
+	aux1 = aux1 >> 1;
+	aux2 = aux2 >> 1;
 	do {
 		//printf("--------->%i\n", aux % 2);
-		fhe_encrypt(c0, pk, aux % 2);
+		fhe_encrypt(c0, pk, aux1 % 2);
+		fhe_encrypt(c1, pk, aux2 %2);
 		i++;
-		fmpz_poly_set_coeff_mpz ( poly_c1 , i , c0 );
-		aux= aux >> 1;
+		fmpz_poly_set_coeff_mpz (poly_c1 , i , c0 );
+		fmpz_poly_set_coeff_mpz (poly_c2, i, c1);
+		aux1 = aux1 >> 1;
+		aux2 = aux2 >> 1;
 	
-	}while(aux != 0 );
+	}while(aux1 != 0 || aux2!=0 );
+
+	mpz_t tmp;
+	mpz_init(tmp);	
 
 	////////////////// Evaluation ///////////////////////
 
+	printf("Check After encryption \n");
+	for (int k=nbits-1;k>=0;k--){
+		fmpz_poly_get_coeff_mpz(tmp, poly_c1,k);
+		printf(" %i ", fhe_decrypt(tmp,sk));
+	}
+
+	printf("\n");		
 	
 	fmpz_poly_t tmp1_poly;
 	fmpz_poly_init(tmp1_poly);
@@ -998,26 +1002,74 @@ void test_majority_bit(){
 	mpz_init(tmp1);
 	mpz_t tmp2 ;
 	mpz_init(tmp2);
-	
-	int nbits =fmpz_poly_degree(poly_c1)+1;
+/*	
+
 	fhe_encrypt(tmp1, pk, 0);
 	fmpz_poly_set_coeff_mpz(tmp1_poly,0,tmp1);
-
-	for(long k = 1; k<nbits; k++){		
+	//fmpz_poly_set_coeff_mpz(tmp2_poly,0,tmp1);
+	//fhe_encrypt(tmp1,pk,1);
+	//fmpz_poly_set_coeff_mpz(tmp2_poly,1,tmp1);
+	//test_sum_mpz_t(tmp1_poly, tmp2_poly, tmp1_poly,pk,sk);
+	
+	
+	for(long k = 0 ; k<nbits; k++){		
 		fmpz_poly_get_coeff_mpz(tmp2, poly_c1, k);
 		fmpz_poly_set_coeff_mpz(tmp2_poly,0,tmp2);
-		test_sum_mpz_t(tmp1_poly, tmp1_poly, tmp2_poly,pk);
+		
+		printf("\n the sum of %dth bit \n", k);
+		for (int j=fmpz_poly_degree(tmp2_poly);j>=0;j--){
+			fmpz_poly_get_coeff_mpz(tmp1,tmp2_poly,j);
+			printf(" %i ", fhe_decrypt(tmp1,sk));
+		}
+
+		printf("\n AND the temporary sum \n");
+
+		for (int j=fmpz_poly_degree(tmp1_poly);j>=0;j--){
+			fmpz_poly_get_coeff_mpz(tmp1,tmp1_poly,j);
+			printf(" %i ", fhe_decrypt(tmp1,sk));
+		}		
+
+		printf("\n IS \n ");
+	
+		test_sum_mpz_t(tmp1_poly, tmp1_poly, tmp2_poly,pk, sk);
+
+		for (int j=fmpz_poly_degree(tmp1_poly);j>=0;j--){
+			fmpz_poly_get_coeff_mpz(tmp1,tmp1_poly,j);
+			printf(" %i ", fhe_decrypt(tmp1,sk));
+		}
+
 				
 	}
+	
+	printf(" \n Printing the sum of n bits \n");
 
-	printf("Printing the sum of n bits \n");
-
-	for(int k=0;k<nbits+1;k++){
+	for(int k=fmpz_poly_degree(tmp1_poly);k>=0;k--){
 
 		fmpz_poly_get_coeff_mpz(tmp1,tmp1_poly,k);
-		printf("the %d the bit of the sum is %i \n",k,fhe_decrypt(tmp1,sk));
+		printf(" %i ",fhe_decrypt(tmp1,sk));
 	}
+	
 
+	//// Calling isGreaterfunction //////////
+
+	test_aIsGreater(tmp1,tmp1_poly, poly_c2, pk, fmpz_poly_degree(tmp1_poly)+1);
+
+	printf("The majority bit in %d is %i", a, fhe_decrypt(tmp1, sk) ) ;
+
+*/	
+	
+	printf("\n");
+	fmpz_poly_clear(poly_c1);
+	fmpz_poly_clear(poly_c2);
+	mpz_clear(c1);
+	fmpz_poly_clear(tmp1_poly);
+	fmpz_poly_clear(tmp2_poly);
+	mpz_clear(tmp1);
+	mpz_clear(tmp2);
+	fhe_pk_clear(pk);
+	mpz_clear(c0);
+	fhe_sk_clear(sk);
+	mpz_clear(tmp);
 }
 
 
