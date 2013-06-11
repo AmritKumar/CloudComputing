@@ -189,7 +189,7 @@ void min_max(mpz_t *min, mpz_t *max, fmpz_poly_t poly_c1, fmpz_poly_t poly_c2, f
 	
 	//////////////// Decryption ///////////////////////////
 
-	printf("Inside min-max method \n");
+	//printf("Inside min-max method \n");
 	
 	mpz_clear(a_k);
 	mpz_clear(b_k); 
@@ -214,15 +214,11 @@ void test_min_max(){
    
  	
 	////////////////  Initialization ////////////////
+	unsigned a =300501045183, b= 50419815648;
+	unsigned aux1, aux2;
 
-	unsigned a ,b, aux1, aux2;
 
 
-	a=30010; b=454;  
-
-	printf("a = %d et b = %d\n", a, b);
-	aux1 = a ; aux2=b;
-	int i = 0;
 
 	int nbits;   // Number of bits in the binary representation of the integers
 
@@ -280,18 +276,29 @@ void test_min_max(){
 	clock_t  START_enc = clock();
 	gettimeofday(&start, NULL);
 */
+
+	int i;
+	clock_t  START_eval;
+
+	mpz_t a_k;
+	mpz_t b_k;
+	mpz_t tmp;
+	mpz_t aIsGreater;
+	double T_Elapsed4;
+	unsigned d; int k;
+	//a=7; b=6;
+
+
+	//printf("a = %d et b = %d\n", a, b);
+	aux1 = a ; aux2=b;
+	i=0;
 	fhe_encrypt(c0, pk, a % 2);
 	fhe_encrypt(c1, pk, b % 2);
-
 	fmpz_poly_set_coeff_mpz( poly_c1 , i , c0 );
 	fmpz_poly_set_coeff_mpz( poly_c2, i, c1 );
-
-	aux1 = aux1 >> 1;
-	
+	aux1 = aux1 >> 1;	
 	aux2 = aux2 >> 1;
-	
 	do {
-		//printf("--------->%i\n", aux % 2);
 		fhe_encrypt(c0, pk, aux1 % 2);
 		fhe_encrypt(c1, pk, aux2 %2);
 		i++;
@@ -299,116 +306,84 @@ void test_min_max(){
 		fmpz_poly_set_coeff_mpz (poly_c2, i, c1);
 		aux1 = aux1 >> 1;
 		aux2 = aux2 >> 1;
-
 	}while(aux1 != 0 || aux2 !=0);
-
 	nbits=i + 1;
 /*
-	double T_Elapsed3 = (double) (clock () - START_enc);
-	printf(" Encryption took %f clocks/sec \n ", T_Elapsed3);	
-	gettimeofday(&end, NULL);
-	seconds  = end.tv_sec  - start.tv_sec;
-  	useconds = end.tv_usec - start.tv_usec;
-   	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+  double T_Elapsed3 = (double) (clock () - START_enc);
+  printf(" Encryption took %f clocks/sec \n ", T_Elapsed3);	
+  gettimeofday(&end, NULL);
+  seconds  = end.tv_sec  - start.tv_sec;
+  useconds = end.tv_usec - start.tv_usec;
+  mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
 
-   	printf("Elapsed time in Encryption  : %ld milliseconds\n", mtime);
-  	/////////////////// Encryption Ends /////////////
-	*/
-
-
+  printf("Elapsed time in Encryption  : %ld milliseconds\n", mtime);
+  /////////////////// Encryption Ends /////////////
+  */
 	/////////// Evaluation ////////////////////
-	clock_t  START_eval = clock();
+	START_eval = clock();
 	gettimeofday(&start, NULL);
 
-	mpz_t * max;
-	mpz_t * min;
-	max = malloc(sizeof(mpz_t) * nbits);
-	min = malloc(sizeof(mpz_t) * nbits);
+	mpz_t * max = malloc(sizeof(mpz_t) * nbits);
+	mpz_t * min = malloc(sizeof(mpz_t) * nbits);
 	for(i=0;i<nbits;i++){
 		mpz_init(max[i]);
 		mpz_init(min[i]);
 	}
 
-
-	
-	mpz_t a_k;
-	mpz_t b_k;
-	mpz_t tmp;
-
 	mpz_init(a_k);
 	mpz_init(b_k);
-	mpz_init(tmp);
-	
-	mpz_t aIsGreater;
-	mpz_init(aIsGreater);
+	mpz_init(tmp);	
 
-	
-	min_max(min, max, poly_c1, poly_c2, pk, nbits);
-	
-	double T_Elapsed4 = (double) (clock () - START_eval);
-	printf(" Evaluation took %f clock/sec \n ", T_Elapsed4);
-					
+	mpz_init(aIsGreater);	
+	min_max(min, max, poly_c1, poly_c2, pk, nbits);	
+	T_Elapsed4 = (double) (clock () - START_eval);
+	//printf(" Evaluation took %f clock/sec \n ", T_Elapsed4);     	
 	gettimeofday(&end, NULL);
 	seconds  = end.tv_sec  - start.tv_sec;
-  	useconds = end.tv_usec - start.tv_usec;
-   	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-
-
-   	printf("Elapsed time in Evaluation : %ld milliseconds\n", mtime);
-  	
-
-
+	useconds = end.tv_usec - start.tv_usec;
+	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+	//printf("Elapsed time in Evaluation : %ld milliseconds\n", mtime); 	
 	//////////////// Evaluation Ends ////////////////
-
-
-
-	///////////////////// Decryption /////////////////
-	
+	///////////////////// Decryption /////////////////	
 /*
-	clock_t  START_dec = clock();
-	gettimeofday(&start, NULL);
+  clock_t  START_dec = clock();
+  gettimeofday(&start, NULL);
 */
 	aux1= 0; aux2= 0;
 
-	unsigned d; int k;
 	for(k=nbits-1; k>=0 ;k--){
 		d =  fhe_decrypt(max[k],sk);
-		aux1= (aux1 * 2) + d;
-		
+		aux1= (aux1 * 2) + d;		
 	}
-
-	printf("le max est: %d \n", aux1);
-
+	//printf("le max est: %d \n", aux1);
 	for(k=nbits-1;k>=0 ;k--){
 		d= fhe_decrypt(min[k],sk);
 		aux2= (aux2 * 2) +d;
 	}
-	printf("le min est: %d\n", aux2);
+	//printf("le min est: %d\n", aux2);
+	printf("a: %d, b: %d, max: %d, min: %d, nbits: %d, time: %ld ms\n",a,b,aux1, aux2, nbits, mtime);
 	/*
-	double T_Elapsed5 = (double) (clock () - START_dec);
-	printf(" Decryption took  %f clocks/sec \n ", T_Elapsed5);
-	gettimeofday(&end, NULL);
-	seconds  = end.tv_sec  - start.tv_sec;
-  	useconds = end.tv_usec - start.tv_usec;
-   	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+	  double T_Elapsed5 = (double) (clock () - START_dec);
+	  printf(" Decryption took  %f clocks/sec \n ", T_Elapsed5);
+	  gettimeofday(&end, NULL);
+	  seconds  = end.tv_sec  - start.tv_sec;
+	  useconds = end.tv_usec - start.tv_usec;
+	  mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
 
-
-   	printf("Elapsed time in Decryption : %ld milliseconds\n", mtime);
+	  printf("Elapsed time in Decryption : %ld milliseconds\n", mtime);
   	
-	//////////////////////// Decryption Ends /////////////
-	*/
+	  //////////////////////// Decryption Ends /////////////
+	  */	
 	
 	for(k=0;k<nbits;k++){
 		mpz_clear(max[k]);
 		mpz_clear(min[k]);
 	}
-	
-
 	free(max);
 	free(min);
+
 	fmpz_poly_clear( poly_c1 );
-	fmpz_poly_clear( poly_c2 ); 
-	
+	fmpz_poly_clear( poly_c2 ); 	
 	fhe_pk_clear(pk);
 	fhe_sk_clear(sk);	
 	mpz_clear(c0);
@@ -416,9 +391,8 @@ void test_min_max(){
 	mpz_clear(a_k);
 	mpz_clear(b_k); 
 	mpz_clear(tmp);
-
 	mpz_clear(aIsGreater);
-
+	
 
 }
 
