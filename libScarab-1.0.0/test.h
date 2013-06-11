@@ -50,4 +50,6 @@ void test_suite();
 
 void test_majority_bit();
 
+void test_matrix_prod();
+
 #endif

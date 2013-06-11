@@ -47,12 +47,13 @@ void test_suite()
 	//test_sum_bits();
 	//test_bit_majoritaire();
 	//test_sum_integers();
-	test_min_max();
+	//test_min_max();
 	//test_insertion_sort();
 	//test_oddeven_merger_sort();
 	//test_bitonic_sort();
 	//test_majority_bit();
-
+	test_matrix_prod();
+	//debug_test_bit_majoritaire();
 	//test_keygen();
 }
 
@@ -65,6 +66,7 @@ void test_keygen(){
 	fhe_pk_clear(pk);
 	fhe_sk_clear(sk);
 }
+
 
 void or(mpz_t res, mpz_t a, mpz_t b, fhe_pk_t pk){
 	mpz_t aux1, aux2;
@@ -140,6 +142,7 @@ void test_aIsGreater(mpz_t res, fmpz_poly_t polya, fmpz_poly_t polyb, fhe_pk_t p
 	mpz_clear(aIsGreater);
 }
 
+
 void min_max(mpz_t *min, mpz_t *max, fmpz_poly_t poly_c1, fmpz_poly_t poly_c2, fhe_pk_t pk, int nbits){
 	
 	mpz_t a_k;
@@ -157,7 +160,7 @@ void min_max(mpz_t *min, mpz_t *max, fmpz_poly_t poly_c1, fmpz_poly_t poly_c2, f
 
 	test_aIsGreater(aIsGreater,poly_c1,poly_c2,pk, nbits);
 
-	//printf("Is a greater than b ? Ans : %i\n",fhe_decrypt(aIsGreater,sk));
+	//printf("Is a greater than b ? Ans : %i  \n", fhe_decrypt(aIsGreater,sk));
 	
 	for(k=0;k<nbits;k++){
 		
@@ -179,7 +182,8 @@ void min_max(mpz_t *min, mpz_t *max, fmpz_poly_t poly_c1, fmpz_poly_t poly_c2, f
 		fhe_mul(a_k, a_k, tmp,pk);
 		or(tmp, a_k,b_k, pk);
 
-		mpz_set(min[k],tmp);					
+		mpz_set(min[k],tmp);		
+			
 	}
 
 	
@@ -205,17 +209,23 @@ void test_min_max(){
 	
     	long mtime, seconds, useconds;    
 
-	gettimeofday(&start, NULL);
-    		
+   	 gettimeofday(&start, NULL);
+    	
+   
+ 	
 	////////////////  Initialization ////////////////
 
 	unsigned a ,b, aux1, aux2;
+
+	a=4; b=2;   // Integers to be compared suppposed to be of the same size
+
 	a=1450; b=1030;  
+
 	printf("a = %d et b = %d\n", a, b);
 	aux1 = a ; aux2=b;
 	int i = 0;
 
-	int nbits;//Number of bits in the binary representation of the integers
+	int nbits;   // Number of bits in the binary representation of the integers
 
 	mpz_t c0, c1;
 	fmpz_poly_t poly_c1;
@@ -293,6 +303,7 @@ void test_min_max(){
 
 	}while(aux1 != 0 || aux2 !=0);
 
+	
 	double T_Elapsed3 = (double) (clock () - START_enc);
 	printf(" Encryption took %f clocks/sec \n ", T_Elapsed3);	
 	gettimeofday(&end, NULL);
@@ -302,6 +313,8 @@ void test_min_max(){
 
    	printf("Elapsed time in Encryption  : %ld milliseconds\n", mtime);
   	/////////////////// Encryption Ends /////////////
+
+
 
 	/////////// Evaluation ////////////////////
 	clock_t  START_eval = clock();
@@ -315,6 +328,23 @@ void test_min_max(){
 		mpz_init(max[i]);
 		mpz_init(min[i]);
 	}
+
+
+	/////////// Evaluation ////////////////////
+	//nbits= i +1;
+	//fmpz_poly_t max;
+	//fmpz_poly_t min;
+	//mpz_t * max;
+	//mpz_t * min;
+	//fmpz_poly_init(max);
+	//fmpz_poly_init(min);
+	//max = malloc(sizeof(mpz_t) * nbits);
+	//min = malloc(sizeof(mpz_t) * nbits);
+	//for(i=0;i<nbits;i++){
+	//	mpz_init(max[i]);
+	//	mpz_init(min[i]);
+	//}
+
 	
 	mpz_t a_k;
 	mpz_t b_k;
@@ -341,7 +371,31 @@ void test_min_max(){
 
    	printf("Elapsed time in Evaluation : %ld milliseconds\n", mtime);
   	
-	///////////////////// Decryption /////////////////	
+
+
+	//////////////// Evaluation Ends ////////////////
+
+/*
+		fmpz_poly_set_coeff_mpz(max , k , tmp) ;
+		//mpz_set(max[k],tmp);
+
+		fmpz_poly_get_coeff_mpz(a_k, poly_c1,k);	
+		fmpz_poly_get_coeff_mpz(b_k, poly_c2,k);
+			
+		fhe_mul(b_k, b_k, aIsGreater,pk);
+		not(tmp, aIsGreater,pk);
+		fhe_mul(a_k, a_k, tmp,pk);
+		or(tmp, a_k,b_k, pk);
+
+		fmpz_poly_set_coeff_mpz(min , k , tmp) ;
+		//mpz_set(min[k],tmp);		
+			
+	}*/
+
+
+
+	///////////////////// Decryption /////////////////
+	
 
 	clock_t  START_dec = clock();
 	gettimeofday(&start, NULL);
@@ -354,6 +408,7 @@ void test_min_max(){
 		aux1= (aux1 * 2) + d;
 		
 	}
+
 	printf("le max est: %d \n", aux1);
 
 	for(k=nbits-1;k>=0 ;k--){
@@ -369,6 +424,7 @@ void test_min_max(){
   	useconds = end.tv_usec - start.tv_usec;
    	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
 
+
    	printf("Elapsed time in Decryption : %ld milliseconds\n", mtime);
   	
 	//////////////////////// Decryption Ends /////////////
@@ -378,7 +434,6 @@ void test_min_max(){
 		mpz_clear(max[k]);
 		mpz_clear(min[k]);
 	}
-
 	
 
 	free(max);
@@ -1219,6 +1274,88 @@ void test_sum_integers(){
 	mpz_clear(a_k);
 	mpz_clear(b_k); 
 }
+
+void test_matrix_prod(){
+	
+	int m, n, p, q, c, d, k ;
+  	
+	int first[10][10], second[10][10];
+ 	mpz_t first_enc[10][10];
+	mpz_t second_enc[10][10];
+	mpz_t multiply_enc[10][10];
+	
+	fhe_pk_t pk;
+	fhe_sk_t sk;
+	fhe_pk_init(pk);
+	fhe_sk_init(sk);
+	fhe_keygen(pk, sk);
+	mpz_t sum;
+	mpz_init(sum);
+	mpz_t tmp;
+	mpz_init(tmp);
+	
+	
+
+	printf("Enter the number of rows and columns of first matrix\n");
+  	scanf("%d%d", &m, &n);
+	printf("Enter the elements of first matrix\n");
+ 
+ 	for ( c = 0 ; c < m ; c++ ){
+   		for ( d = 0 ; d < n ; d++ ){
+     			scanf("%d", &first[c][d]);
+			mpz_init(first_enc[c][d]);
+			fhe_encrypt(first_enc[c][d], pk, first[c][d]);
+			
+		}
+ 	}
+
+	
+ 	 printf("Enter the number of rows and columns of second matrix\n");
+ 	 scanf("%d%d", &p, &q);
+ 
+  	if ( n != p )
+ 	   	printf("Matrices with entered orders can't be multiplied with each other.\n");
+	else{
+			
+   		printf("Enter the elements of second matrix\n");
+ 		fhe_encrypt(sum, pk, 0);	 
+		for ( c = 0 ; c < p ; c++ ){
+      			for ( d = 0 ; d < q ; d++ ){
+       				scanf("%d", &second[c][d]);
+ 				mpz_init(second_enc[c][d]);
+				fhe_encrypt(second_enc[c][d], pk, second[c][d]);
+			}
+		}
+
+
+   		 for ( c = 0 ; c < m ; c++ ){
+      			for ( d = 0 ; d < q ; d++ ){
+      			 	 for ( k = 0 ; k < p ; k++ ){
+					fhe_mul(tmp, first_enc[c][k], second_enc[k][d], pk);
+					fhe_add(sum, sum, tmp, pk);
+         				
+       				 }
+ 	
+        			mpz_init(multiply_enc[c][d]);
+				mpz_set(multiply_enc[c][d],sum);
+        			fhe_encrypt(sum, pk,0);
+     			 }
+    		}
+ 
+ 	   	printf("Product of entered matrices:-\n");
+ 
+   		 for ( c = 0 ; c < m ; c++ ) {
+      			for ( d = 0 ; d < q ; d++ )
+        			printf("%d\t", fhe_decrypt(multiply_enc[c][d], sk));
+ 
+      			printf("\n");
+   		 }
+  	}	
+
+
+
+}
+
 
 
 void test_xor_bits(){
