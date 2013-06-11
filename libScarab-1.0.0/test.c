@@ -34,6 +34,7 @@
 
 void test_keygen();
 
+void bitonicSortUp(fmpz_poly_t *poly_nums, int  nbits, int n,  int lo , int  high, fhe_sk_t sk, fhe_pk_t pk);
 
 void test_suite()
 {
@@ -47,13 +48,12 @@ void test_suite()
 	//test_sum_bits();
 	//test_bit_majoritaire();
 	//test_sum_integers();
-	//test_min_max();
+	test_min_max();
 	//test_insertion_sort();
 	//test_oddeven_merger_sort();
 	//test_bitonic_sort();
 	//test_majority_bit();
-	test_matrix_prod();
-	//debug_test_bit_majoritaire();
+	//test_matrix_prod();
 	//test_keygen();
 }
 
@@ -203,13 +203,13 @@ void min_max(mpz_t *min, mpz_t *max, fmpz_poly_t poly_c1, fmpz_poly_t poly_c2, f
 
 void test_min_max(){
 	
-	clock_t START_init = clock();
+	//clock_t START_init = clock();
 
 	struct timeval start, end;
 	
     	long mtime, seconds, useconds;    
 
-   	 gettimeofday(&start, NULL);
+	//gettimeofday(&start, NULL);
     	
    
  	
@@ -217,9 +217,8 @@ void test_min_max(){
 
 	unsigned a ,b, aux1, aux2;
 
-	a=4; b=2;   // Integers to be compared suppposed to be of the same size
 
-	a=1450; b=1030;  
+	a=30010; b=454;  
 
 	printf("a = %d et b = %d\n", a, b);
 	aux1 = a ; aux2=b;
@@ -242,7 +241,7 @@ void test_min_max(){
 	fhe_sk_t sk;
 	fhe_pk_init(pk);
 	fhe_sk_init(sk);
-	
+	/*
 	double T_Elapsed1 = (double) ( clock () - START_init ); 
 	printf(" Initialization of the variables etc took %f clocks / sec \n ", T_Elapsed1);
 
@@ -252,18 +251,18 @@ void test_min_max(){
    	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
 
    	 printf("Elapsed time in Init : %ld milliseconds\n", mtime);
-  	
+	*/
 	////////////////////// Initialization Ends ////////////////////
 	
 
 	//////////////////////// Key Generation /////////
-	
+	/*
 	clock_t  START_keygen = clock();
 	gettimeofday(&start, NULL);
-
+	*/
 
 	fhe_keygen(pk, sk);
-
+/*
 	double T_Elapsed2 = (double) (clock () - START_keygen);	
 	printf(" KeyGen took %f clocks/sec \n", T_Elapsed2);
 	
@@ -273,14 +272,14 @@ void test_min_max(){
    	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
 
    	printf("Elapsed time in KeyGen : %ld milliseconds\n", mtime);
-  		
+  	*/	
 	////////////////////// Key Generation Ends /////////////
 	
 	////// Encryption of the bit sequences ////////////////
-
+/*
 	clock_t  START_enc = clock();
 	gettimeofday(&start, NULL);
-
+*/
 	fhe_encrypt(c0, pk, a % 2);
 	fhe_encrypt(c1, pk, b % 2);
 
@@ -303,7 +302,8 @@ void test_min_max(){
 
 	}while(aux1 != 0 || aux2 !=0);
 
-	
+	nbits=i + 1;
+/*
 	double T_Elapsed3 = (double) (clock () - START_enc);
 	printf(" Encryption took %f clocks/sec \n ", T_Elapsed3);	
 	gettimeofday(&end, NULL);
@@ -313,7 +313,7 @@ void test_min_max(){
 
    	printf("Elapsed time in Encryption  : %ld milliseconds\n", mtime);
   	/////////////////// Encryption Ends /////////////
-
+	*/
 
 
 	/////////// Evaluation ////////////////////
@@ -329,21 +329,6 @@ void test_min_max(){
 		mpz_init(min[i]);
 	}
 
-
-	/////////// Evaluation ////////////////////
-	//nbits= i +1;
-	//fmpz_poly_t max;
-	//fmpz_poly_t min;
-	//mpz_t * max;
-	//mpz_t * min;
-	//fmpz_poly_init(max);
-	//fmpz_poly_init(min);
-	//max = malloc(sizeof(mpz_t) * nbits);
-	//min = malloc(sizeof(mpz_t) * nbits);
-	//for(i=0;i<nbits;i++){
-	//	mpz_init(max[i]);
-	//	mpz_init(min[i]);
-	//}
 
 	
 	mpz_t a_k;
@@ -375,31 +360,14 @@ void test_min_max(){
 
 	//////////////// Evaluation Ends ////////////////
 
-/*
-		fmpz_poly_set_coeff_mpz(max , k , tmp) ;
-		//mpz_set(max[k],tmp);
-
-		fmpz_poly_get_coeff_mpz(a_k, poly_c1,k);	
-		fmpz_poly_get_coeff_mpz(b_k, poly_c2,k);
-			
-		fhe_mul(b_k, b_k, aIsGreater,pk);
-		not(tmp, aIsGreater,pk);
-		fhe_mul(a_k, a_k, tmp,pk);
-		or(tmp, a_k,b_k, pk);
-
-		fmpz_poly_set_coeff_mpz(min , k , tmp) ;
-		//mpz_set(min[k],tmp);		
-			
-	}*/
-
 
 
 	///////////////////// Decryption /////////////////
 	
-
+/*
 	clock_t  START_dec = clock();
 	gettimeofday(&start, NULL);
-
+*/
 	aux1= 0; aux2= 0;
 
 	unsigned d; int k;
@@ -416,7 +384,7 @@ void test_min_max(){
 		aux2= (aux2 * 2) +d;
 	}
 	printf("le min est: %d\n", aux2);
-	
+	/*
 	double T_Elapsed5 = (double) (clock () - START_dec);
 	printf(" Decryption took  %f clocks/sec \n ", T_Elapsed5);
 	gettimeofday(&end, NULL);
@@ -428,7 +396,7 @@ void test_min_max(){
    	printf("Elapsed time in Decryption : %ld milliseconds\n", mtime);
   	
 	//////////////////////// Decryption Ends /////////////
-	
+	*/
 	
 	for(k=0;k<nbits;k++){
 		mpz_clear(max[k]);
