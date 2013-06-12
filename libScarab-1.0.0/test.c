@@ -34,6 +34,10 @@
 
 void test_keygen();
 
+void measure_test_keygen(){
+	for(int i=0; i< 40; i++) test_keygen();
+}
+
 void bitonicSortUp(fmpz_poly_t *poly_nums, int  nbits, int n,  int lo , int  high, fhe_sk_t sk, fhe_pk_t pk);
 
 void test_suite()
@@ -48,16 +52,22 @@ void test_suite()
 	//test_sum_bits();
 	//test_bit_majoritaire();
 	//test_sum_integers();
-	test_min_max();
+	//test_min_max();
 	//test_insertion_sort();
 	//test_oddeven_merger_sort();
 	//test_bitonic_sort();
 	//test_majority_bit();
 	//test_matrix_prod();
-	//test_keygen();
+	measure_test_keygen();
 }
 
 void test_keygen(){
+	struct timeval start, end;	
+    	long mtime, seconds, useconds;    
+	clock_t  START_eval;
+	double T_Elapsed4;
+	START_eval = clock();
+	gettimeofday(&start, NULL);    
 	fhe_pk_t pk;
 	fhe_sk_t sk;
 	fhe_pk_init(pk);
@@ -65,6 +75,13 @@ void test_keygen(){
 	fhe_keygen(pk, sk);
 	fhe_pk_clear(pk);
 	fhe_sk_clear(sk);
+	T_Elapsed4 = (double) (clock () - START_eval);
+	//printf(" Evaluation took %f clock/sec \n ", T_Elapsed4);     	
+	gettimeofday(&end, NULL);
+	seconds  = end.tv_sec  - start.tv_sec;
+	useconds = end.tv_usec - start.tv_usec;
+	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+	printf("Elapsed time in KeyGen : %ld ms \n", mtime );
 }
 
 
@@ -214,7 +231,7 @@ void test_min_max(){
    
  	
 	////////////////  Initialization ////////////////
-	unsigned a =300501045183, b= 50419815648;
+	unsigned a =30050183, b= 504195648;
 	unsigned aux1, aux2;
 
 
