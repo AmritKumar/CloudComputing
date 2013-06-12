@@ -124,51 +124,76 @@ Discuss the security of these schemes.
 
 
 
-\begin{itemize}
-\item Smart-Vercauteren scheme:\\
+Smart-Vercauteren scheme:\\
 The scheme \cite{cryptoeprint:2009:571} has 3 parameters: ($N, \nu, \mu$ ). The somewhat homomorphic scheme uses 5 algorithms: (\texttt{KeyGen}, \texttt{Encrypt}, \texttt{Decrypt}, \texttt{Add}, \texttt{Mult}).
-\begin{itemize}
-\item \texttt{KeyGen}:
-\begin{itemize}
-\item $F(x)= x^{n}+1$
-\item do
-\begin{itemize}
-\item $S(x)=_{R}(B_{\infty , N}(\nu/2)$
-\item $G(x)=1+2.S(x)$
-\item $p= resultant(G(x),F(x))$
-\end{itemize}
-until $p$ is prime
-\item $D(x)=gcd(G(x),F(x))$ over $\mathbb{F}_p[x]$
-\item $\alpha$: the unique root of $D(x)$
-\item apply \texttt{fmpz\_poly\_xgcd} to obtain $Z(x)$ such that $Z(x).G(x)=p$ mod $F(x)$
-\item $B=z_0$ mod $2p$
-\item $PK = (p, \alpha)$ and $Sk = (p , B)$
-\end{itemize}
-\item \texttt{Encrypt}($m \in \{0,1\} , PK$):
-\begin{itemize}
-\item $R(x)=_{R}(B_{\infty , N}(\mu/2)$
-\item $C(x)=m+2.R(x)$
-\item $c=C(\alpha) mod p$
-\item return $c$
-\end{itemize}
-\item \texttt{Decrypt}($c, SK$):
-\begin{itemize}
-\item $m= (c - round(c.B/p)) mod 2$
-\item return $m$
-\end{itemize}
-\item \texttt{Add}($c_1$, $c_2$, $PK$):
-\begin{itemize}
-\item $c_3=c_1+c_2 mod p$
-\item return $c_3$
-\end{itemize}
-\item \texttt{Mult}($c_1$, $c_2$, PK):
-\begin{itemize}
-\item $c_3=c_1.c_2 mod p$
-\item return $c_3$
-\end{itemize}
-\end{itemize}
-\item BGV:
-\end{itemize}
+
+\restylealgo{algoruled}
+
+
+
+\linesnumbered
+
+
+
+\begin{algorithm}[H]
+
+
+
+ \SetVline
+
+
+
+ \KwData{$N, \nu, \mu$ }
+
+
+
+ \KwResult{$pk, sk$}
+
+  $F(x)= x^{n}+1$
+	
+
+ \While{$p$ is not prime}{
+
+	$S(x)=_{R}(B_{\infty , N}(\nu/2)$\;
+
+	$G(x)=1+2.S(x)$\;
+
+	$p= resultant(G(x),F(x))$\;						
+
+	     
+}
+
+ 	$D(x)=gcd(G(x),F(x))$ over $\mathbb{F}_p[x]$\;
+
+	$\alpha$: the unique root of $D(x)$\;
+
+ 	apply \texttt{fmpz\_poly\_xgcd} to obtain $Z(x)$ such that $Z(x).G(x)=p$ mod $F(x)$\;
+
+	$B=z_0$ mod $2p$\;
+
+	$pk = (p, \alpha)$ and $sk = (p , B)$\;
+
+
+return($pk$, $sk$)
+
+
+
+ \caption{Comparator\label{Code:algo}}
+
+
+
+\end{algorithm}
+\texttt{Encrypt}($m \in \{0,1\} , PK$): 
+\newline \phantom{x}\hspace{3ex}  $R(x)=_{R}(B_{\infty , N}(\mu/2)$ \; $C(x)=m+2.R(x)$ 
+\newline \phantom{x}\hspace{3ex} return  $c=C(\alpha) mod p$
+\newline \texttt{Decrypt}($c, SK$):
+\newline \phantom{x}\hspace{3ex} $m = (c - round(c.B/p)) mod 2$;
+\phantom{x}\hspace{1ex} return $m$
+
+\texttt{Add}($c_1$, $c_2$, $PK$):
+\newline \phantom{x}\hspace{3ex} $c_3=c_1+c_2 mod p$  \phantom{x}\hspace{1ex}  return $c_3$
+\newline \texttt{Mult}($c_1$, $c_2$, PK):
+ \newline \phantom{x}\hspace{3ex}  $c_3=c_1.c_2 mod p$ ; \phantom{x}\hspace{1ex}  return $c_3$
 \subsection{Considered Implementations}
 
 The library used, version, implementaion details, versions, references, modifications required, how-to-installl, how-to-use.Platforms accepted and other depedeices.\\
@@ -340,6 +365,13 @@ A comparator gate uses $n$ \texttt{AND} gates, $n$ \texttt{OR} gates and $n$ \te
 
 \section{Evaluation on the benchmarks}
 Measurements by varying the parameters or the plaintext size.
+
+\begin{figure*}
+
+\incudegraphics{"/home/honey/Documents/Mosig\_1/ProjSpec/Measurements\Insertion\_sort\_CPU.jpg"}
+
+\end{figure*}
+
 
 \section{Analysis of the results}
 
