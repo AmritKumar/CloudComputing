@@ -36,6 +36,14 @@
 void test_keygen();
 
 
+
+void measure_test_keygen(){
+	for(int i=0; i< 40; i++) test_keygen();
+}
+
+void bitonicSortUp(fmpz_poly_t *poly_nums, int  nbits, int n,  int lo , int  high, fhe_sk_t sk, fhe_pk_t pk);
+
+
 void test_suite()
 {
 	//test_fully_homomorphic();
@@ -44,21 +52,30 @@ void test_suite()
 	//test_encryt_decrypt();
 	//test_halfadd();
 	//test_fulladd();
-	//test_xor_bits();
+	test_xor_bits();
 	//test_sum_bits();
 	//test_bit_majoritaire();
 	//test_sum_integers();
 	//test_min_max();
 	//test_insertion_sort();
 	//test_oddeven_merger_sort();
-	test_bitonic_sort();
+	//test_bitonic_sort();
 	//test_majority_bit();
 	//test_matrix_prod();
+
 	//debug_test_bit_majoritaire();
+	//measure_test_keygen();
+
 	//test_keygen();
 }
 
 void test_keygen(){
+	struct timeval start, end;	
+    	long mtime, seconds, useconds;    
+	clock_t  START_eval;
+	//double T_Elapsed4;
+	START_eval = clock();
+	gettimeofday(&start, NULL);    
 	fhe_pk_t pk;
 	fhe_sk_t sk;
 	fhe_pk_init(pk);
@@ -66,6 +83,13 @@ void test_keygen(){
 	fhe_keygen(pk, sk);
 	fhe_pk_clear(pk);
 	fhe_sk_clear(sk);
+	//T_Elapsed4 = (double) (clock () - START_eval);
+	//printf(" Evaluation took %f clock/sec \n ", T_Elapsed4);     	
+	gettimeofday(&end, NULL);
+	seconds  = end.tv_sec  - start.tv_sec;
+	useconds = end.tv_usec - start.tv_usec;
+	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+	printf("Elapsed time in KeyGen : %ld ms \n", mtime );
 }
 
 
@@ -221,6 +245,9 @@ void test_min_max(){
 	printf("a = %d et b = %d\n", a, b);
 	aux1 = a ; aux2=b;
 	int i = 0;
+//	unsigned a =30050183, b= 504195648;
+//	unsigned aux1, aux2;
+
 
 	int nbits;   // Number of bits in the binary representation of the integers
 
@@ -689,7 +716,7 @@ void bitonicSortUp(fmpz_poly_t *poly_nums, int  nbits, int n,  int lo , int  hig
 
 
 void test_bitonic_sort(){ // Sorts a bitonic array of 2^n elements
-	int n = 16 ; // Nombre d'entiers à trier
+	int n = 32 ; // Nombre d'entiers à trier
 	int nbits = 4;// Size in number of bits
 	int *list = malloc(sizeof(int)*n); // List d'entiers à trier
 	
@@ -1433,32 +1460,44 @@ void test_matrix_prod(){
 void test_xor_bits(){
 	int m, aux;
 	mpz_t c0, c1;
+	fmpz_poly_t poly_c;
 	mpz_init(c0);
 	mpz_init(c1);
+	fmpz_poly_init(poly_c);
 	fhe_pk_t pk;
 	fhe_sk_t sk;
 	fhe_pk_init(pk);
 	fhe_sk_init(sk);
 	fhe_keygen(pk, sk);
-	m= 13;	
+	int j;	
 	for(int i=13; i < 27; i++){
 		m=i;
+		j=0;
 		printf("--------->%i\n", m % 2);
 		fhe_encrypt(c0, pk, m % 2);
+		fmpz_poly_set_coeff_mpz ( poly_c , 0 , c0 );
 		aux = m;	
 		aux = aux >> 1;
 		do {
 			printf("--------->%i\n", aux % 2);
-			fhe_encrypt(c1, pk, aux % 2);
+			fhe_encrypt(c0, pk, aux % 2);
 			aux = aux >> 1;
-			fhe_add(c0, c0, c1, pk);
+			j++;
+			fmpz_poly_set_coeff_mpz ( poly_c , j , c0 );
+			//fhe_add(c0, c0, c1, pk);
 		}while(aux != 0);
-////
-		aux = fhe_decrypt(c0, sk);
+		mpz_set(c1, c0);
+		while(j>0){
+			j--;
+			fmpz_poly_get_coeff_mpz ( c0 , poly_c , j );
+			fhe_add(c1, c0, c1, pk);
+		}
+		aux = fhe_decrypt(c1, sk);
 		printf("///////////////-----------!!!!!!  xor bits de %i est %i \n", m, aux);
 	}
 	mpz_clear(c0);
 	mpz_clear(c1);
+	fmpz_poly_clear(poly_c);
 	fhe_pk_clear(pk);
 	fhe_sk_clear(sk);
 }
@@ -1868,16 +1907,16 @@ test_fully_homomorphic()
 		fhe_sk_init(sk);
 		
 		fhe_keygen(pk, sk);
-		fhe_encrypt(c0, pk, 1);
-		fhe_encrypt(c1, pk, 1);
-		printf("\nadd-chain: ");
-		for (int j = 0; j < RUNS*RUNS; j++) {
-			fhe_add(c0, c0, c1, pk);
-			fhe_recrypt(c0, pk);
-			m = fhe_decrypt(c0, sk);
-			printf("%i", m);
-			fflush(stdout);
-		}
+		fhe_encrypt(c0, pk, 0);
+		//fhe_encrypt(c1, pk, 1);
+		//printf("\nadd-chain: ");
+		//for (int j = 0; j < RUNS*RUNS; j++) {
+		//	fhe_add(c0, c0, c0, pk);
+		//	fhe_recrypt(c0, pk);
+		//	m = fhe_decrypt(c0, sk);
+		//	printf("%i", m);
+		//	fflush(stdout);
+		//}
 		fhe_encrypt(c1, pk, 1);
 		printf("\nmul-chain: ");
 		for (int j = 0; j < RUNS*RUNS; j++) {

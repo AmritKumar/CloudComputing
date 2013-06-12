@@ -15,7 +15,7 @@
 #include <assert.h>
 #include "integer-fhe.h"
 
-#define RUNS 60
+#define RUNS 25
 #define KEYRUNS 10
 
 void test_encryt_decrypt();

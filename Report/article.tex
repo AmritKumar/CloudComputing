@@ -215,24 +215,24 @@ Min-Max of sequence of n-btis with arithmetic operations and without branching.
 
 \SetVline
 
- \KwData{a:=$(a_0,a_1,\ldots, a_{n-1}$), b:=$(b_0,b_1,\ldots, b_{n-1})$ }
+ \KwData{a':=$(a_0',a_1',\ldots, a_{n-1}'$), b':=$(b_0',b_1',\ldots, b_{n-1}')$ }
 
- \KwResult{Return Max(a,b) and Min(a,b)}
+ \KwResult{Return Max(a',b') and Min(a',b')}
 
  $aIsGreater \leftarrow 0$\;
  $bitsEqual \leftarrow 1$\;
 	
  \For{$i\leftarrow n-1 $ \KwTo $0$}{
 						
-     $aIsGreater \leftarrow (aIsGreater +\neg(b_i)a_i)* bitEqual$ \;
-     $bitEqual \leftarrow bitEqual*(a_ib_i + \neg(a_i)*\neg(b_i))$		       	
+     $aIsGreater \leftarrow (aIsGreater +\neg(b_i')a_i')* bitEqual$ \;
+     $bitEqual \leftarrow bitEqual*(a_i'b_i' + \neg(a_i)'*\neg(b_i'))$		       	
  }
 
 \For{$i\leftarrow 0$ \KwTo $n-1$}{
 
-     $Max_i \leftarrow aIsGreater*a_i + \neg(aIsGreater)*b_i$ \;
+     $Max_i \leftarrow aIsGreater*a_i' + \neg(aIsGreater)*b_i'$ \;
 
-     $Min_i \leftarrow a \neg(aIsGreater)*a_i + aIsGreater*b_i$ \;
+     $Min_i \leftarrow  \neg(aIsGreater)*a_i' + aIsGreater*b_i'$ \;
 
  }
 
@@ -240,9 +240,11 @@ Min-Max of sequence of n-btis with arithmetic operations and without branching.
 
 return($Max$, $Min$)
 
- \caption{Min-Max\label{Code:algo}}
+ \caption{Min-Max on ciphertext \label{Code:algo}}
+
 
 \end{algorithm}
+
 
 \subsection{Theoretical Cost with the Schemes}
 
@@ -259,18 +261,26 @@ Here we estimate the performance of this program in terms of run time for KeyGen
 \begin{itemize}
 
 \item KeyGen\\
-The measured time execution for KeyGen($N, \mu$)  for fixed values of parameters: $N=8$ and $\mu = 4$ shows a variation from 0.31 s to 13.41 s with mean = 2.726 s.\\
+The measured time execution for KeyGen($N, \mu$)  for fixed values of parameters: $N=8$ and $\mu = 4$ show a variation from 0.2 s to 14.41 s with big density at the interval [0.2s, 1s].\\
+\begin{figure}[!h] %on ouvre l'environnement figure
+\centering
+\includegraphics[width=5cm]{f3.eps} 
+\caption{Run time of KeyGen(ms)} 
+\label{image_f2} %l'étiquette pour faire référence à cette image
+\end{figure}
 \item {Encryption and Decryption}\\
 
 
 \item {Cost time of Min-Max program}\\
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
-  \hline
-  nbits  & 3 & 4 & 5 & 6 & 7 & 8 &  9  & 10 \\
-  \hline
-  time(s) & 4.17 & 5.84 & 7.18 & 4.29 & 4.65 & 5.9 & 6.71 & 6.73\\
-  \hline
-\end{tabular}
+We measure the run time from $n=1$ to $32$ bits,we find a linear cost which confirms the $\theta(n)$ complexity. During these measures the result of Min-Max is correct. 
+\begin{figure}[!h] %on ouvre l'environnement figure
+\centering
+\includegraphics[width=5cm]{f2.eps} 
+\caption{Run time(ms)} 
+\label{image_f2} %l'étiquette pour faire référence à cette image
+\end{figure}
+
+\item The cost of this algorithm on ciphertext is linear with bit number, like  the algorithm on plaintext, the extra cost in this case is encryption-decryption cost and especially the code generation which is very inpreductible and take often a long time in the SV-Scheme.
 \end{itemize}
 \section{Choice of Benchmarks}
 
@@ -366,11 +376,19 @@ A comparator gate uses $n$ \texttt{AND} gates, $n$ \texttt{OR} gates and $n$ \te
 \section{Evaluation on the benchmarks}
 Measurements by varying the parameters or the plaintext size.
 
-\begin{figure*}
+\begin{figure}[!h] %on ouvre l'environnement figure
+\centering
+\includegraphics[width=5cm]{./Insertion_sort_CPU.jpg} 
+\caption{Run time of } 
+\label{image_f2} %l'étiquette pour faire référence à cette image
+\end{figure}
+\
 
-\incudegraphics{"/home/honey/Documents/Mosig\_1/ProjSpec/Measurements\Insertion\_sort\_CPU.jpg"}
+%\begin{figure*}
 
-\end{figure*}
+%\incudegraphics{"/home/honey/Documents/Mosig\_1/ProjSpec/Measurements\Insertion\_sort\_CPU.jpg"}
+
+%\end{figure*}
 
 
 \section{Analysis of the results}
