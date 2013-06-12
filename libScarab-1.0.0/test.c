@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <math.h>
 
 #define ASSERT_HALFADD(__a,__b,__sum,__carry)		\
 	fhe_halfadd(sum, carry, __a, __b, pk);			\
@@ -48,7 +49,7 @@ void test_suite()
 	//test_encryt_decrypt();
 	//test_halfadd();
 	//test_fulladd();
-	//test_xor_bits();
+	test_xor_bits();
 	//test_sum_bits();
 	//test_bit_majoritaire();
 	//test_sum_integers();
@@ -58,14 +59,15 @@ void test_suite()
 	//test_bitonic_sort();
 	//test_majority_bit();
 	//test_matrix_prod();
-	measure_test_keygen();
+	//measure_test_keygen();
+	//test_keygen();
 }
 
 void test_keygen(){
 	struct timeval start, end;	
     	long mtime, seconds, useconds;    
 	clock_t  START_eval;
-	double T_Elapsed4;
+	//double T_Elapsed4;
 	START_eval = clock();
 	gettimeofday(&start, NULL);    
 	fhe_pk_t pk;
@@ -75,7 +77,7 @@ void test_keygen(){
 	fhe_keygen(pk, sk);
 	fhe_pk_clear(pk);
 	fhe_sk_clear(sk);
-	T_Elapsed4 = (double) (clock () - START_eval);
+	//T_Elapsed4 = (double) (clock () - START_eval);
 	//printf(" Evaluation took %f clock/sec \n ", T_Elapsed4);     	
 	gettimeofday(&end, NULL);
 	seconds  = end.tv_sec  - start.tv_sec;
@@ -216,8 +218,6 @@ void min_max(mpz_t *min, mpz_t *max, fmpz_poly_t poly_c1, fmpz_poly_t poly_c2, f
 }
 
 
-
-
 void test_min_max(){
 	
 	//clock_t START_init = clock();
@@ -233,9 +233,6 @@ void test_min_max(){
 	////////////////  Initialization ////////////////
 	unsigned a =30050183, b= 504195648;
 	unsigned aux1, aux2;
-
-
-
 
 	int nbits;   // Number of bits in the binary representation of the integers
 
@@ -324,6 +321,9 @@ void test_min_max(){
 		aux1 = aux1 >> 1;
 		aux2 = aux2 >> 1;
 	}while(aux1 != 0 || aux2 !=0);
+
+
+
 	nbits=i + 1;
 /*
   double T_Elapsed3 = (double) (clock () - START_enc);
@@ -336,6 +336,7 @@ void test_min_max(){
   printf("Elapsed time in Encryption  : %ld milliseconds\n", mtime);
   /////////////////// Encryption Ends /////////////
   */
+
 	/////////// Evaluation ////////////////////
 	START_eval = clock();
 	gettimeofday(&start, NULL);
@@ -648,10 +649,10 @@ void bitonicSortUp(fmpz_poly_t *poly_nums, int  nbits, int n,  int lo , int  hig
 
 
 void test_bitonic_sort(){ // Sorts a bitonic array of 2^n elements
-	int n = 8; // Nombre d'entiers à trier
-	int nbits = 6; // Size in number of bits
-	int list [] ={5, 2, 11, 7, 18, 4, 5, 9}; // {8,13,19,32,24,10,6,5};  // List d'entiers à trier
-
+	int n = 10; // Nombre d'entiers à trier
+	int nbits = 4;// Size in number of bits
+	int *list = malloc(sizeof(int)*n); // List d'entiers à trier
+	
 	fmpz_poly_t * poly_nums;
 	poly_nums = malloc(sizeof(fmpz_poly_t) * n);
 	
@@ -669,30 +670,41 @@ void test_bitonic_sort(){ // Sorts a bitonic array of 2^n elements
 	fhe_keygen(pk, sk);
 	
 	mpz_init(c0);
-
-
-	////////////// Encryption of the bit sequennces //////////
-	for(int k = 0; k < n ; k++){
-		i=0;
-		fmpz_poly_init(poly_nums[k]);
-		a= list[k];
-		aux=a;
-		fhe_encrypt(c0, pk, a % 2);
-		fmpz_poly_set_coeff_mpz( poly_nums[k] , i , c0 );
-		aux = aux >> 1;
-		do {
-		//printf("--------->%i\n", aux % 2);
-			fhe_encrypt(c0, pk, aux % 2);
-			i++;
-			fmpz_poly_set_coeff_mpz ( poly_nums[k] , i , c0 );
-			aux = aux >> 1;
-		}while(aux!= 0);
-
-	}
-
-	mpz_t tmp;	
-	mpz_init(tmp);
+	struct timeval start, end;
+	long mtime, seconds, useconds;    
 	
+	for(int obs=0;obs<2;obs++){
+	////////////// Encryption of the bit sequennces //////////
+		srand(time(NULL));
+		int mod = (int)pow(2, nbits);
+	//printf(" The array is \n");
+
+		for(int t=0;t<n;t++){
+			list[t]= rand()%mod;
+			//printf("%d ", list[t]);
+			
+		}
+		//printf("\n");
+		nbits = 0;
+		for(int k = 0; k < n ; k++){
+			i=0;
+			fmpz_poly_init(poly_nums[k]);
+			a= list[k];
+			aux=a;
+			fhe_encrypt(c0, pk, a % 2);
+			fmpz_poly_set_coeff_mpz( poly_nums[k] , i , c0 );
+			aux = aux >> 1;
+			do {
+		//printf("--------->%i\n", aux % 2);
+				fhe_encrypt(c0, pk, aux % 2);
+				i++;
+				fmpz_poly_set_coeff_mpz ( poly_nums[k] , i , c0 );
+				aux = aux >> 1;
+			}while(aux!= 0);
+			if(i+1>nbits) nbits=i+1;
+		}
+
+/*	
 	int k;
 	for(i=0;i<n;i++){
 		printf(" \n The %d'th number is \n", i);
@@ -703,17 +715,32 @@ void test_bitonic_sort(){ // Sorts a bitonic array of 2^n elements
 	
 	}
 	
-	printf("\n");
+	//printf("\n");
 	
-
+*/
 	////////////////// Bitonic Sorting : sort from the index 0 till n //////////////
+		clock_t  START_eval = clock();
+		gettimeofday(&start, NULL);
 
-	bitonicSortUp(poly_nums, nbits, n, 0, n, sk, pk);
+		bitonicSortUp(poly_nums, nbits, n, 0, n, sk, pk);
+		
+		double T_Elapsed4 = (double) (clock () - START_eval);
+		//printf(" Evaluation took %f clock/sec \n ", T_Elapsed4);
+					
+		gettimeofday(&end, NULL);
+		seconds  = end.tv_sec  - start.tv_sec;
+		useconds = end.tv_usec - start.tv_usec;
+   		mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+		
+		
+  	 	printf("%d \t %d \t %f \t %ld \n",n, nbits, T_Elapsed4, mtime);	
 
+
+	}
 	////////////// Decryption /////////////////////
 
 
-		for(i=0;i<n;i++){
+/*		for(i=0;i<n;i++){
 		printf(" \n The %d'th number is \n", i);
 		for(k=0;k<nbits;k++){
 			fmpz_poly_get_coeff_mpz(tmp, poly_nums[i],k);
@@ -723,23 +750,57 @@ void test_bitonic_sort(){ // Sorts a bitonic array of 2^n elements
 	}
 	
 	printf("\n");	
+	mpz_t tmp;	
+	mpz_init(tmp);
+
+	int d ;
+	printf("\n After Bitonic sort \n");
+	for (i=0;i<n;i++){
+		aux = 0;
+		d=0;
+		for (int k=nbits-1;k>=0;k--){
+			fmpz_poly_get_coeff_mpz(tmp, poly_nums[i],k);
+			d = fhe_decrypt(tmp, sk);
+			aux = (aux*2)+d;
+		} 
+		printf(" %d ", aux);
 		
-	for(k=0;k<n;k++)
+	}
+*/	
+	printf("\n");
+	for(int k=0;k<n;k++)
 		fmpz_poly_clear( poly_nums[k]);
 	
 	fhe_pk_clear(pk);
 	fhe_sk_clear(sk);	
 	mpz_clear(c0);
-	mpz_clear(tmp);
+	//mpz_clear(tmp);
 				
 
 
 }
 
 void test_insertion_sort(){   // Generate n random numbers of nbits each and sort them
-	int n = 5; // Nombre d'entiers à trier
+	int n = 15; // Nombre d'entiers à trier
 	int nbits = 6; // Size in number of bits
-	int list [] = {19,8,32,13,5};  // List d'entiers à trier
+	int *list = malloc(sizeof(int)*n); // List d'entiers à trier
+	//printf("\n");
+
+	mpz_t * max;
+	mpz_t * min;
+	max = malloc(sizeof(mpz_t) * nbits);
+	min = malloc(sizeof(mpz_t) * nbits);
+	for(int i=0;i<nbits;i++){
+		mpz_init(max[i]);
+		mpz_init(min[i]);
+	}
+	
+	mpz_t tmp;	
+	mpz_init(tmp);
+	
+	struct timeval start, end;
+	long mtime, seconds, useconds;    
+	
 
 	fmpz_poly_t * poly_nums;
 	poly_nums = malloc(sizeof(fmpz_poly_t) * n);
@@ -748,7 +809,7 @@ void test_insertion_sort(){   // Generate n random numbers of nbits each and sor
 	int a ;
 
 	int i;
-
+	int k;
 	mpz_t c0;
 	
 	fhe_pk_t pk;
@@ -758,56 +819,50 @@ void test_insertion_sort(){   // Generate n random numbers of nbits each and sor
 	fhe_keygen(pk, sk);
 	
 	mpz_init(c0);
-
-
+	
+	for(int obser = 0 ; obser < 1 ;obser++){	
+		srand(time(NULL));
+		int mod = (int)pow(2, nbits);
+		//printf(" The array is \n");
+	
+		for(int t=0;t<n;t++){
+			list[t]= rand()%mod;
+		//printf("%d ", list[t]);
+		}
+	
+	nbits=0;
 	////////////// Encryption of the bit sequennces //////////
-	for(int k = 0; k < n ; k++){
-		i=0;
-		fmpz_poly_init(poly_nums[k]);
-		a= list[k];
-		aux=a;
-		fhe_encrypt(c0, pk, a % 2);
-		fmpz_poly_set_coeff_mpz( poly_nums[k] , i , c0 );
-		aux = aux >> 1;
-		do {
-		//printf("--------->%i\n", aux % 2);
-			fhe_encrypt(c0, pk, aux % 2);
-			i++;
-			fmpz_poly_set_coeff_mpz ( poly_nums[k] , i , c0 );
+		for(int k = 0; k < n ; k++){
+			i=0;
+			fmpz_poly_init(poly_nums[k]);
+			a= list[k];
+			aux=a;
+			fhe_encrypt(c0, pk, a % 2);
+			fmpz_poly_set_coeff_mpz( poly_nums[k] , i , c0 );
 			aux = aux >> 1;
-		}while(aux!= 0);
+			do {
+		//printf("--------->%i\n", aux % 2);
+				fhe_encrypt(c0, pk, aux % 2);
+				i++;
+				fmpz_poly_set_coeff_mpz ( poly_nums[k] , i , c0 );
+				aux = aux >> 1;
+			}while(aux!= 0);
+			if(i+1>nbits) nbits = i+1;
+		}
 
-	}
-
-	mpz_t tmp;	
-	mpz_init(tmp);
-	
-	int k;
-	for(i=0;i<n;i++){
-		printf(" \n The %d'th number is \n", i);
-		for(k=0;k<nbits;k++){
-			fmpz_poly_get_coeff_mpz(tmp, poly_nums[i],k);
-			printf(" %i ", fhe_decrypt(tmp, sk));
-	
-	}
-	
-	}
-	
+	//printf("Number of bits in this case is %d \n ", nbits);
+int k;	
 
 
 	/////////// Evaluation ////////////////////
+	
+	
+	
 		
-	
-	mpz_t * max;
-	mpz_t * min;
-	max = malloc(sizeof(mpz_t) * nbits);
-	min = malloc(sizeof(mpz_t) * nbits);
-	for(i=0;i<nbits;i++){
-		mpz_init(max[i]);
-		mpz_init(min[i]);
-	}
-	
+	clock_t  START_eval = clock();
+	gettimeofday(&start, NULL);
 
+	
 	i=n-2;
 	
 	while(i>=0){
@@ -820,31 +875,47 @@ void test_insertion_sort(){   // Generate n random numbers of nbits each and sor
 				fmpz_poly_set_coeff_mpz(poly_nums[j+1],k, max[k]);
 			}
 		
-	}
-	i--;
+		}
+		i--;
 	
 	}
 
+	double T_Elapsed4 = (double) (clock () - START_eval);
+	//printf(" Evaluation took %f clock/sec \n ", T_Elapsed4);
+					
+	gettimeofday(&end, NULL);
+	seconds  = end.tv_sec  - start.tv_sec;
+	useconds = end.tv_usec - start.tv_usec;
+   	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+	
 
+   	printf("%d \t %d \t %f \t %ld \n",n, nbits, T_Elapsed4, mtime);
+  }
 	
 	//////////////// Decryption ///////////////////////////
-	
+/*	
+	int d ;
+	printf("\n After insertion sort \n");
 	for (i=0;i<n;i++){
-		printf(" \n the %dth integer is : \n ", i);	
-		for (k=0;k<nbits;k++){
+		aux = 0;
+		d=0;
+		for (k=nbits-1;k>=0;k--){
 			fmpz_poly_get_coeff_mpz(tmp, poly_nums[i],k);
-			printf(" %i ", fhe_decrypt(tmp,sk));
+			d = fhe_decrypt(tmp, sk);
+			aux = (aux*2)+d;
 		} 
+		printf(" %d ", aux);
 		
 	}
 	
 	printf("\n");
-
+*/
 	for(k=0;k<nbits;k++){
 		mpz_clear(max[k]);
 		mpz_clear(min[k]);
 	}
-	
+	free(max);
+	free(min);	
 	for(k=0;k<n;k++)
 		fmpz_poly_clear( poly_nums[k]);
 	
@@ -852,6 +923,7 @@ void test_insertion_sort(){   // Generate n random numbers of nbits each and sor
 	fhe_sk_clear(sk);	
 	mpz_clear(c0);
 	mpz_clear(tmp);
+	free(list);
 	
 }
 
@@ -1320,32 +1392,44 @@ void test_matrix_prod(){
 void test_xor_bits(){
 	int m, aux;
 	mpz_t c0, c1;
+	fmpz_poly_t poly_c;
 	mpz_init(c0);
 	mpz_init(c1);
+	fmpz_poly_init(poly_c);
 	fhe_pk_t pk;
 	fhe_sk_t sk;
 	fhe_pk_init(pk);
 	fhe_sk_init(sk);
 	fhe_keygen(pk, sk);
-	m= 13;	
+	int j;	
 	for(int i=13; i < 27; i++){
 		m=i;
+		j=0;
 		printf("--------->%i\n", m % 2);
 		fhe_encrypt(c0, pk, m % 2);
+		fmpz_poly_set_coeff_mpz ( poly_c , 0 , c0 );
 		aux = m;	
 		aux = aux >> 1;
 		do {
 			printf("--------->%i\n", aux % 2);
-			fhe_encrypt(c1, pk, aux % 2);
+			fhe_encrypt(c0, pk, aux % 2);
 			aux = aux >> 1;
-			fhe_add(c0, c0, c1, pk);
+			j++;
+			fmpz_poly_set_coeff_mpz ( poly_c , j , c0 );
+			//fhe_add(c0, c0, c1, pk);
 		}while(aux != 0);
-////
-		aux = fhe_decrypt(c0, sk);
+		mpz_set(c1, c0);
+		while(j>0){
+			j--;
+			fmpz_poly_get_coeff_mpz ( c0 , poly_c , j );
+			fhe_add(c1, c0, c1, pk);
+		}
+		aux = fhe_decrypt(c1, sk);
 		printf("///////////////-----------!!!!!!  xor bits de %i est %i \n", m, aux);
 	}
 	mpz_clear(c0);
 	mpz_clear(c1);
+	fmpz_poly_clear(poly_c);
 	fhe_pk_clear(pk);
 	fhe_sk_clear(sk);
 }
@@ -1755,16 +1839,16 @@ test_fully_homomorphic()
 		fhe_sk_init(sk);
 		
 		fhe_keygen(pk, sk);
-		fhe_encrypt(c0, pk, 1);
-		fhe_encrypt(c1, pk, 1);
-		printf("\nadd-chain: ");
-		for (int j = 0; j < RUNS*RUNS; j++) {
-			fhe_add(c0, c0, c1, pk);
-			fhe_recrypt(c0, pk);
-			m = fhe_decrypt(c0, sk);
-			printf("%i", m);
-			fflush(stdout);
-		}
+		fhe_encrypt(c0, pk, 0);
+		//fhe_encrypt(c1, pk, 1);
+		//printf("\nadd-chain: ");
+		//for (int j = 0; j < RUNS*RUNS; j++) {
+		//	fhe_add(c0, c0, c0, pk);
+		//	fhe_recrypt(c0, pk);
+		//	m = fhe_decrypt(c0, sk);
+		//	printf("%i", m);
+		//	fflush(stdout);
+		//}
 		fhe_encrypt(c1, pk, 1);
 		printf("\nmul-chain: ");
 		for (int j = 0; j < RUNS*RUNS; j++) {
