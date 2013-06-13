@@ -1537,7 +1537,7 @@ void test_matrix_prod(){
 
 
 void test_xor_bits(){
-	int m, aux;
+	unsigned m, aux;
 	mpz_t c0, c1;
 	fmpz_poly_t poly_c;
 	mpz_init(c0);
@@ -1548,31 +1548,47 @@ void test_xor_bits(){
 	fhe_pk_init(pk);
 	fhe_sk_init(sk);
 	fhe_keygen(pk, sk);
-	int j;	
-	for(int i=13; i < 27; i++){
-		m=i;
+	int j, nbits;	
+
+	struct timeval start, end;	
+	long mtime, seconds, useconds;    
+	//clock_t  START_eval;
+	//double T_Elapsed4;
+
+	m= 2147483648	;
+	for(int i=0; i< 250; i++){
+		m= m + 2;
 		j=0;
-		printf("--------->%i\n", m % 2);
+		//printf("--------->%i\n", m % 2);
 		fhe_encrypt(c0, pk, m % 2);
 		fmpz_poly_set_coeff_mpz ( poly_c , 0 , c0 );
 		aux = m;	
 		aux = aux >> 1;
 		do {
-			printf("--------->%i\n", aux % 2);
+			//	printf("--------->%i\n", aux % 2);
 			fhe_encrypt(c0, pk, aux % 2);
 			aux = aux >> 1;
 			j++;
 			fmpz_poly_set_coeff_mpz ( poly_c , j , c0 );
 			//fhe_add(c0, c0, c1, pk);
 		}while(aux != 0);
+		nbits= j+1;
+		//START_eval = clock();
+		gettimeofday(&start, NULL);    
 		mpz_set(c1, c0);
 		while(j>0){
 			j--;
 			fmpz_poly_get_coeff_mpz ( c0 , poly_c , j );
 			fhe_add(c1, c0, c1, pk);
 		}
+		gettimeofday(&end, NULL);
+		seconds  = end.tv_sec  - start.tv_sec;
+		useconds = end.tv_usec - start.tv_usec;
+		mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+		//printf("Elapsed time in KeyGen : %ld ms \n", mtime );
+
 		aux = fhe_decrypt(c1, sk);
-		printf("///////////////-----------!!!!!!  xor bits de %i est %i \n", m, aux);
+		printf("xor de %u: %d bits, runtime: %ld ms\n", m, nbits, mtime);
 	}
 	mpz_clear(c0);
 	mpz_clear(c1);
