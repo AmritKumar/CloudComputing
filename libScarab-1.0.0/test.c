@@ -53,12 +53,13 @@ void test_suite()
 	//test_halfadd();
 	//test_fulladd();
 	//test_xor_bits();
+
 	//test_sum_bits();
 	//test_bit_majoritaire();
 	mesure_sum_integers();
 	//test_min_max();
 	//test_insertion_sort();
-	//test_oddeven_merger_sort();
+	test_oddeven_merger_sort();
 	//test_bitonic_sort();
 	//test_majority_bit();
 	//test_matrix_prod();
@@ -480,7 +481,7 @@ void test_min_max(){
 }
 
 
-void OddEvenMerge(fmpz_poly_t * poly_nums, int n, int nbits, int lo, int r, fhe_sk_t sk , fhe_pk_t pk){
+void OddEvenMerge(fmpz_poly_t * poly_nums, int n, int nbits, int lo, int r, fhe_pk_t pk){
 
 		
 	mpz_t * max;
@@ -496,8 +497,8 @@ void OddEvenMerge(fmpz_poly_t * poly_nums, int n, int nbits, int lo, int r, fhe_
 	
 	if(m<n){
 		
-		OddEvenMerge(poly_nums, n, nbits, lo, m, sk, pk); // even subsequence
-		OddEvenMerge(poly_nums, n, nbits, lo+r, m, sk, pk); //odd subsequence	
+		OddEvenMerge(poly_nums, n, nbits, lo, m, pk); // even subsequence
+		OddEvenMerge(poly_nums, n, nbits, lo+r, m, pk); //odd subsequence	
 		for(int i=lo+r; i+r <lo+n; i+=m){
 			min_max(min, max, poly_nums[i], poly_nums[i+r], pk, nbits);		
 			for(int k=0;k<nbits;k++){
@@ -522,29 +523,36 @@ void OddEvenMerge(fmpz_poly_t * poly_nums, int n, int nbits, int lo, int r, fhe_
 	}
 
 
-
+	for(int k=0;k<n;k++){
+		mpz_clear(max[k]);
+		mpz_clear(min[k]);
+	}
+	free(max);
+	free(min);
+	
+	
 }
 
 
 
-void OddEvenMergeSort(fmpz_poly_t * poly_nums, int n, int nbits, int lo, fhe_sk_t sk, fhe_pk_t pk)
+void OddEvenMergeSort(fmpz_poly_t * poly_nums, int n, int nbits, int lo, fhe_pk_t pk)
 {
 	if(n>1){
 	
 		int m = n/2;
-		OddEvenMergeSort(poly_nums, m, nbits, lo, sk, pk);
-		OddEvenMergeSort(poly_nums, m, nbits, lo+m, sk, pk);
-		OddEvenMerge(poly_nums, n, nbits, lo, 1, sk, pk);
+		OddEvenMergeSort(poly_nums, m, nbits, lo, pk);
+		OddEvenMergeSort(poly_nums, m, nbits, lo+m, pk);
+		OddEvenMerge(poly_nums, n, nbits, lo, 1,  pk);
 	
 	}
 }
 
 
 void test_oddeven_merger_sort(){
-	int n = 8; // Nombre d'entiers à trier
-	int nbits = 6; // Size in number of bits
-	int list [] = {19,8,32,13,5,6,10,24};  // List d'entiers à trier
-
+	int n = 8;// Nombre d'entiers à trier
+	int nbits = 4;// Size in number of bits
+	int *list = malloc(sizeof(int)*n); // List d'entiers à trier
+	
 	fmpz_poly_t * poly_nums;
 	poly_nums = malloc(sizeof(fmpz_poly_t) * n);
 	
@@ -554,6 +562,10 @@ void test_oddeven_merger_sort(){
 	int i;
 
 	mpz_t c0;
+	mpz_t tmp;	
+	mpz_init(tmp);
+
+	int d ;
 	
 	fhe_pk_t pk;
 	fhe_sk_t sk;
@@ -562,9 +574,22 @@ void test_oddeven_merger_sort(){
 	fhe_keygen(pk, sk);
 	
 	mpz_init(c0);
-
-
+	struct timeval start, end;
+	long mtime, seconds, useconds;    
+	
+	for(int obs=0;obs<5;obs++){
 	////////////// Encryption of the bit sequennces //////////
+		srand(time(NULL));
+		int mod = (int)pow(2, nbits);
+	//printf(" The array is \n");
+
+		for(int t=0;t<n;t++){
+			list[t]= rand()%mod;
+			printf("%d ", list[t]);
+			
+		}
+	printf("\n");
+	nbits=0;
 	for(int k = 0; k < n ; k++){
 		i=0;
 		fmpz_poly_init(poly_nums[k]);
@@ -580,14 +605,28 @@ void test_oddeven_merger_sort(){
 			fmpz_poly_set_coeff_mpz ( poly_nums[k] , i , c0 );
 			aux = aux >> 1;
 		}while(aux!= 0);
-
+		if(i+1>nbits) nbits=i+1;
 	}
+	printf("\n After Encryption");
+	for (i=0;i<n;i++){
+		aux = 0;
+		d=0;
+		for (int k=nbits-1;k>=0;k--){
+			fmpz_poly_get_coeff_mpz(tmp, poly_nums[i],k);
+			d = fhe_decrypt(tmp, sk);
+			aux = (aux*2)+d;
+		} 
+		printf(" %d ", aux);
+		
+	}
+	
+	printf("\n");
 
-	mpz_t tmp;	
+/*	mpz_t tmp;	
 	mpz_init(tmp);
 	
 	int k;
-	for(i=0;i<n;i++){
+	r(i=0;i<n;i++){
 		printf(" \n The %d'th number is \n", i);
 		for(k=0;k<nbits;k++){
 			fmpz_poly_get_coeff_mpz(tmp, poly_nums[i],k);
@@ -597,25 +636,64 @@ void test_oddeven_merger_sort(){
 	}
 	
 	printf("\n");
-	
+	*/
 
 	////////////////// Odd Even Sorting //////////////
+	clock_t  START_eval = clock();
+	gettimeofday(&start, NULL);
 
-	OddEvenMergeSort(poly_nums, n, nbits, 0, sk, pk);
+
+	OddEvenMergeSort(poly_nums, n, nbits, 0, pk);
+	double T_Elapsed4 = (double) (clock () - START_eval);
+		//T_Elapsed4/=CLOCKS_PER_SEC;
+		//printf(" Evaluation took %f clock/sec \n ", T_Elapsed4);
+					
+	gettimeofday(&end, NULL);
+	seconds  = end.tv_sec  - start.tv_sec;
+	useconds = end.tv_usec - start.tv_usec;
+   	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+		
+		
+  	printf("%d \t %d \t %f \t %ld \n",n, nbits, T_Elapsed4, mtime);	
+
+
 
 	////////////// Decryption /////////////////////
+	printf("\n After OddEven sort \n");
+	for (i=0;i<n;i++){
+		aux = 0;
+		d=0;
+		for (int k=nbits-1;k>=0;k--){
+			fmpz_poly_get_coeff_mpz(tmp, poly_nums[i],k);
+			d = fhe_decrypt(tmp, sk);
+			aux = (aux*2)+d;
+		} 
+		printf(" %d ", aux);
+		
+	}
+	
+	printf("\n");
 
 
-		for(i=0;i<n;i++){
+	}
+	/*	for(i=0;i<n;i++){
 		printf(" \n The %d'th number is \n", i);
 		for(k=0;k<nbits;k++){
 			fmpz_poly_get_coeff_mpz(tmp, poly_nums[i],k);
 			printf(" %i ", fhe_decrypt(tmp, sk));
 		}
 	
-	}
-	
-	printf("\n");
+	}*/
+		printf("\n");
+	for(int k=0;k<n;k++)
+		fmpz_poly_clear( poly_nums[k]);
+	free(poly_nums);
+	fhe_pk_clear(pk);
+	fhe_sk_clear(sk);	
+	mpz_clear(c0);
+	mpz_clear(tmp);
+	free(list);			
+
 
 
 }
@@ -654,7 +732,8 @@ void bitonicMergeUp(fmpz_poly_t *poly_nums, int  nbits, int n,  int lo , int  hi
 		mpz_clear(max[k]);
 		mpz_clear(min[k]);
 	}
-	
+	free(max);
+	free(min);
 				
 }
 
@@ -688,7 +767,8 @@ void bitonicMergeDown(fmpz_poly_t *poly_nums, int  nbits, int n,  int lo , int  
 		mpz_clear(max[k]);
 		mpz_clear(min[k]);
 	}
-	
+	free(max);
+	free(min);	
 }
 
 
@@ -714,8 +794,8 @@ void bitonicSortUp(fmpz_poly_t *poly_nums, int  nbits, int n,  int lo , int  hig
 
 
 void test_bitonic_sort(){ // Sorts a bitonic array of 2^n elements
-	int n = 32 ; // Nombre d'entiers à trier
-	int nbits = 4;// Size in number of bits
+	int n = 32;// Nombre d'entiers à trier
+	int nbits = 8 ;// Size in number of bits
 	int *list = malloc(sizeof(int)*n); // List d'entiers à trier
 	
 	fmpz_poly_t * poly_nums;
@@ -737,8 +817,7 @@ void test_bitonic_sort(){ // Sorts a bitonic array of 2^n elements
 	mpz_init(c0);
 	struct timeval start, end;
 	long mtime, seconds, useconds;    
-	
-	for(int obs=0;obs<1;obs++){
+	for(int obs=0;obs<5;obs++){
 	////////////// Encryption of the bit sequennces //////////
 		srand(time(NULL));
 		int mod = (int)pow(2, nbits);
@@ -803,6 +882,7 @@ void test_bitonic_sort(){ // Sorts a bitonic array of 2^n elements
 
 
 	}
+	
 	////////////// Decryption /////////////////////
 
 
@@ -836,12 +916,12 @@ void test_bitonic_sort(){ // Sorts a bitonic array of 2^n elements
 	printf("\n");
 	for(int k=0;k<n;k++)
 		fmpz_poly_clear( poly_nums[k]);
-	
+	free(poly_nums);
 	fhe_pk_clear(pk);
 	fhe_sk_clear(sk);	
 	mpz_clear(c0);
 	//mpz_clear(tmp);
-				
+	free(list);			
 
 
 }
