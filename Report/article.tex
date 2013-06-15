@@ -200,8 +200,8 @@ To simplify out computational circuit added, we added two basic functions \textt
 We time the various algorithms on two desktop machines. Both these machines were x86-64 platform running linux kernel $3.2.0$-$45$-generic  and used GCC $4.6.3$ C compiler.  The first machine housed Intel Core i3 M330 (2.13GHz x 4) processor and will be referred in this article as machine M1 while the other used  housed Intel Core i5 2430 M(2.40 x4) processor and will be referred as machine M2.
  
 \subsection{Intial set-up cost}
-Measurements taken are CPU time, Wall Time, Memory Usage by varying the input size  and the algorithmic parameters. Noise reduction threshold.\\
-Here we estimate the performance of this program in terms of run time for KeyGen, Encrypt, Decrypt and the Min-Max algorithm.
+(Measurements taken are CPU time, Wall Time, Memory Usage by varying the input size  and the algorithmic parameters. Noise reduction threshold).\\
+Here we estimate the performance in terms of run time for KeyGen, Encrypt, Decrypt, Add, Mult, Recrypt.
 
 \textbf{KeyGen}\\
 The measured time execution for KeyGen($N, \mu$)  for fixed values of parameters: $N=8$ and $\mu = 4$ show a variation from 0.2 s to 14.41 s with big density at the interval [0.2s, 1s].
