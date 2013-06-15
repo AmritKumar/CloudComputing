@@ -12,7 +12,7 @@
 #define PARAMETERS_H
 
 //#define N 8
-#define N 2
+#define N 8
 
 #define MU 4
 
