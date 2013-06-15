@@ -200,19 +200,31 @@ To simplify out computational circuit added, we added two basic functions \textt
 We time the various algorithms on two desktop machines. Both these machines were x86-64 platform running linux kernel $3.2.0$-$45$-generic  and used GCC $4.6.3$ C compiler.  The first machine housed Intel Core i3 M330 (2.13GHz x 4) processor and will be referred in this article as machine M1 while the other used  housed Intel Core i5 2430 M(2.40 x4) processor and will be referred as machine M2.
  
 \subsection{Intial set-up cost}
-(Measurements taken are CPU time, Wall Time, Memory Usage by varying the input size  and the algorithmic parameters. Noise reduction threshold).\\
-Here we estimate the performance in terms of run time for KeyGen, Encrypt, Decrypt, Add, Mult, Recrypt.
+Here we mesure the performance in terms of run time for KeyGen, Encrypt, Add, Mult, Recrypt, Decrypt.\\
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+  \hline
+  \multicolumn{8}{|c|}{$\mu = 4$} \\
+  \hline
+  N & $log_{2}(p)$ & KeyGen & Encrypt & Add & Mult & Recrypt & Decrypt \\
+  \hline
+  $2^{1}$ & 1.2 & & 1.3 & & & & \\
+  $2^{2}$ & 2.2 & & 2.3 & & & & \\
+  $2^{3}$ & 2.2 & & 2.3 & & & & \\
+  $2^{4}$ & 2.2 & & 2.3 & & & & \\
+  $2^{5}$ & 2.2 & & 2.3 & & & & \\
+  \hline
+\end{tabular}
 
 \textbf{KeyGen}\\
-The measured time execution for KeyGen($N, \mu$)  for fixed values of parameters: $N=8$ and $\mu = 4$ show a variation from 0.2 s to 14.41 s with big density at the interval [0.2s, 1s].
-\begin{comment}
+The measured time execution for KeyGen($N, \mu$)  for fixed values of parameters: $N=8$ and $\mu = 4$ show a variation from 0.2 s to 14.41 s with big density at the interval [0.2s, 2s]\autoref{image_f2}.
+
 \begin{figure}[!h] %on ouvre l'environnement figure
 \centering
-\includegraphics[width=5cm]{f3.eps} 
+\includegraphics[width=5cm]{f3.pdf} 
 \caption{Run time of KeyGen(ms)} 
 \label{image_f2} %l'étiquette pour faire référence à cette image
 \end{figure}
-\end{comment}
+
 
 \textbf{Encryption and Decryption}\\
 
