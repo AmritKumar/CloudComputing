@@ -56,9 +56,9 @@ void test_suite()
 	//test_xor_bits();
 
 	//test_sum_bits();
-	mesure_sum_integers();
+	//mesure_sum_integers();
 	//test_min_max();
-	//test_insertion_sort();
+	test_insertion_sort();
 	//test_oddeven_merger_sort();
 	//test_bitonic_sort();
 	//test_majority_bit();
@@ -663,9 +663,9 @@ void test_oddeven_merger_sort(){
 		int mod = (int)pow(2, nbits);
 		for(int t=0;t<n;t++){
 			list[t]= rand()%mod;
-			//printf("%d ",list[t]);	
+			printf("%d ",list[t]);	
 		}
-	//printf("\n");
+	printf("\n");
 	nbits=0;
 	for(int k = 0; k < n ; k++){
 		i=0;
@@ -706,7 +706,7 @@ void test_oddeven_merger_sort(){
 
 	
 	////////////// Decryption /////////////////////
-	/*intf("After OddEven sort \n");
+	printf("After OddEven sort \n");
 	for (i=0;i<n;i++){
 		aux = 0;
 		d=0;
@@ -720,7 +720,7 @@ void test_oddeven_merger_sort(){
 	}
 	printf("\n");
 
-*/
+
 }
 
 	for(int k=0;k<n;k++)
@@ -969,8 +969,8 @@ void test_bitonic_sort(){ // Sorts a bitonic array of 2^n elements
 }
 
 void test_insertion_sort(){   // Generate n random numbers of nbits each and sort them
-	int n = 15; // Nombre d'entiers à trier
-	int nbits = 8; // Size in number of bits
+	int n = 14;// Nombre d'entiers à trier
+	int nbits = 4; // Size in number of bits
 	int *list = malloc(sizeof(int)*n); // List d'entiers à trier
 	//printf("\n");
 
