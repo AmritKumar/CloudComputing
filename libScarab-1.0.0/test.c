@@ -59,14 +59,15 @@ void test_suite()
 	//mesure_sum_integers();
 	//test_min_max();
 	//test_insertion_sort();
-	test_oddeven_merger_sort();
+	//test_oddeven_merger_sort();
 	//test_bitonic_sort();
 	//test_majority_bit();
-	//test_matrix_prod();
+
+	//mesure_test_matrix_prod();
 	//test_sum_unbounded();
 	//measure_test_keygen();
 	//test_keygen();
-	//mesure_encrypt_decrypt();
+	mesure_encrypt_decrypt();
 	//essai();
 }
 
@@ -91,7 +92,7 @@ void test_keygen(){
 	//clock_t  START_eval;
 	//double T_Elapsed4;
 	//START_eval = clock();
-	gettimeofday(&start, NULL);    
+ 	gettimeofday(&start, NULL);    
 	fhe_pk_t pk;
 	fhe_sk_t sk;
 	fhe_pk_init(pk);
@@ -112,7 +113,7 @@ void mesure_encrypt_decrypt(){
 	fhe_pk_t pk;
 	fhe_sk_t sk;	
 	mpz_t c, aux1, aux2;
-	int m, k =0;
+	int m;
 	mpz_init(c);
 	mpz_init(aux1);
 	mpz_init(aux2);
@@ -124,46 +125,77 @@ void mesure_encrypt_decrypt(){
 	gettimeofday(&start, NULL);
 	fhe_keygen(pk, sk);
 	gettimeofday(&end, NULL);
-		seconds  = end.tv_sec  - start.tv_sec;
-		useconds = end.tv_usec - start.tv_usec;
-		mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-		printf("time keygen: %ld ms", mtime );
-   
-	for(int i=0; i < 10; i++){
-		k= 1 - k;
-		gettimeofday(&start, NULL);    
-		fhe_encrypt(c, pk, k);
-		gettimeofday(&end, NULL);
-		seconds  = end.tv_sec  - start.tv_sec;
-		useconds = end.tv_usec - start.tv_usec;
-		mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-		printf("time encrypt : %ld ms", mtime );
+	seconds  = end.tv_sec  - start.tv_sec;
+	useconds = end.tv_usec - start.tv_usec;
+	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+	//gmp_printf("p: %Zd \n", pk->p);
+	//gmp_printf("alpha: %Zd \n", pk->alpha);
+	//gmp_printf("B: %Zd \n", sk->B);
 
-		gettimeofday(&start, NULL);    
-		fhe_fulladd(c, aux1,c,c,aux2, pk);
-		gettimeofday(&end, NULL);
-		seconds  = end.tv_sec  - start.tv_sec;
-		useconds = end.tv_usec - start.tv_usec;
-		mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-		printf("time add : %ld ms", mtime );
-
-		gettimeofday(&start, NULL);    
-		fhe_mul(c,c, c, pk);
-		gettimeofday(&end, NULL);
-		seconds  = end.tv_sec  - start.tv_sec;
-		useconds = end.tv_usec - start.tv_usec;
-		mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-		printf("time mul : %ld ms", mtime );
-
-		gettimeofday(&start, NULL);    
-		m= fhe_decrypt(c, sk);
-		printf("m : %d ",m);
-		gettimeofday(&end, NULL);
-		seconds  = end.tv_sec  - start.tv_sec;
-		useconds = end.tv_usec - start.tv_usec;
-		mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-		printf("time decrypt : %ld ms \n", mtime );
+	printf("N:%d , log(p): %d , keygen: %ld ",N,mpz_sizeinbase( pk->p, 2), mtime );
+	
+	
+	gettimeofday(&start, NULL);  
+	for(int i=0; i < 100; i++){
+		fhe_encrypt(c, pk, 1);
 	}
+	gettimeofday(&end, NULL);
+	seconds  = end.tv_sec  - start.tv_sec;
+	useconds = end.tv_usec - start.tv_usec;
+	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+	printf("encrypt: %ld ms ", mtime );
+	
+
+	gettimeofday(&start, NULL); 
+	for(int i=0; i < 100; i++){   
+		fhe_fulladd(c, aux1,c,c,aux2, pk);
+	}
+	gettimeofday(&end, NULL);
+	seconds  = end.tv_sec  - start.tv_sec;
+	useconds = end.tv_usec - start.tv_usec;
+	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+	printf("add : %ld ms ", mtime );
+
+
+	gettimeofday(&start, NULL);  
+	for(int i=0; i < 100; i++){  
+		fhe_mul(c,c, c, pk);
+	}
+	gettimeofday(&end, NULL);
+	seconds  = end.tv_sec  - start.tv_sec;
+	useconds = end.tv_usec - start.tv_usec;
+	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+	printf("mul : %ld ms ", mtime );
+	
+	gettimeofday(&start, NULL);  
+	for(int i=0; i < 100; i++){
+		fhe_recrypt(c, pk);
+	}
+	gettimeofday(&end, NULL);
+	seconds  = end.tv_sec  - start.tv_sec;
+	useconds = end.tv_usec - start.tv_usec;
+	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+	printf("recrypt : %ld ms ", mtime );
+	
+	gettimeofday(&start, NULL);  
+	for(int i=0; i < 100; i++){  
+		fhe_decrypt(c, sk);
+	}
+	//printf("m : %d ",m);
+	gettimeofday(&end, NULL);
+	seconds  = end.tv_sec  - start.tv_sec;
+	useconds = end.tv_usec - start.tv_usec;
+	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+	printf("decrypt : %ld ms\n", mtime );
+	
+	
+	gettimeofday(&start, NULL);
+	test_sum_integers(8 , 49, pk, sk);
+	gettimeofday(&end, NULL);
+	seconds  = end.tv_sec  - start.tv_sec;
+	useconds = end.tv_usec - start.tv_usec;
+	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+	printf("time sum: %ld ms \n", mtime );
 	mpz_clear(c); mpz_clear(aux1); mpz_clear(aux2);
 	fhe_pk_clear(pk);
 	fhe_sk_clear(sk);
@@ -1243,93 +1275,101 @@ void test_majority_bit(){
 	mpz_init(c1);
 	fmpz_poly_init(poly_c1);
 	fmpz_poly_init(poly_c2);
-	unsigned a = 173;
-	printf("a: %d\n", a);
-	aux1= a; 
-	i=0;
-	////// Encryption of the bit sequences ////////////////
-	printf("aux1[i] -----> %i\n", aux1 % 2);
-	fhe_encrypt(c0, pk, a % 2);
-	fmpz_poly_set_coeff_mpz( poly_c1 , i , c0 );
-	i++;		
-	aux1 = aux1 >> 1;
-	do {		
-		printf("aux1[i] -----> %i\n", aux1 % 2);
-		fhe_encrypt(c0, pk, aux1 % 2);
-		fmpz_poly_set_coeff_mpz (poly_c1 , i , c0 );
-		i++;
-		aux1 = aux1 >> 1;	
-	}while(aux1 != 0 );
-	////////////////////////////////////////
+	struct timeval start, end;	
+    	long mtime, seconds, useconds;    
+	for(unsigned a = 45; a < 55; a++){
+		printf("a: %d , ", a);
+		gettimeofday(&start, NULL);   
+		aux1= a * 50; 
+		i=0;
+		////// Encryption of the bit sequences ////////////////
+		//printf("aux1[i] -----> %i\n", aux1 % 2);
+		fhe_encrypt(c0, pk, a % 2);
+		fmpz_poly_set_coeff_mpz( poly_c1 , i , c0 );
+		i++;		
+		aux1 = aux1 >> 1;
+		do {		
+			//printf("aux1[i] -----> %i\n", aux1 % 2);
+			fhe_encrypt(c0, pk, aux1 % 2);
+			fmpz_poly_set_coeff_mpz (poly_c1 , i , c0 );
+			i++;
+			aux1 = aux1 >> 1;	
+		}while(aux1 != 0 );
+		////////////////////////////////////////
 
-	nbits=i;
-	aux2=nbits/2;
+		nbits=i;
+		aux2=nbits/2;
 	
-	////// Encryption of the bit sequences ////////////////
-	//printf("aux2[i] -----> %i\n", aux2 % 2);
-	fhe_encrypt(c1, pk, nbits % 2);
-	i=0;
-	fmpz_poly_set_coeff_mpz(poly_c2, i, c1);		
-	aux2 = aux2 >> 1;
-	do {		
-		//	printf("aux2[i]------>%i\n", aux2 % 2);
-		fhe_encrypt(c1, pk, aux2 %2);
-		i++;
-		fmpz_poly_set_coeff_mpz (poly_c2, i, c1);
-		aux2 = aux2 >> 1;	
-	}while(aux2!=0 );
-	////////////////////////////////////////	
+		////// Encryption of the bit sequences ////////////////
+		//printf("aux2[i] -----> %i\n", aux2 % 2);
+		fhe_encrypt(c1, pk, nbits % 2);
+		i=0;
+		fmpz_poly_set_coeff_mpz(poly_c2, i, c1);		
+		aux2 = aux2 >> 1;
+		do {		
+			//	printf("aux2[i]------>%i\n", aux2 % 2);
+			fhe_encrypt(c1, pk, aux2 %2);
+			i++;
+			fmpz_poly_set_coeff_mpz (poly_c2, i, c1);
+			aux2 = aux2 >> 1;	
+		}while(aux2!=0 );
+		////////////////////////////////////////	
 
-	////////////////// Evaluation ///////////////////////	
+		////////////////// Evaluation ///////////////////////	
 
-	fhe_encrypt(tmp1, pk, 0);
-	fmpz_poly_set_coeff_mpz(tmp1_poly,0,tmp1);
-	//fmpz_poly_set_coeff_mpz(tmp2_poly,0,tmp1);
-	//fhe_encrypt(tmp1,pk,1);
-	//fmpz_poly_set_coeff_mpz(tmp2_poly,1,tmp1);
-	//test_sum_mpz_t(tmp1_poly, tmp2_poly, tmp1_poly,pk,sk);
+		fhe_encrypt(tmp1, pk, 0);
+		fmpz_poly_set_coeff_mpz(tmp1_poly,0,tmp1);
+		//fmpz_poly_set_coeff_mpz(tmp2_poly,0,tmp1);
+		//fhe_encrypt(tmp1,pk,1);
+		//fmpz_poly_set_coeff_mpz(tmp2_poly,1,tmp1);
+		//test_sum_mpz_t(tmp1_poly, tmp2_poly, tmp1_poly,pk,sk);
 	
 	
-	for(long k = 0 ; k<nbits; k++){		
-		fmpz_poly_get_coeff_mpz(tmp2, poly_c1, k);
-		fmpz_poly_set_coeff_mpz(tmp2_poly,0,tmp2);
+		for(long k = 0 ; k<nbits; k++){		
+			fmpz_poly_get_coeff_mpz(tmp2, poly_c1, k);
+			fmpz_poly_set_coeff_mpz(tmp2_poly,0,tmp2);
 
-		//printf("\n tmp2_poly \n");
-		//for (int j=fmpz_poly_degree(tmp2_poly);j>=0;j--){
-		//	fmpz_poly_get_coeff_mpz(tmp1,tmp2_poly,j);
-		//	printf("%i*", fhe_decrypt(tmp1,sk));
-		//}
-		//printf("\n tmp1_poly \n");
-		//for (int j=fmpz_poly_degree(tmp1_poly);j>=0;j--){
-		//	fmpz_poly_get_coeff_mpz(tmp1,tmp1_poly,j);
-		//	printf("%i.", fhe_decrypt(tmp1,sk));
-		//}		
+			//printf("\n tmp2_poly \n");
+			//for (int j=fmpz_poly_degree(tmp2_poly);j>=0;j--){
+			//	fmpz_poly_get_coeff_mpz(tmp1,tmp2_poly,j);
+			//	printf("%i*", fhe_decrypt(tmp1,sk));
+			//}
+			//printf("\n tmp1_poly \n");
+			//for (int j=fmpz_poly_degree(tmp1_poly);j>=0;j--){
+			//	fmpz_poly_get_coeff_mpz(tmp1,tmp1_poly,j);
+			//	printf("%i.", fhe_decrypt(tmp1,sk));
+			//}		
 
-		test_sum_mpz_t(tmp1_poly, tmp1_poly, tmp2_poly,pk, sk);
+			test_sum_mpz_t(tmp1_poly, tmp1_poly, tmp2_poly,pk, sk);
 
-		//printf("\n sum_poly \n");
-		//for (int j=fmpz_poly_degree(tmp1_poly);j>=0;j--){
-		//fmpz_poly_get_coeff_mpz(tmp1,tmp1_poly,j);
-		//printf("%i-", fhe_decrypt(tmp1,sk));
-		//}			
-	}
+			//printf("\n sum_poly \n");
+			//for (int j=fmpz_poly_degree(tmp1_poly);j>=0;j--){
+			//fmpz_poly_get_coeff_mpz(tmp1,tmp1_poly,j);
+			//printf("%i-", fhe_decrypt(tmp1,sk));
+			//}			
+		}
 	
-	printf(" \n Printing the sum of n bits \n");
+		//printf(" \n Printing the sum of n bits \n");
 
-	for(int k=fmpz_poly_degree(tmp1_poly);k>=0;k--){
-		fmpz_poly_get_coeff_mpz(tmp1,tmp1_poly,k);
-		printf(" %i ",fhe_decrypt(tmp1,sk));
-	}
-	printf(" \n");
+		/*  for(int k=fmpz_poly_degree(tmp1_poly);k>=0;k--){
+		  fmpz_poly_get_coeff_mpz(tmp1,tmp1_poly,k);
+		  printf(" %i ",fhe_decrypt(tmp1,sk));
+		  }
+		  printf(" \n");
+		*/
+		//// Calling isGreaterfunction //////////
 
-	//// Calling isGreaterfunction //////////
+		test_aIsGreater(tmp1,tmp1_poly, poly_c2, pk, fmpz_poly_degree(tmp1_poly)+1);
 
-	test_aIsGreater(tmp1,tmp1_poly, poly_c2, pk, fmpz_poly_degree(tmp1_poly)+1);
-
-	printf("The majority bit in %d is %i", a, fhe_decrypt(tmp1, sk) ) ;
+		//printf("The majority bit in %d is %i", a, fhe_decrypt(tmp1, sk) ) ;
 		
-	printf("\n");
-
+		//printf("\n");
+		gettimeofday(&end, NULL);
+		seconds  = end.tv_sec  - start.tv_sec;
+		useconds = end.tv_usec - start.tv_usec;
+		mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+		printf("nbits: %d , temps: %ld \n",nbits,  mtime );
+	}
 	fmpz_poly_clear(poly_c1);
 	fmpz_poly_clear(poly_c2);
 	mpz_clear(c1);
@@ -1467,26 +1507,51 @@ void test_sum_integers(unsigned a , unsigned b, fhe_pk_t pk, fhe_sk_t sk){
 
 }
 
-void test_matrix_prod(){
-	
+void mesure_test_matrix_prod(){
+	/*
 	int m, n, p, q, c, d, k ;
   	
 	int first[10][10], second[10][10];
  	mpz_t first_enc[10][10];
 	mpz_t second_enc[10][10];
 	mpz_t multiply_enc[10][10];
-	
+	*/
 	fhe_pk_t pk;
 	fhe_sk_t sk;
 	fhe_pk_init(pk);
 	fhe_sk_init(sk);
 	fhe_keygen(pk, sk);
+	struct timeval start, end;	
+    	long mtime, seconds, useconds;    
+	//gettimeofday(&start, NULL);  
+	for(int i= 4; i <7; i++){
+		gettimeofday(&start, NULL);
+		test_matrix_prod( 4*i,4* i, 4*i,4* i,pk, sk);
+		gettimeofday(&end, NULL);
+		seconds  = end.tv_sec  - start.tv_sec;
+		useconds = end.tv_usec - start.tv_usec;
+		mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+		printf("size : %d , time : %ld ms \n",4*i, mtime );
+	}
+	fhe_pk_clear(pk);
+	fhe_sk_clear(sk);
+}
+void test_matrix_prod(int m, int n, int p, int q,fhe_pk_t pk,fhe_sk_t sk){
+	
+	int c, d, k ;
+  	
+	int first[30][30], second[30][30];
+ 	mpz_t first_enc[30][30];
+	mpz_t second_enc[30][30];
+	mpz_t multiply_enc[30][30];
+	
+
 	mpz_t sum;
 	mpz_init(sum);
 	mpz_t tmp;
 	mpz_init(tmp);
 	
-	
+	/*
 
 	printf("Enter the number of rows and columns of first matrix\n");
   	scanf("%d%d", &m, &n);
@@ -1504,7 +1569,7 @@ void test_matrix_prod(){
 	
  	 printf("Enter the number of rows and columns of second matrix\n");
  	 scanf("%d%d", &p, &q);
- 
+	*/
   	if ( n != p )
  	   	printf("Matrices with entered orders can't be multiplied with each other.\n");
 	else{
@@ -1547,7 +1612,6 @@ void test_matrix_prod(){
 
 
 }
-
 
 
 void test_xor_bits(){
@@ -1611,9 +1675,7 @@ void test_xor_bits(){
 	fhe_sk_clear(sk);
 }
 
-void
-test_encryt_decrypt()
-{
+void test_encryt_decrypt(){
 	printf("ENCRYPT/DECRYPT\n");
 	int m0, m1;
 	mpz_t c0, c1;
