@@ -190,7 +190,7 @@ void mesure_encrypt_decrypt(){
 	
 	
 	gettimeofday(&start, NULL);
-	test_sum_integers(8 , 49, pk, sk);
+	test_sum_integers(2000 , 49, pk, sk);
 	gettimeofday(&end, NULL);
 	seconds  = end.tv_sec  - start.tv_sec;
 	useconds = end.tv_usec - start.tv_usec;
