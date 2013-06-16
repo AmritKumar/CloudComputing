@@ -58,8 +58,8 @@ void test_suite()
 	//test_sum_bits();
 	//mesure_sum_integers();
 	//test_min_max();
-	test_insertion_sort();
-	//test_oddeven_merger_sort();
+	//test_insertion_sort();
+	test_oddeven_merger_sort();
 	//test_bitonic_sort();
 	//test_majority_bit();
 	//test_matrix_prod();
@@ -630,9 +630,9 @@ void OddEvenMergeSort(fmpz_poly_t * poly_nums, int n, int nbits, int lo, int hig
 
 void test_oddeven_merger_sort(){
 	int n = 32;// Nombre d'entiers à trier
-	int nbits = 4;// Size in number of bits
+	int nbits = 6;// Size in number of bits
 	int *list = malloc(sizeof(int)*n); // List d'entiers à trier
-	//int list[]= {3, 6, 10, 6, 5, 6, 2, 2};
+	//int list[]= {8,7,13,2};
 	fmpz_poly_t * poly_nums;
 	poly_nums = malloc(sizeof(fmpz_poly_t) * n);
 	
@@ -832,8 +832,8 @@ void bitonicSortUp(fmpz_poly_t *poly_nums, int  nbits, int n,  int lo , int  hig
 
 
 void test_bitonic_sort(){ // Sorts a bitonic array of 2^n elements
-	int n = 4;// Nombre d'entiers à trier
-	int nbits = 4 ;// Size in number of bits
+	int n = 32;// Nombre d'entiers à trier
+	int nbits = 8 ;// Size in number of bits
 	int *list = malloc(sizeof(int)*n); // List d'entiers à trier
 	
 	fmpz_poly_t * poly_nums;
@@ -859,7 +859,7 @@ void test_bitonic_sort(){ // Sorts a bitonic array of 2^n elements
 	mpz_init(c0);
 	struct timeval start, end;
 	long mtime, seconds, useconds;    
-	for(int obs=0;obs<5;obs++){
+	for(int obs=0;obs<3;obs++){
 	////////////// Encryption of the bit sequennces //////////
 		srand(time(NULL));
 		int mod = (int)pow(2, nbits);
@@ -969,7 +969,7 @@ void test_bitonic_sort(){ // Sorts a bitonic array of 2^n elements
 }
 
 void test_insertion_sort(){   // Generate n random numbers of nbits each and sort them
-	int n = 14;// Nombre d'entiers à trier
+	int n = 32;// Nombre d'entiers à trier
 	int nbits = 4; // Size in number of bits
 	int *list = malloc(sizeof(int)*n); // List d'entiers à trier
 	//printf("\n");
@@ -1008,7 +1008,7 @@ void test_insertion_sort(){   // Generate n random numbers of nbits each and sor
 	
 	mpz_init(c0);
 	
-	for(int obser = 0 ; obser < 4 ;obser++){	
+	for(int obser = 0 ; obser < 3 ;obser++){	
 		srand(time(NULL));
 		int mod = (int)pow(2, nbits);
 		//printf(" The array is \n");

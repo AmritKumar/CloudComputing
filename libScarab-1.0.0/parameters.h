@@ -14,7 +14,7 @@
 //#define N 8
 #define N 8
 
-#define MU 4
+#define MU 8
 
 
 //#define NU 2**256;
