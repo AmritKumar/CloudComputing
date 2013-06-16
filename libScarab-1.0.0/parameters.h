@@ -14,14 +14,14 @@
 //#define N 8
 #define N 8
 
-#define MU 2
+#define MU 8
 
 
 //#define NU 2**256;
 
 //#define LOG_NU 384
 //#define LOG_NU 310
-#define LOG_NU 200
+#define LOG_NU 400 
 
 //#define LOG_NU 250
 
