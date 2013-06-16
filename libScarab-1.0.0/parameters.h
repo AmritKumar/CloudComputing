@@ -23,7 +23,7 @@
 //#define LOG_NU 384
 //#define LOG_NU 310
 
-#define LOG_NU 384
+#define LOG_NU 400
 
 
 

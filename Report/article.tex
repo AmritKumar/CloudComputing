@@ -396,21 +396,21 @@ We note that the sorting programs used do not increase the size of the circuit o
 
 \begin{figure}[!h]
 \centering
-\includegraphics[width=7cm, height=6cm]{fsort3.pdf} 
+\includegraphics[width=7cm]{fsort3.pdf} 
 \caption{Runtime for Insertion sort, nbit=4} 
 \label{fig:image_sf3} %l'étiquette pour faire référence à cette image
 \end{figure}
 
 \begin{figure}[!h] %on ouvre l'environnement figure
 \centering
-\includegraphics[width=7cm, height=6cm]{fsort4.pdf} 
+\includegraphics[width=7cm]{fsort4.pdf} 
 \caption{Runtime for Insertion sort, nbit=6} 
 \label{fig:image_sf4} %l'étiquette pour faire référence à cette image
 \end{figure}
 
 \begin{figure}[!h] %on ouvre l'environnement figure
 \centering
-\includegraphics[width=7cm, height=6cm]{fsort5.pdf} 
+\includegraphics[width=7cm]{fsort5.pdf} 
 \caption{Run time for Insertion sort, nbit=8} 
 \label{fig:image_sf5} %l'étiquette pour faire référence à cette image
 \end{figure}
@@ -418,7 +418,7 @@ We note that the sorting programs used do not increase the size of the circuit o
 
 \begin{figure}[!h]%on ouvre l'environnement figure
 \centering
-\includegraphics[width=7cm, height=6cm]{fsort6.pdf} 
+\includegraphics[width=7cm]{fsort6.pdf} 
 \caption{CPU time for Insertion sort, nbit=4} 
 \label{fig:image_sf6} %l'étiquette pour faire référence à cette image
 \end{figure}
@@ -440,14 +440,14 @@ We note that the sorting programs used do not increase the size of the circuit o
 
 \begin{figure}[!H]
 \centering
-\includegraphics[width=7cm, height=6cm]{fsort2.pdf} 
+\includegraphics[width=7cm]{fsort2.pdf} 
 \caption{Runtime Comparison for insertion sort} 
 \label{fig:image_sf2} %l'étiquette pour faire référence à cette image
 \end{figure}
 
 \begin{figure}[!H]%nouvre l'environnement figure
 \centering
-\includegraphics[width=7cm, height=6cm]{fsort1.pdf} 
+\includegraphics[width=7cm]{fsort1.pdf} 
 \caption{Curve fitting for insertion sort}
 \label{fig:image_sf1} %l'étiquette pour faire référence à cette image
 \end{figure}
@@ -506,7 +506,6 @@ Intially, the cryptographic parameters were set to $(N = 8, \nu = 2^{384}, \mu =
 }
 \end{table}
 
- 
 \autoref{bitonicsort}, \autoref{OddEvensort1} justify the fact that Odd-Even Merge algorithm performs better than the Bitonic sort(even though they have the same worst case complexity) as it uses less number of comparator gates. We further remark that for small values, Insertion sort performs better than Bitonic, but we estimate that for $32$ sequences of $4$ bits each, Bitonic search would be faster. This estimate comes from the fact that the insertion sort would cost $16$ times the cost of sorting only $8$ such sequences i.e. around $3000000$ ms. This is experimentally confirmed by the obtained value : 3639429 which is thrice the time = 1315663 taken by Bitonic sort.    
 
 
@@ -530,13 +529,10 @@ Intially, the cryptographic parameters were set to $(N = 8, \nu = 2^{384}, \mu =
 }
 \end{table}
 
-When we increase the security of the system by setting the parameters to  $(N = 256,\eta  = 16, \mu = 2, s_1 = 5000, s_2 = 5)$(as suggested in \cite{cryptoeprint:2009:571}) which ensures $25$ bits of security, the Odd-Even sorting algorithm on  $4$ sequences, each of $4$ bits takes hours. By lowering the security level to only $8$ bits using the parameters :$(N = 16, \eta = 32, \mu = 2, s_1 = 85, s_2 = 5)$, the result did not decrypt to the desired output; which we believe is an implementation bug in the bootstrapping mechanism. Lowering the security even further to only $5$ bits using the parameters: $(N = 8, \eta = 2^8, \mu = 4, s_1 = 65, s_2 = 5)$, and testing odd-even sorting for $32$ sequences of $6$ bits each took more than an hour. However, increasing $\mu$ also increases security, and setting the parameters to :  $(N = 8, \eta = 2^{384}, \mu = 8, s_1 = 8, s_2 = 5)$ we obtained the results as in \autoref{OddEvensort2}. The results show that this set of parameters provide a better security and at almost no extra cost. For this result to be conclusive, we need to perfom tests for large $n$.
+When we increase the security of the system by setting the parameters to  $(N = 256,\eta  = 16, \mu = 2, s_1 = 5000, s_2 = 5)$(as suggested in \cite{cryptoeprint:2009:571}) which ensures $25$ bits of security, the Odd-Even sorting algorithm on  $4$ sequences, each of $4$ bits takes hours. By lowering the security level to only $8$ bits using the parameters :$(N = 16, \eta = 32, \mu = 2, s_1 = 85, s_2 = 5)$, the result did not decrypt to the desired output; which we believe is an implementation bug in the bootstrapping mechanism. Lowering the security even further to only $5$ bits using the parameters: $(N = 8, \eta = 2^8, \mu = 4, s_1 = 65, s_2 = 5)$, and testing odd-even sorting for $32$ sequences of $6$ bits each took more than an hour. However, increasing $\mu$ also increases security, and setting the parameters to :  $(N = 8, \eta = 2^{384}, \mu = 8, s_1 = 8, s_2 = 5)$ we obtained the results as in \autoref{OddEvensort2}. The results show that this set of parameters provide a better security and at almost no extra cost. For this result to be conclusive, we need to perfom tests for large $n$. For our last test, we set the parameters to  $(N = 8, \eta = 2^{200}, \mu = 8, s_1 = 8, s_2 = 5)$ which gave us incorrect decryption. We note that decryption fails in case the depth is too small for recrypt to function.
 
 \section{Conclusion}
-
-
-With the examples and the programs discussed, we conclude that the tranformation of a non-straight line programs(with branching) in general increases the circuit complexity. The experiments on the implementation and the operations ........
-\pagebreak
+With the examples and the programs discussed, we conclude that the tranformation of a non-straight line program on unencrypted data(with branching) into a straight line program on encrypted data increases the circuit complexity. We experimentally measured the cost of different operations on encrypted data. The existing implementation of Smart-Vercauteren scheme remains practical only for $1$ bit of security, when a user wants to apply a sorting algorithm on his encrypted bit sequences.      
 
 \bibliographystyle{alpha}
 \bibliography{article}  
