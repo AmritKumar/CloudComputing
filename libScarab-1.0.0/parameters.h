@@ -21,9 +21,9 @@
 
 //#define LOG_NU 384
 //#define LOG_NU 310
-#define LOG_NU 8
+#define LOG_NU 300
 
-#define S1 65
+#define S1 8
 #define S2 5
 #define T  5 // Ceiling[Log[2, S2]] + 2
 #define S  3 // Floor[Log[2, s2]] + 1

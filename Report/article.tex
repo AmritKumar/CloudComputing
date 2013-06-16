@@ -93,17 +93,17 @@ The homomorphic encryption scheme proposed by Gentry \cite{homenc} is based on i
 
 \subsection{Smart-Vercauteren  scheme}
 
-The scheme proposed in \cite{cryptoeprint:2009:571} has 3 parameters :($N, \nu, \mu$ ). The somewhat homomorphic scheme uses 5 algorithms: (\texttt{KeyGen}, \texttt{Encrypt}, \texttt{Decrypt}, \texttt{Add}, \texttt{Mult}). Algorithm \autoref{Code:SV} presents the \texttt{KeyGen} algorithm. This scheme will be referred to as SV scheme in this paper.
+The scheme proposed in \cite{cryptoeprint:2009:571} has 3 parameters : \\$(N=2^n, \eta, \mu)$, where $n\in \mathbb{N}$. The somewhat homomorphic scheme uses 5 algorithms: (\texttt{KeyGen}, \texttt{Encrypt}, \texttt{Decrypt}, \texttt{Add}, \texttt{Mult}). Algorithm \autoref{Code:SV} presents the \texttt{KeyGen} algorithm. This scheme will be referred to as SV scheme in this paper.
 
 \restylealgo{algoruled}
 \linesnumbered
 \begin{algorithm}[H]
  \SetVline
- \KwData{$N, \nu, \mu$ }
+ \KwData{$N, \eta, \mu$ }
 \KwResult{($pk, sk$)}
  $F(x)$ monic irreducible over $\mathbb{Z}[x]$ of degree $n$\;
 \While{$p$ is not prime}{
-  $S(x) \leftarrow_{R}(B_{\infty , N}(\nu/2)$\; \tcc{Random choice}
+  $S(x) \leftarrow_{R}(B_{\infty , N}(\eta/2)$\; \tcc{Random polynomial in the ball}
   $G(x)=1+2.S(x)$\;
   $p= resultant(G(x),F(x))$\;						
 }
@@ -120,7 +120,7 @@ return ($pk$, $sk$)\;
 where $ B_{\infty , n}(r) = \{\sum_{i=0}^{n-1}{a_i}x^i : -r \leq a_i \leq r \} $
 
 \texttt{Encrypt}($m \in \{0,1\} , pk$): 
-\newline \phantom{x}\hspace{3ex}  $R(x)=_{R}(B_{\infty , N}(\mu/2)$
+\newline \phantom{x}\hspace{3ex}  $R(x) \leftarrow_{R}(B_{\infty , N}(\mu/2)$
  \; $C(x)=m+2\cdot R(x)$ 
 \newline \phantom{x}\hspace{3ex} return  $c=C(\alpha)$ mod $p$;
 \newline \texttt{Decrypt}($c, sk$):
@@ -133,18 +133,18 @@ where $ B_{\infty , n}(r) = \{\sum_{i=0}^{n-1}{a_i}x^i : -r \leq a_i \leq r \} $
  \newline \phantom{x}\hspace{3ex}  $c_3=c_1.c_2$ mod $p$; 
 \phantom{x}\hspace{1ex}  return $c_3$;
 
-\textbf{Security of the scheme :} The scheme is semantically secure under the assumption that the \textit{Polynomial Coset Problem}(PCP) is hard. One wayness of the encryption is believed to be true under the assumption that the \textit{Bounded distance decoding problem} BDDP is hard while key recovery is assumed to be difficult under the assumption that the \textit{Small Principal Ideal Problem}(SPIP) is hard. Solutions to all of these problems have either a sub-exponential algorithm or in general take exponential time.
+\textbf{Security of SWHE scheme :} The scheme is semantically secure under the assumption that the \textit{Polynomial Coset Problem}(PCP) is hard. One wayness of the encryption is believed to be true under the assumption that the \textit{Bounded distance decoding problem} BDDP is hard while key recovery is assumed to be difficult under the assumption that the \textit{Small Principal Ideal Problem}(SPIP) is hard. Solutions to all of these problems have either a sub-exponential algorithm or in general take exponential time.
 
-If we choose $F(x)$ \footnote{a choice that authors of SV scheme propose and is always a safe choice for monic and irreducible polynomial over $\mathbb{Z}[x] $} to be $x^N+1$, and take $2 ^ \lambda = \frac{\nu}{2\cdot \mu \sqrt{N}} $, then the SV scheme provides $N /\lambda$ bits of security.
+If we choose $F(x)$ \footnote{a choice that authors of SV scheme propose and is always a safe choice for monic and irreducible polynomial over $\mathbb{Z}[x] $} to be $x^N+1$, and take \begin{equation}2 ^ \epsilon = \frac{\eta}{2\cdot \mu \sqrt{N}} \end{equation} then the SV scheme provides $N /\epsilon$ bits of security.
 
-\textbf{SWHE to FHE :} We recall that the authors of the scheme have proved that the multiplicative depth $d$ of SWHE scheme verifies: \[d \cdot \mathrm{log}(2) \leq  \mathrm{log}\left( \mathrm{log}\left(\frac{\nu}{2\cdot \sqrt{N}}\right) \right) - \mathrm{log}\left(\mathrm{log}\left( N\mu\right)\right)\]
-when $F(x)= x^N+1$. Turning the SWHE to FHE is achieved by recasting Gentry's method for the parameters of this scheme. To achieve this, the authors propose to generate $s_1$ uniformly random integers $B_i$ in $[-p, \ldots, p]$ such that there exists a subset $S$ of $s_2$ elements with $\sum_{j \in S}{B_j}= B$ over integers. By defining $sk_i =1$ iff $i\in S$ and taking $c_i=\texttt{Encrypt}(sk_i,pk)$ we generate a new public key which contains hint of the secret key $sk$. The public key now comprises of \[(p, \alpha, s_1, s_2, \{c_i, B_i\}_{i=1}^{s1})\]
-To ensure that the hint does not provide any considerable advantage to an attacker, the underlying \textit{sparse subset-sum problem} SSSP must remain remain hard. If we take $s_1$ to be slightly greater than $p$, then we need to select $s_2$ such that $\sqrt {{s_1}  \choose {s_2} } \leq 2 ^{N/\lambda}$ so as to ensure that SSSP difficulty is at least as difficult as the difficulty of the BDDP underlying the SWHE scheme.
+\textbf{SWHE to FHE :} We recall that the authors of the scheme have proved that the multiplicative depth $d$ of SWHE scheme verifies: \begin{equation}d \cdot \mathrm{log}(2) \leq  \mathrm{log}\left( \mathrm{log}\left(\frac{\eta}{2\cdot \sqrt{N}}\right) \right) - \mathrm{log}\left(\mathrm{log}\left( N\mu\right)\right)\end{equation}
+when $F(x)= x^N+1$. Turning the SWHE to FHE is achieved by recasting Gentry's method for the parameters of this scheme. To achieve this, authors define another algorithm \texttt{Recrypt} which takes a ciphertext $c$ and re-encrypts it to $c_{new}$, whilst at the same time removing some of the noise in $c$. This requires augmenting the encryption key with some additional information by extending the \texttt{KeyGen} algorithm. The FHE scheme now generates $s_1$ uniformly random integers $B_i$ in $[-p, \ldots, p]$ such that there exists a subset $S$ of $s_2$ elements with $\sum_{j \in S}{B_j}= B$ over integers. By defining $sk_i =1$ iff $i\in S$ and taking $c_i=\texttt{Encrypt}(sk_i,pk)$ we generate a new public key which contains hint of the secret key $sk$. The public key now comprises of \[(p, \alpha, s_1, s_2, \{c_i, B_i\}_{i=1}^{s1})\]
+To ensure that the hint does not provide any considerable advantage to an attacker, the underlying \textit{sparse subset-sum problem} SSSP must remain remain hard. If we take $s_1$ to be slightly greater than $\mathrm{log}_{2}(p)$, then we need to select $s_2$ such that $\sqrt {{s_1}  \choose {s_2} } \leq 2 ^{N/\epsilon}$ so as to ensure that SSSP difficulty is at least as difficult as the difficulty of the BDDP underlying the SWHE scheme. 
 
 \subsection{Considered Implementations}
 We used the open source implementation Scarab library \cite{hcrypt}  version $1.0.0$ of the Smart-Vercauteren scheme which is a part of \textsc{hcryptProject}. The implementation is in beta version. The software requires GMP(we tested with version $5.1.2$) \cite{gmp} : GNU Multiple Precision Arithmetic Library; FLINT version $1.6$ \cite{flint}: Fast Library for Number Theory; MPIR (we tested with $2.6.0$) \cite{mpir} : Multiple Precision Integers and Rationals and MPFR (tested with version $3.1.2$) \cite{mpfr} :  Multiple-Precision Floating-point computations with correct Rounding. Linux is supposed to be the only supported platform. The libraries are implemented in  C and an installation guide is provided with the package. 
 
-\autoref{funs} presents the list of functions provided by the implementation with their description. The library provides a file \texttt{test.c} where a user can write his own functions to test different operations. It also provides a header file \texttt{parameters.h} to set the parameters $N, \nu, \mu, s_1$ and $ s_2$ of the cryptosystem. To simplify our computational circuit, we added two basic functions \texttt{or(mpz\_t res, mpz\_t a, mpz\_t b, fhe\_pk\_t pk);} and \texttt{not(mpz\_t res, mpz\_t a, fhe\_pk\_t pk);} which compute the logical \texttt{or}(+) of encrypted bits and the negation ($\neg$) of an encrypted bit respectively.
+\autoref{funs} presents the list of functions provided by the implementation with their description. The library provides a file \texttt{test.c} where a user can write his own functions to test different operations. It also provides a header file \texttt{parameters.h} to set the parameters $N, \eta, \mu, s_1$ and $ s_2$ of the cryptosystem. To simplify our computational circuit, we added two basic functions \texttt{or(mpz\_t res, mpz\_t a, mpz\_t b, fhe\_pk\_t pk);} and \texttt{not(mpz\_t res, mpz\_t a, fhe\_pk\_t pk);} which compute the logical \texttt{or}(+) of encrypted bits and the negation ($\neg$) of an encrypted bit respectively.
 
 \begin{table*}
 \centering
@@ -170,8 +170,9 @@ We used the open source implementation Scarab library \cite{hcrypt}  version $1.
 
 We time the various algorithms on two desktop machines. Both these machines were x86-64 platform running Linux kernel $3.2.0$-$45$-generic  and used GCC $4.6.3$ C compiler.  The first machine housed Intel Core i3 M330 (2.13GHz x 4) processor and will be referred in this article as machine M1 while the other used  housed Intel Core i5 M2430 (2.40GHz x 4) processor and will be referred as machine M2. During the experiments these machines were not connected to any network and were running ony the most needed applications.
  
-\subsection{Initial set-up cost}
-Here we mesure the performance in terms of run time for KeyGen, Encrypt, Add, Mult, Recrypt, Decrypt.\\
+\subsection{Cost of Cryptosytem}
+ In the SV scheme, performing any operation on encrypted bits requires  \texttt{KeyGen}, \texttt{Encrypt}, \texttt{Add},\texttt{ Mult}, \texttt{Recrypt}, \texttt{Decrypt} and hence we measure their performance in terms of run time. These measuremens are done by varying the parameter $N$ that determines the degree of all intermediate polynomials in the cryptostystem and keeping all other parameters fixed. The measurements in this section were taken on the machine M2. 
+
 \begin{table}[htb]
   \centering
   \caption{Run time (ms)}
@@ -194,18 +195,44 @@ Here we mesure the performance in terms of run time for KeyGen, Encrypt, Add, Mu
 }
 \end{table}
 
-\textbf{KeyGen}\\
-The measured time execution for KeyGen($N, \mu$)  for fixed values of parameters: $N=8$ and $\mu = 4$ show a variation from 0.2 s to 14.41 s with big density at the interval [0.2s, 2s]\autoref{fig:image_f2}.
+
+\autoref{fig:image_f2} measures execution time for \texttt{KeyGen} for fixed values of parameters: $N=8$ and $\eta = 2^{384}$. It shows a variation from 0.2 s to 14.41 s with high density in the interval [0.2s, 2s].
 
 \begin{figure}[!h] %on ouvre l'environnement figure
 \centering
-\includegraphics[width=5cm]{f3.pdf} 
+\includegraphics[width=5cm, height=4cm]{f3.pdf} 
 \caption{Run time of KeyGen(ms)} 
 \label{fig:image_f2} %l'étiquette pour faire référence à cette image
 \end{figure}
 
+As the time taken by \texttt{KeyGen} depends on how fast the prime $p$ is found, its cost is related with the density of primes which is $\frac{1}{\mathrm{log(n)}}$. \autoref{fig:image_f2} is in accordance with the density of primes over $\mathbb{N}$.
 
-\textbf{Encryption and Decryption}\\
+\subsection{Security }
+
+Using (1), and (2), we calculate the theoretical security level and the depth provided by the crytosystem, and we find that security level increases with increasing $N$ and for $\mu =4$ and $\eta=2^{384}$ fixed. But \autoref{common cost} show that the cost of the cryptosystem increases(ex. 15 mins for \texttt{KeyGen}). We note that for $N \geq 2^6$, \texttt{KeyGen} takes hours. Hence, we choose $N=8$ for our experiments which provides $1.01472$ level of security and we vary $\mu$ and $\eta$. Due to some erroneous results provided by the decryption function for $d<5.3$, we choose $\mu$ and $\eta$ to ensure that the depth is greater than the threshold value $5.9$.
+
+\begin{table}[htb]
+  \centering
+  \caption{Run time (ms)}
+\begin{tabular}{|c|c|c||}
+  \hline
+  \multicolumn{3}{|c||}{$\mu = 4$ , $\eta = 2^{384}$} \\
+  \hline
+  $N=2^{n}$ &  $2^{\frac{N}{\epsilon}}$ & d \\
+  \hline
+  $2^{1}$ &  1.00365 & 6.99 \\
+  $2^{2}$ &  1.00732 & 6.57\\
+  $2^{3}$ &  1.01472 & 6.25\\
+  $2^{4}$ &  1.02969 & 5.98\\
+  $2^{5}$ & 1.06035 & 5.76\\
+  \hline
+\end{tabular}
+\normalsize
+\label{tab:securitytab}
+\end{table}
+
+
+
 \section{Circuit Transformation}
 As previously discussed, a user sends his program which runs on unencrypted data and his encrypted input to the cloud. The cloud then performs the demanded computation and returns the encrypted result. However, the program in the same form cannot always be used for computations on encrypted data. 
 
@@ -295,16 +322,14 @@ Max and Min regenerate $a_i$ and $b_i$ and hence contain the correct result.
 \end{proof}
 \textbf{Theoretical Cost :} Algorithm \autoref{Code:algo} uses $5n$ \texttt{AND} gates, $2n$ \texttt{OR} gates and $2n$ \texttt{NOT} gates to find the larger of the two bit sequences and then to regenerate the maximum and the minimum $4n$ \texttt{AND} gates and $2n$ \texttt{NOT} and \texttt{OR} gates. We note that reconstruction of Max and  Min is not required when working on non-encrypted data. Hence, this is an additional cost to pay to use the transformed program operating on encrypted data. 
 
-\textbf{Experimental Analysis :} We measure the run time from $n=1$ to $32$ bits, we find a linear cost which confirms the $\theta(n)$ complexity. During these measures the result of Min-Max is correct.
-\begin{comment} 
+\textbf{Experimental Analysis :} We measure the run time from $n=1$ to $32$ bits, we find a linear cost which confirms the $\theta(n)$ complexity.
+
 \begin{figure}[!h] %on ouvre l'environnement figure
 \centering
-\includegraphics[width=5cm]{f2.eps} 
+\includegraphics[width=5cm,height=5cm]{f2.pdf} 
 \caption{Run time(ms)} 
 \label{image_f2} %l'étiquette pour faire référence à cette image
 \end{figure}
-\end{comment}
-The cost of this algorithm on cipher-text is linear with bit number, like  the algorithm on plain-text, the extra cost in this case is encryption-decryption cost and especially the code generation which is very unpredictable and take often a long time in the SV scheme.
 
 \section{Choice of Benchmarks}
 \label{sec:bm}
@@ -340,21 +365,21 @@ We note that the sorting programs used do not increase the size of the circuit o
 \section{Experimental evaluation \\ and results}
 \label{Sec:Eval}
 
-\begin{figure}[!H]
+\begin{figure}[!h]
 \centering
-\includegraphics[width=7cm]{fsort3.pdf} 
+\includegraphics[width=5cm]{fsort3.pdf} 
 \caption{Runtime for Insertion sort, nbit=4} 
 \label{fig:image_sf3} %l'étiquette pour faire référence à cette image
 \end{figure}
 
-\begin{figure}[!H] %on ouvre l'environnement figure
+\begin{figure}[!h] %on ouvre l'environnement figure
 \centering
-\includegraphics[width=7cm]{fsort4.pdf} 
+\includegraphics[width=5cm]{fsort4.pdf} 
 \caption{Runtime for Insertion sort, nbit=6} 
 \label{fig:image_sf4} %l'étiquette pour faire référence à cette image
 \end{figure}
 
-\begin{figure}[!H] %on ouvre l'environnement figure
+\begin{figure}[!h] %on ouvre l'environnement figure
 \centering
 \includegraphics[width=7cm]{fsort5.pdf} 
 \caption{Run time for Insertion sort, nbit=8} 
@@ -362,7 +387,7 @@ We note that the sorting programs used do not increase the size of the circuit o
 \end{figure}
 
 
-\begin{figure}[!H] %on ouvre l'environnement figure
+\begin{figure}[!h]%on ouvre l'environnement figure
 \centering
 \includegraphics[width=7cm]{fsort6.pdf} 
 \caption{CPU time for Insertion sort, nbit=4} 
@@ -474,7 +499,7 @@ Intially, the cryptographic parameters were set to $(N = 8, \nu = 2^{384}, \mu =
 }
 \end{table}
 
-When we increase the security of the system by setting the parameters to  $(N = 256, \nu = 16, \mu = 2, s_1 = 5000, s_2 = 5)$(as suggested in \cite{cryptoeprint:2009:571}) which ensures $25$ bits of security, the Odd-Even sorting algorithm on  $4$ sequences, each of $4$ bits takes hours. By lowering the security level to only $8$ bits using the parameters :$(N = 16, \nu = 32, \mu = 2, s_1 = 85, s_2 = 5)$, the result did not decrypt to the desired output; which we believe is an implementation bug in the bootstrapping mechanism. Lowering the security even further to only $5$ bits using the parameters: $(N = 8, \nu = 2^8, \mu = 4, s_1 = 65, s_2 = 5)$, and testing odd-even sorting for $32$ sequences of $6$ bits each took more than an hour. However, increasing $\mu$ also increases security, and setting the parameters to :  $(N = 8, \nu = 2^{384}, \mu = 8, s_1 = 8, s_2 = 5)$ we obtained the results as in \autoref{OddEvensort2}. The results show that this set of parameters provide a better security and at almost no extra cost. For this result to be conclusive, we need to perfom tests for large $n$.
+When we increase the security of the system by setting the parameters to  $(N = 256,\eta  = 16, \mu = 2, s_1 = 5000, s_2 = 5)$(as suggested in \cite{cryptoeprint:2009:571}) which ensures $25$ bits of security, the Odd-Even sorting algorithm on  $4$ sequences, each of $4$ bits takes hours. By lowering the security level to only $8$ bits using the parameters :$(N = 16, \eta = 32, \mu = 2, s_1 = 85, s_2 = 5)$, the result did not decrypt to the desired output; which we believe is an implementation bug in the bootstrapping mechanism. Lowering the security even further to only $5$ bits using the parameters: $(N = 8, \eta = 2^8, \mu = 4, s_1 = 65, s_2 = 5)$, and testing odd-even sorting for $32$ sequences of $6$ bits each took more than an hour. However, increasing $\mu$ also increases security, and setting the parameters to :  $(N = 8, \eta = 2^{384}, \mu = 8, s_1 = 8, s_2 = 5)$ we obtained the results as in \autoref{OddEvensort2}. The results show that this set of parameters provide a better security and at almost no extra cost. For this result to be conclusive, we need to perfom tests for large $n$.
 \section{Conclusion}
 
 With the examples and the programs discussed, we conclude that the tranformation of a non-straight line programs(with branching) in general increases the circuit complexity. The experiments on the implementation and the operations ........
@@ -484,94 +509,6 @@ With the examples and the programs discussed, we conclude that the tranformation
 \bibliography{article}  
 
 
-\section{Appendix}
-The programs used for Odd-Even Merge sort and Bitonic sort are provided below : 
-\begin{figure}[h]
-\begin{lstlisting}[label = oesort ]
-
- OddEvenMergeSort(int lo, int n)
-if (n > 1)
-        {
-            int m = n/2;
-            oddEvenMergeSort(lo, m);
-            oddEvenMergeSort(lo + m, m);
-            oddEvenMerge(lo, n, 1);
-        }
-\end{lstlisting}
-
-\caption{Odd-Even Merge Sort : sort from index lo to n }
-\end{figure}
-
-\begin{figure}
-\begin{lstlisting}[label = oemerge ]
-
-oddEvenMerge(int lo, int n, int r)
-    {
-        int m = r*2;
-        if (m < n)
-        {
-	    //even subsequence ;		
-            oddEvenMerge(lo, n, m); 
-            //odd subsequence ;
-	    oddEvenMerge(lo+r, n, m); 
-	    int i = lo+r;   
-            for (;i + r < lo + n;){
-		compare(i, i + r);
-		i += m;
-	    }
-        }
-        else
-            compare(lo, lo + r);
-    }
-
-
-\end{lstlisting} 
-\caption{Odd-Even Merge Sort : merging function}
-\end{figure}
-
-\begin{figure}
-\begin{lstlisting}[label=bitsort]
-
-sortup( int m, int n) {//from m to m+n
-    if (n == 1) return;
-    sortup(m, n/2);
-    sortdown(m + n/2, n/2);
-    mergeup(m, n/2);
-}
- sortdown(int m, int n) {//from m to m+n
-    if (n == 1) return;
-    sortup(m, n/2);
-    sortdown(m + n/2, n/2);
-    mergedown(m, n/2);
-}
-\end{lstlisting}
-\caption{Bitonic Sort : sort form m to n}
-\end{figure}
-
-\begin{figure}[t]
-\begin{lstlisting}[label=bitmerge]
-mergeup(int m, int n) {  
-    if (n == 0) return;
-    
-    for (i = 0 : n)
-        // Increasing Comparator
-	 compare(m + i,m + i + n);
-    mergeup(m, n/2);
-    mergeup(m + n,n/2);
-}
-
-mergedown( int m,  int n) { 
-    if (n == 0) return;
-    for (i = 0 : n) 
-        // Decreasing Comparator
-	compare(m + i, m + i + n); 
-    mergedown(m, n/2);
-    mergedown(m + n, n/2);
-}
-\end{lstlisting}
-\caption{Bitonic Merge} 
-\end{figure} 
-%\begin{comment}
 
 
 % sigproc.bib is the name of the Bibliography in this case
