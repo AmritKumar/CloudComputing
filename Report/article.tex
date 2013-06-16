@@ -171,7 +171,7 @@ We used the open source implementation Scarab library \cite{hcrypt}  version $1.
 We time the various algorithms on two desktop machines. Both these machines were x86-64 platform running Linux kernel $3.2.0$-$45$-generic  and used GCC $4.6.3$ C compiler.  The first machine housed Intel Core i3 M330 (2.13GHz x 4) processor and will be referred in this article as machine M1 while the other used  housed Intel Core i5 M2430 (2.40GHz x 4) processor and will be referred as machine M2. During the experiments these machines were not connected to any network and were running ony the most needed applications.
  
 \subsection{Cost of Cryptosytem}
- In the SV scheme, performing any operation on encrypted bits requires  \texttt{KeyGen}, \texttt{Encrypt}, \texttt{Add},\texttt{ Mult}, \texttt{Recrypt}, \texttt{Decrypt} and hence we measure their performance in terms of run time. These measuremens are done by varying the parameter $N$ that determines the degree of all intermediate polynomials in the cryptostystem and keeping all other parameters fixed. The measurements in this section were taken on the machine M2. 
+ In the SV scheme, performing any operation on encrypted bits requires  \texttt{KeyGen}, \texttt{Encrypt}, \texttt{Add},\texttt{ Mult}, \texttt{Recrypt}, \texttt{Decrypt} and hence we measure their performance in terms of run time. These measuremens are done by varying the parameter $N$ that determines the degree of all intermediate polynomials in the cryptostystem and keeping all other parameters fixed. The measurements in this section were taken on the machine M2. We can infer that the cost of these functions increase with the increase of the the degree  polynomials. 
 
 \begin{table}[htb]
   \centering
@@ -195,7 +195,7 @@ We time the various algorithms on two desktop machines. Both these machines were
 }
 \end{table}
 
-
+We can see that the size of the public key is increasing lineary with $n$ such that $N=2^n$ 
 \autoref{fig:image_f2} measures execution time for \texttt{KeyGen} for fixed values of parameters: $N=8$ and $\eta = 2^{384}$. It shows a variation from 0.2 s to 14.41 s with high density in the interval [0.2s, 2s].
 
 \begin{figure}[!h] %on ouvre l'environnement figure
@@ -339,8 +339,9 @@ We propose a set of benchmark functions to evaluate the implementations. These f
 Functions operating on bits provide information on the security-cost trade-off for bit-wise operations. The first two categories of functions have straight-line programs on non-encrypted data and hence can directly be translated to operate on encrypted bits. For others, evaluation of \texttt{if-then-else} condition on encrypted data is chosen. In this case, a circuit(program) transformation is required and which often makes the size longer than the one on non-encrypted data. Hence, this provides information on increase in size of the circuit(when passing from non-encrypted to encrypted data) and the associated trade-off. We study the security-cost trade-off for the following problems : 
 
 1. \textbf{XOR of an $n$-bit sequence}\\
-2. \textbf{Sum of :}  two $n$ bit sequences  \newline 
 3. \textbf{Majority bit of an $n$-bit sequence} \\
+2. \textbf{Sum of :}  two unsigned integers of $32$ bits  \newline 
+2. \textbf{Sum of :}  two unsigned integers  \newline 
 4. \textbf{Product of two $n\times n$ boolean matrices} \\
 5. \textbf{Sorting of $n$ sequences of $nbit$ using :} \newline\noindent
 \phantom{x}\hspace{3ex} a) Insertion sort \phantom{x}\hspace{2ex} b) Bitonic sort \\
@@ -352,8 +353,13 @@ The interest of choosing the above sorting algorithms is that all of them can be
 As the implementations provide addition and multiplication of cipher-texts,  size in terms of \texttt{XOR} and \texttt{AND} gates are provided for each problem. 
 
 \textbf{XOR of $n$-bits :} \texttt{XOR} of $n$-bits requires $n-1$ \texttt{XOR} gates. \newline \newline
-\textbf{Sum of two $n$-bit sequences :} Sum of two $n$-bits sequences is performed using $n$ \texttt{full-adder} circuits (provided as \texttt{fhe\_fulladd(...)} function in the Scarab library). The cost of a full adder circuit is $2$ \texttt{XOR} to calculate the sum and $2$ \texttt{AND}, $1$ \texttt{XOR} and $1$ \texttt{OR} for the carry. Hence the total complexity is $3n$ \texttt{AND}, $5n$ \texttt{XOR}. \newline \newline
+
 \textbf{Majority of $n$-bits :} Majority bit is evaluated by obtaining the sum of the bits and then returning the result of the comparison of the sum and $n/2$. This comparison is done using algorithm \autoref{Code:algo}. The operation is interesting in the sense that if the same program is evaluated on the user's side, he has to store the sum of the bits, hence  needs $\mathrm{\lfloor\log_{2}n \rfloor +1}$ bits of memory. However, if he performs the operation remotely on a cloud, he only requires a constant number of bits to retrieve the result. \newline \newline
+
+\textbf{Sum of two unsigned integers of $32$ bits :} It is a sum of two $n$-bits sequences such as $n<32$ and it is performed using $n$ \texttt{full-adder} circuits (provided as \texttt{fhe\_fulladd(...)} function in the Scarab library). The cost of a full adder circuit is $2$ \texttt{XOR} to calculate the sum and $2$ \texttt{AND}, $1$ \texttt{XOR} and $1$ \texttt{OR} for the carry. Hence the total complexity is $3n$ \texttt{AND}, $5n$ \texttt{XOR}. \newline \newline
+
+\textbf{Sum of two unsigned integers :} This program select the first $32$-bits sequences of the $2$ integers and does the sum of themexactly like the previous algorithm and then perform the sum with next $32$-bits sequences with the carry from the previous addition untill there is no sequence left.n in the Scarab library). So this program has approximately the same linear cost with the previous one \newline \newline
+
 \textbf{Product of two $n\times n$ matrices :} This requires $n^3$ \texttt{AND} gates and \texttt{$n^2(n-1)$} \texttt{XOR} gates. \newline \newline
 \textbf{Sorting :} Several straight-line programs for sorting have have been proposed in literature \cite{dk}, \cite{Batcher:1968:SNA:1468075.1468121}. These programs use a comparator gate : a logical gate with two inputs and two outputs, that computes the minimum and maximum of two $n$ bit sequences. Algorithm \autoref{Code:algo} implements such a comparator gate. We do not need to perform any transformation for these algorithms. The algorithms used for Bitonic and Odd-Even merge sort are provided in the appendix. They accept $n$ which are powers of $2$.
 \newline \newline
@@ -364,34 +370,29 @@ We note that the sorting programs used do not increase the size of the circuit o
 
 \section{Experimental evaluation \\ and results}
 \label{Sec:Eval}
-
-
-\textbf{XOR of $n$ bits}
+In this we execute the implementations of the programs above, and we measure their wall time and compare this cost with the theoretical complexity depending on the sizes of the input data.
+The figure \autoref{fig:image_sf7} represents minumum and maximum wall time of \texttt{XOR} done on random inputs. We can see that the wall time increase lineary with number of bits which confirm the theoretical cost.
 \begin{figure}[!H]%on ouvre l'environnement figure
 \centering
 \includegraphics[width=7cm, height=6cm]{f4.pdf} 
 \caption{Wall time for XOR} 
-\label{fig:image_sf7} %l'étiquette pour faire référence à cette image
+\label{fig:image_sf0} %l'étiquette pour faire référence à cette image
 \end{figure}
 
-\textbf{Sum of two $n$ bit sequences}
+We notice the same complexity for both \texttt{Bit Majority} and \texttt{sum of integers}\autoref{fig:image_sf1}.
 \begin{figure}[!H]%on ouvre l'environnement figure
 \centering
-\includegraphics[width=6cm]{f8.pdf} 
+\includegraphics[width=6cm, height=5cm]{f8.pdf} 
 \caption{Wall time for sum} 
-\label{fig:image_sf7} %l'étiquette pour faire référence à cette image
+\label{fig:image_sf1} %l'étiquette pour faire référence à cette image
 \end{figure}
 
-
-\textbf{Majority of $n$ bits}
-
-\textbf{Product of two $n\times n$ matrices}
-
+And we confirm as well the $O(n^{3})$ complexity for the \texttt{matrix product}\autoref{fig:image_sf2}.
 \begin{figure}[!H]%on ouvre l'environnement figure
 \centering
 \includegraphics[width=9cm, height=6cm]{f9.pdf} 
 \caption{Wall time for matrix product} 
-\label{fig:image_sf7} %l'étiquette pour faire référence à cette image
+\label{fig:image_sf2} %l'étiquette pour faire référence à cette image
 \end{figure}
 
 \begin{figure}[!h]
