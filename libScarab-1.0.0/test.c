@@ -132,7 +132,7 @@ void mesure_encrypt_decrypt(){
 	//gmp_printf("alpha: %Zd \n", pk->alpha);
 	//gmp_printf("B: %Zd \n", sk->B);
 
-	printf("N: %d , log(p): %d , Mu: %d , Nu: %d , keygen: %ld \n",N,mpz_sizeinbase( pk->p, 2), MU, LOG_NU, mtime );
+	printf("N: %d , log(p): %d , Mu: %d , Nu: %d , keygen: %ld ",N,mpz_sizeinbase( pk->p, 2), MU, LOG_NU, mtime );
 	
 	
 	gettimeofday(&start, NULL);  
