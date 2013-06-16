@@ -66,8 +66,8 @@ void test_suite()
 	//mesure_test_matrix_prod();
 	//test_sum_unbounded();
 	//measure_test_keygen();
-	test_keygen();
-	//mesure_encrypt_decrypt();
+	//test_keygen();
+	mesure_encrypt_decrypt();
 	//essai();
 }
 
@@ -113,7 +113,7 @@ void mesure_encrypt_decrypt(){
 	fhe_pk_t pk;
 	fhe_sk_t sk;	
 	mpz_t c, aux1, aux2;
-	int m, k =0;
+	int m;
 	mpz_init(c);
 	mpz_init(aux1);
 	mpz_init(aux2);
@@ -128,44 +128,74 @@ void mesure_encrypt_decrypt(){
 	seconds  = end.tv_sec  - start.tv_sec;
 	useconds = end.tv_usec - start.tv_usec;
 	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+	//gmp_printf("p: %Zd \n", pk->p);
+	//gmp_printf("alpha: %Zd \n", pk->alpha);
+	//gmp_printf("B: %Zd \n", sk->B);
+
 	printf("N:%d , log(p): %d , keygen: %ld ",N,mpz_sizeinbase( pk->p, 2), mtime );
+	
+	
 	gettimeofday(&start, NULL);  
 	for(int i=0; i < 100; i++){
-
-		k= 1 - k;
-		gettimeofday(&start, NULL);    
-		fhe_encrypt(c, pk, k);
-		gettimeofday(&end, NULL);
-		seconds  = end.tv_sec  - start.tv_sec;
-		useconds = end.tv_usec - start.tv_usec;
-		mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-		printf("time encrypt : %ld ms", mtime );
-
-		gettimeofday(&start, NULL);    
-		fhe_fulladd(c, aux1,c,c,aux2, pk);
-		gettimeofday(&end, NULL);
-		seconds  = end.tv_sec  - start.tv_sec;
-		useconds = end.tv_usec - start.tv_usec;
-		mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-		printf("time add : %ld ms", mtime );
-
-		gettimeofday(&start, NULL);    
-		fhe_mul(c,c, c, pk);
-		gettimeofday(&end, NULL);
-		seconds  = end.tv_sec  - start.tv_sec;
-		useconds = end.tv_usec - start.tv_usec;
-		mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-		printf("time mul : %ld ms", mtime );
-
-		gettimeofday(&start, NULL);    
-		m= fhe_decrypt(c, sk);
-		printf("m : %d ",m);
-		gettimeofday(&end, NULL);
-		seconds  = end.tv_sec  - start.tv_sec;
-		useconds = end.tv_usec - start.tv_usec;
-		mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-		printf("time decrypt : %ld ms \n", mtime );
+		fhe_encrypt(c, pk, 1);
 	}
+	gettimeofday(&end, NULL);
+	seconds  = end.tv_sec  - start.tv_sec;
+	useconds = end.tv_usec - start.tv_usec;
+	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+	printf("encrypt: %ld ms ", mtime );
+	
+
+	gettimeofday(&start, NULL); 
+	for(int i=0; i < 100; i++){   
+		fhe_fulladd(c, aux1,c,c,aux2, pk);
+	}
+	gettimeofday(&end, NULL);
+	seconds  = end.tv_sec  - start.tv_sec;
+	useconds = end.tv_usec - start.tv_usec;
+	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+	printf("add : %ld ms ", mtime );
+
+
+	gettimeofday(&start, NULL);  
+	for(int i=0; i < 100; i++){  
+		fhe_mul(c,c, c, pk);
+	}
+	gettimeofday(&end, NULL);
+	seconds  = end.tv_sec  - start.tv_sec;
+	useconds = end.tv_usec - start.tv_usec;
+	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+	printf("mul : %ld ms ", mtime );
+	
+	gettimeofday(&start, NULL);  
+	for(int i=0; i < 100; i++){
+		fhe_recrypt(c, pk);
+	}
+	gettimeofday(&end, NULL);
+	seconds  = end.tv_sec  - start.tv_sec;
+	useconds = end.tv_usec - start.tv_usec;
+	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+	printf("recrypt : %ld ms ", mtime );
+	
+	gettimeofday(&start, NULL);  
+	for(int i=0; i < 100; i++){  
+		fhe_decrypt(c, sk);
+	}
+	//printf("m : %d ",m);
+	gettimeofday(&end, NULL);
+	seconds  = end.tv_sec  - start.tv_sec;
+	useconds = end.tv_usec - start.tv_usec;
+	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+	printf("decrypt : %ld ms\n", mtime );
+	
+	
+	gettimeofday(&start, NULL);
+	test_sum_integers(8 , 49, pk, sk);
+	gettimeofday(&end, NULL);
+	seconds  = end.tv_sec  - start.tv_sec;
+	useconds = end.tv_usec - start.tv_usec;
+	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+	printf("time sum: %ld ms \n", mtime );
 	mpz_clear(c); mpz_clear(aux1); mpz_clear(aux2);
 	fhe_pk_clear(pk);
 	fhe_sk_clear(sk);
