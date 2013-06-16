@@ -171,7 +171,7 @@ We used the open source implementation Scarab library \cite{hcrypt}  version $1.
 We time the various algorithms on two desktop machines. Both these machines were x86-64 platform running Linux kernel $3.2.0$-$45$-generic  and used GCC $4.6.3$ C compiler.  The first machine housed Intel Core i3 M330 (2.13GHz x 4) processor and will be referred in this article as machine M1 while the other used  housed Intel Core i5 M2430 (2.40GHz x 4) processor and will be referred as machine M2. During the experiments these machines were not connected to any network and were running ony the most needed applications.
  
 \subsection{Cost of Cryptosytem}
- In the SV scheme, performing any operation on encrypted bits requires  \texttt{KeyGen}, \texttt{Encrypt}, \texttt{Add},\texttt{ Mult}, \texttt{Recrypt}, \texttt{Decrypt} and hence we measure their performance in terms of run time. These measuremens are done by varying the parameter $N$ that determines the degree of all intermediate polynomials in the cryptostystem and keeping all other parameters fixed. The measurements in this section were taken on the machine M2. 
+ In the SV scheme, performing any operation on encrypted bits requires  \texttt{KeyGen}, \texttt{Encrypt}, \texttt{Add},\texttt{ Mult}, \texttt{Recrypt}, \texttt{Decrypt} and hence we measure their performance in terms of run time. These measuremens are done by varying the parameter $N$ that determines the degree of all intermediate polynomials in the cryptostystem and keeping all other parameters fixed. The measurements in this section were taken on the machine M2. We can infer that the cost of these functions increase with the increase of the the degree  polynomials. 
 
 \begin{table}[htb]
   \centering
@@ -195,7 +195,7 @@ We time the various algorithms on two desktop machines. Both these machines were
 }
 \end{table}
 
-
+We can see that the size of the public key is increasing lineary with $n$ such that $N=2^n$ 
 \autoref{fig:image_f2} measures execution time for \texttt{KeyGen} for fixed values of parameters: $N=8$ and $\eta = 2^{384}$. It shows a variation from 0.2 s to 14.41 s with high density in the interval [0.2s, 2s].
 
 \begin{figure}[!h] %on ouvre l'environnement figure
