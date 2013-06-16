@@ -21,7 +21,9 @@
 
 //#define LOG_NU 384
 //#define LOG_NU 310
+
 #define LOG_NU 250
+
 
 #define S1 8
 #define S2 5
