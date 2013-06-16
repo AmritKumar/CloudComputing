@@ -43,7 +43,7 @@ fhe_keygen(fhe_pk_t pk, fhe_sk_t sk)
 		fmpz_to_mpz(temp, fmpz_p);
 		fmpz_clear(fmpz_p);
 	} while (!mpz_probab_prime_p(temp, 10));
-
+	//gmp_printf("Choosing Prime p = %Zd\n", temp);
 #ifdef DEBUG
 	gmp_printf("Choosing Prime p = %Zd\n", temp);
 	printf("Choosing F(x) = ");
