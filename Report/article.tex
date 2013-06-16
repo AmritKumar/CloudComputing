@@ -358,8 +358,8 @@ As the implementations provide addition and multiplication of cipher-texts,  siz
 \textbf{Sorting :} Several straight-line programs for sorting have have been proposed in literature \cite{dk}, \cite{Batcher:1968:SNA:1468075.1468121}. These programs use a comparator gate : a logical gate with two inputs and two outputs, that computes the minimum and maximum of two $n$ bit sequences. Algorithm \autoref{Code:algo} implements such a comparator gate. We do not need to perform any transformation for these algorithms. The algorithms used for Bitonic and Odd-Even merge sort are provided in the appendix. They accept $n$ which are powers of $2$.
 \newline \newline
 \textbf{Insertion sort :} When allowing for parallel comparators, bubble sort and insertion sort are identical. Hence $n(n-1)/2$ comparator gates are used for insertion sort.\newline \newline
-\textbf{Bitonic Sort :} \autoref{bitsort} and \autoref{bitmerge} are used to perform Bitonic Sort. The algorithm uses $n\mathrm{log}(n)·(\mathrm{log}(n)+1)/4$ comparator gates. \newline \newline
-\textbf{Odd-Even Merge sort :} \autoref{oesort} and \autoref{oemerge} are used to perform Odd-Even merge sort and hence  $n(\mathrm{log}^{2}(n)-1)/2 + 1 $ comparator gates are required.\newline
+\textbf{Bitonic Sort :} The standard algorithm uses $n\mathrm{log}(n)·(\mathrm{log}(n)+1)/4$ comparator gates. \newline \newline
+\textbf{Odd-Even Merge sort :} Odd-Even merge sort requires  $n(\mathrm{log}^{2}(n)-1)/2 + 1 $ comparator gates.\newline
 We note that the sorting programs used do not increase the size of the circuit operating on encrypted input bit sequences.
 
 \section{Experimental evaluation \\ and results}
@@ -411,16 +411,44 @@ We note that the sorting programs used do not increase the size of the circuit o
 
 \begin{figure}[!H]
 \centering
-\includegraphics[width=7cm]{fsort2.pdf} 
+\includegraphics[width=7cm, height=6cm]{fsort2.pdf} 
 \caption{Runtime Comparison for insertion sort} 
 \label{fig:image_sf2} %l'étiquette pour faire référence à cette image
 \end{figure}
 
 \begin{figure}[!H]%nouvre l'environnement figure
 \centering
-\includegraphics[width=7cm]{fsort1.pdf} 
+\includegraphics[width=7cm, height=6cm]{fsort1.pdf} 
 \caption{Curve fitting for insertion sort}
 \label{fig:image_sf1} %l'étiquette pour faire référence à cette image
+\end{figure}
+
+\textbf{XOR of $n$ bits}
+\begin{figure}[!H]%on ouvre l'environnement figure
+\centering
+\includegraphics[width=7cm, height=6cm]{f4.pdf} 
+\caption{Wall time for XOR} 
+\label{fig:image_sf7} %l'étiquette pour faire référence à cette image
+\end{figure}
+
+\textbf{Sum of two $n$ bit sequences}
+\begin{figure}[!H]%on ouvre l'environnement figure
+\centering
+\includegraphics[width=6cm]{f8.pdf} 
+\caption{Wall time for sum} 
+\label{fig:image_sf7} %l'étiquette pour faire référence à cette image
+\end{figure}
+
+
+\textbf{Majority of $n$ bits}
+
+\textbf{Product of two $n\times n$ matrices}
+
+\begin{figure}[!H]%on ouvre l'environnement figure
+\centering
+\includegraphics[width=9cm, height=6cm]{f9.pdf} 
+\caption{Wall time for matrix product} 
+\label{fig:image_sf7} %l'étiquette pour faire référence à cette image
 \end{figure}
 
  \textbf{Sorting :} 
@@ -500,27 +528,13 @@ Intially, the cryptographic parameters were set to $(N = 8, \nu = 2^{384}, \mu =
 \end{table}
 
 When we increase the security of the system by setting the parameters to  $(N = 256,\eta  = 16, \mu = 2, s_1 = 5000, s_2 = 5)$(as suggested in \cite{cryptoeprint:2009:571}) which ensures $25$ bits of security, the Odd-Even sorting algorithm on  $4$ sequences, each of $4$ bits takes hours. By lowering the security level to only $8$ bits using the parameters :$(N = 16, \eta = 32, \mu = 2, s_1 = 85, s_2 = 5)$, the result did not decrypt to the desired output; which we believe is an implementation bug in the bootstrapping mechanism. Lowering the security even further to only $5$ bits using the parameters: $(N = 8, \eta = 2^8, \mu = 4, s_1 = 65, s_2 = 5)$, and testing odd-even sorting for $32$ sequences of $6$ bits each took more than an hour. However, increasing $\mu$ also increases security, and setting the parameters to :  $(N = 8, \eta = 2^{384}, \mu = 8, s_1 = 8, s_2 = 5)$ we obtained the results as in \autoref{OddEvensort2}. The results show that this set of parameters provide a better security and at almost no extra cost. For this result to be conclusive, we need to perfom tests for large $n$.
-\section{Conclusion}
 
-With the examples and the programs discussed, we conclude that the tranformation of a non-straight line programs(with branching) in general increases the circuit complexity. The experiments on the implementation and the operations ........
+\section{Conclusion}
+With the examples and the programs discussed, we conclude that the tranformation of a non-straight line programs(with branching) in general increases the circuit complexity. The experiments with the implementation 
 \pagebreak
 
 \bibliographystyle{alpha}
 \bibliography{article}  
-
-
-
-
-% sigproc.bib is the name of the Bibliography in this case
-% You must have a proper ".bib" file
-%  and remember to run:
-% latex bibtex latex latex
-% to resolve all references
-%
-% ACM needs 'a single self-contained file'!
-%
-%APPENDICES are optional
-%\balancecolumns
 \balancecolumns
 % That's all folks!
 \end{document}
