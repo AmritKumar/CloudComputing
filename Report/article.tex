@@ -211,6 +211,8 @@ As the time taken by \texttt{KeyGen} depends on how fast the prime $p$ is found,
 
 Using (1), and (2), we calculate the theoretical security level and the depth provided by the crytosystem, and we find that security level increases with increasing $N$ and for $\mu =4$ and $\eta=2^{384}$ fixed. But \autoref{common cost} show that the cost of the cryptosystem increases(ex. 15 mins for \texttt{KeyGen}). We note that for $N \geq 2^6$, \texttt{KeyGen} takes hours. Hence, we choose $N=8$ for our experiments which provides $1.01472$ level of security and we vary $\mu$ and $\eta$. Due to some erroneous results provided by the decryption function for $d<5.3$, we choose $\mu$ and $\eta$ to ensure that the depth is greater than the threshold value $5.9$.
 
+
+
 \begin{table}[htb]
   \centering
   \caption{Run time (ms)}
@@ -230,6 +232,49 @@ Using (1), and (2), we calculate the theoretical security level and the depth pr
 \normalsize
 \label{tab:securitytab}
 \end{table}
+
+\autoref{tab:tradeofftab1} presents the security-cost tradeoff for 10000 multiplications as a function of $\eta$. We remark that : decreasing $\eta$ with other parameters fixed increases the security of the system at the cost of decreasing the depth.  We further note that increasing the value of $\eta$ increases the computational cost. On the contrary, \autoref{tab:tradeofftab2} presents the security-cost tradeoff for 10000 multiplications as a function of $\mu$. Here, increasing $\mu$ with other parameters fixed increases the security of the system at the cost of decreasing the depth. However, in this case the cost does not vary much. Hence it is profitable to increase $\mu$ to increase the security of the system.
+
+
+ 
+\begin{table}[htb]
+  \centering
+  \caption{Trade-off for 10000 multiplications}
+\begin{tabular}{|c|c|c|c||}
+  \hline
+  \multicolumn{4}{|c||}{$\mu = 4$ , $N=8$} \\
+  \hline
+  $\eta$ &  time(in s)  & depth & $2^{\frac{N}{\epsilon}}$ \\
+  \hline
+  $2^{600}$ & 619  & 6.90 & 1.009 \\
+  $2^{400}$ &  580 & 6.31 & 1.014 \\
+  $2^{200}$ &  509 & 5.03 & 1.028 \\
+  $2^{100}$ &  490 & 4.28 & 1.059 \\
+   \hline
+\end{tabular}
+\normalsize
+\label{tab:tradeofftab1}
+\end{table}
+
+\begin{table}[htb]
+  \centering
+  \caption{Trade-off for 10000 multiplications}
+\begin{tabular}{|c|c|c|c||}
+  \hline
+  \multicolumn{4}{|c||}{$\eta = 2^{300}$ , $N=8$} \\
+  \hline
+  $\mu$ &  time(in s)  & depth & $2^{\frac{N}{\epsilon}}$ \\
+  \hline
+  $2$ & 527  & 6.90 & 1.01887 \\
+  $4$ & 526 & 5.89 & 1.01894 \\
+  $8$ & 528  & 5.63 & 1.01900 \\
+  $16$ & 529  & 5.40 & 1.01907 \\
+   \hline
+\end{tabular}
+\normalsize
+\label{tab:tradeofftab2}
+\end{table}
+
 
 
 
@@ -326,7 +371,7 @@ Max and Min regenerate $a_i$ and $b_i$ and hence contain the correct result.
 
 \begin{figure}[!h] %on ouvre l'environnement figure
 \centering
-\includegraphics[width=5cm,height=5cm]{f2.pdf} 
+\includegraphics[width=5cm,height=4cm]{f2.pdf} 
 \caption{Run time(ms)} 
 \label{image_f2} %l'étiquette pour faire référence à cette image
 \end{figure}
@@ -353,13 +398,9 @@ The interest of choosing the above sorting algorithms is that all of them can be
 As the implementations provide addition and multiplication of cipher-texts,  size in terms of \texttt{XOR} and \texttt{AND} gates are provided for each problem. 
 
 \textbf{XOR of $n$-bits :} \texttt{XOR} of $n$-bits requires $n-1$ \texttt{XOR} gates. \newline \newline
-
 \textbf{Majority of $n$-bits :} Majority bit is evaluated by obtaining the sum of the bits and then returning the result of the comparison of the sum and $n/2$. This comparison is done using algorithm \autoref{Code:algo}. The operation is interesting in the sense that if the same program is evaluated on the user's side, he has to store the sum of the bits, hence  needs $\mathrm{\lfloor\log_{2}n \rfloor +1}$ bits of memory. However, if he performs the operation remotely on a cloud, he only requires a constant number of bits to retrieve the result. \newline \newline
-
 \textbf{Sum of two unsigned integers of $32$ bits :} It is a sum of two $n$-bits sequences such as $n<32$ and it is performed using $n$ \texttt{full-adder} circuits (provided as \texttt{fhe\_fulladd(...)} function in the Scarab library). The cost of a full adder circuit is $2$ \texttt{XOR} to calculate the sum and $2$ \texttt{AND}, $1$ \texttt{XOR} and $1$ \texttt{OR} for the carry. Hence the total complexity is $3n$ \texttt{AND}, $5n$ \texttt{XOR}. \newline \newline
-
 \textbf{Sum of two unsigned integers :} This program select the first $32$-bits sequences of the $2$ integers and does the sum of themexactly like the previous algorithm and then perform the sum with next $32$-bits sequences with the carry from the previous addition untill there is no sequence left.n in the Scarab library). So this program has approximately the same linear cost with the previous one \newline \newline
-
 \textbf{Product of two $n\times n$ matrices :} This requires $n^3$ \texttt{AND} gates and \texttt{$n^2(n-1)$} \texttt{XOR} gates. \newline \newline
 \textbf{Sorting :} Several straight-line programs for sorting have have been proposed in literature \cite{dk}, \cite{Batcher:1968:SNA:1468075.1468121}. These programs use a comparator gate : a logical gate with two inputs and two outputs, that computes the minimum and maximum of two $n$ bit sequences. Algorithm \autoref{Code:algo} implements such a comparator gate. We do not need to perform any transformation for these algorithms. The algorithms used for Bitonic and Odd-Even merge sort are provided in the appendix. They accept $n$ which are powers of $2$.
 \newline \newline
@@ -374,7 +415,7 @@ In this we execute the implementations of the programs above, and we measure the
 The figure \autoref{fig:image_sf7} represents minumum and maximum wall time of \texttt{XOR} done on random inputs. We can see that the wall time increase lineary with number of bits which confirm the theoretical cost.
 \begin{figure}[!H]%on ouvre l'environnement figure
 \centering
-\includegraphics[width=7cm, height=6cm]{f4.pdf} 
+\includegraphics[width=5cm, height=4cm]{f4.pdf} 
 \caption{Wall time for XOR} 
 \label{fig:image_sf0} %l'étiquette pour faire référence à cette image
 \end{figure}
@@ -382,7 +423,7 @@ The figure \autoref{fig:image_sf7} represents minumum and maximum wall time of \
 We notice the same complexity for both \texttt{Bit Majority} and \texttt{sum of integers}\autoref{fig:image_sf1}.
 \begin{figure}[!H]%on ouvre l'environnement figure
 \centering
-\includegraphics[width=6cm, height=5cm]{f8.pdf} 
+\includegraphics[width=5cm, height=4cm]{f8.pdf} 
 \caption{Wall time for sum} 
 \label{fig:image_sf1} %l'étiquette pour faire référence à cette image
 \end{figure}
@@ -390,7 +431,7 @@ We notice the same complexity for both \texttt{Bit Majority} and \texttt{sum of 
 And we confirm as well the $O(n^{3})$ complexity for the \texttt{matrix product}\autoref{fig:image_sf2}.
 \begin{figure}[!H]%on ouvre l'environnement figure
 \centering
-\includegraphics[width=9cm, height=6cm]{f9.pdf} 
+\includegraphics[width=5cm, height=4cm]{f9.pdf} 
 \caption{Wall time for matrix product} 
 \label{fig:image_sf2} %l'étiquette pour faire référence à cette image
 \end{figure}
