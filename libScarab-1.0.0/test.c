@@ -132,7 +132,7 @@ void mesure_encrypt_decrypt(){
 	//gmp_printf("alpha: %Zd \n", pk->alpha);
 	//gmp_printf("B: %Zd \n", sk->B);
 
-	printf("N:%d , log(p): %d , keygen: %ld ",N,mpz_sizeinbase( pk->p, 2), mtime );
+	printf("N: %d , log(p): %d , Mu: %d , Nu: %d , keygen: %ld \n",N,mpz_sizeinbase( pk->p, 2), MU, LOG_NU, mtime );
 	
 	
 	gettimeofday(&start, NULL);  
@@ -186,16 +186,16 @@ void mesure_encrypt_decrypt(){
 	seconds  = end.tv_sec  - start.tv_sec;
 	useconds = end.tv_usec - start.tv_usec;
 	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-	printf("decrypt : %ld ms\n", mtime );
+	printf("decrypt : %ld ms ", mtime );
 	
 	
 	gettimeofday(&start, NULL);
-	test_sum_integers(8 , 49, pk, sk);
+	test_sum_integers(2000 , 49, pk, sk);
 	gettimeofday(&end, NULL);
 	seconds  = end.tv_sec  - start.tv_sec;
 	useconds = end.tv_usec - start.tv_usec;
 	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-	printf("time sum: %ld ms \n", mtime );
+	printf("sum: %ld ms \n", mtime );
 	mpz_clear(c); mpz_clear(aux1); mpz_clear(aux2);
 	fhe_pk_clear(pk);
 	fhe_sk_clear(sk);
