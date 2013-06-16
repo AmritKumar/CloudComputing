@@ -365,6 +365,35 @@ We note that the sorting programs used do not increase the size of the circuit o
 \section{Experimental evaluation \\ and results}
 \label{Sec:Eval}
 
+
+\textbf{XOR of $n$ bits}
+\begin{figure}[!H]%on ouvre l'environnement figure
+\centering
+\includegraphics[width=7cm, height=6cm]{f4.pdf} 
+\caption{Wall time for XOR} 
+\label{fig:image_sf7} %l'étiquette pour faire référence à cette image
+\end{figure}
+
+\textbf{Sum of two $n$ bit sequences}
+\begin{figure}[!H]%on ouvre l'environnement figure
+\centering
+\includegraphics[width=6cm]{f8.pdf} 
+\caption{Wall time for sum} 
+\label{fig:image_sf7} %l'étiquette pour faire référence à cette image
+\end{figure}
+
+
+\textbf{Majority of $n$ bits}
+
+\textbf{Product of two $n\times n$ matrices}
+
+\begin{figure}[!H]%on ouvre l'environnement figure
+\centering
+\includegraphics[width=9cm, height=6cm]{f9.pdf} 
+\caption{Wall time for matrix product} 
+\label{fig:image_sf7} %l'étiquette pour faire référence à cette image
+\end{figure}
+
 \begin{figure}[!h]
 \centering
 \includegraphics[width=7cm, height=6cm]{fsort3.pdf} 
@@ -423,33 +452,7 @@ We note that the sorting programs used do not increase the size of the circuit o
 \label{fig:image_sf1} %l'étiquette pour faire référence à cette image
 \end{figure}
 
-\textbf{XOR of $n$ bits}
-\begin{figure}[!H]%on ouvre l'environnement figure
-\centering
-\includegraphics[width=7cm, height=6cm]{f4.pdf} 
-\caption{Wall time for XOR} 
-\label{fig:image_sf7} %l'étiquette pour faire référence à cette image
-\end{figure}
 
-\textbf{Sum of two $n$ bit sequences}
-\begin{figure}[!H]%on ouvre l'environnement figure
-\centering
-\includegraphics[width=6cm]{f8.pdf} 
-\caption{Wall time for sum} 
-\label{fig:image_sf7} %l'étiquette pour faire référence à cette image
-\end{figure}
-
-
-\textbf{Majority of $n$ bits}
-
-\textbf{Product of two $n\times n$ matrices}
-
-\begin{figure}[!H]%on ouvre l'environnement figure
-\centering
-\includegraphics[width=9cm, height=6cm]{f9.pdf} 
-\caption{Wall time for matrix product} 
-\label{fig:image_sf7} %l'étiquette pour faire référence à cette image
-\end{figure}
 
  \textbf{Sorting :} 
 The experiments on the sorting algorithms were performed on the machine M1. For each test, $5-10$ random samples were taken. These were generated using the Unix \texttt{rand()} function by setting the seed using \texttt{srand(time(NULL))}. 
@@ -530,7 +533,9 @@ Intially, the cryptographic parameters were set to $(N = 8, \nu = 2^{384}, \mu =
 When we increase the security of the system by setting the parameters to  $(N = 256,\eta  = 16, \mu = 2, s_1 = 5000, s_2 = 5)$(as suggested in \cite{cryptoeprint:2009:571}) which ensures $25$ bits of security, the Odd-Even sorting algorithm on  $4$ sequences, each of $4$ bits takes hours. By lowering the security level to only $8$ bits using the parameters :$(N = 16, \eta = 32, \mu = 2, s_1 = 85, s_2 = 5)$, the result did not decrypt to the desired output; which we believe is an implementation bug in the bootstrapping mechanism. Lowering the security even further to only $5$ bits using the parameters: $(N = 8, \eta = 2^8, \mu = 4, s_1 = 65, s_2 = 5)$, and testing odd-even sorting for $32$ sequences of $6$ bits each took more than an hour. However, increasing $\mu$ also increases security, and setting the parameters to :  $(N = 8, \eta = 2^{384}, \mu = 8, s_1 = 8, s_2 = 5)$ we obtained the results as in \autoref{OddEvensort2}. The results show that this set of parameters provide a better security and at almost no extra cost. For this result to be conclusive, we need to perfom tests for large $n$.
 
 \section{Conclusion}
-With the examples and the programs discussed, we conclude that the tranformation of a non-straight line programs(with branching) in general increases the circuit complexity. The experiments with the implementation 
+
+
+With the examples and the programs discussed, we conclude that the tranformation of a non-straight line programs(with branching) in general increases the circuit complexity. The experiments on the implementation and the operations ........
 \pagebreak
 
 \bibliographystyle{alpha}
