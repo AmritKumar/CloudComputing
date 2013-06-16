@@ -200,19 +200,39 @@ To simplify out computational circuit added, we added two basic functions \textt
 We time the various algorithms on two desktop machines. Both these machines were x86-64 platform running linux kernel $3.2.0$-$45$-generic  and used GCC $4.6.3$ C compiler.  The first machine housed Intel Core i3 M330 (2.13GHz x 4) processor and will be referred in this article as machine M1 while the other used  housed Intel Core i5 2430 M(2.40 x4) processor and will be referred as machine M2.
  
 \subsection{Intial set-up cost}
-Measurements taken are CPU time, Wall Time, Memory Usage by varying the input size  and the algorithmic parameters. Noise reduction threshold.\\
-Here we estimate the performance of this program in terms of run time for KeyGen, Encrypt, Decrypt and the Min-Max algorithm.
+Here we mesure the performance in terms of run time for KeyGen, Encrypt, Add, Mult, Recrypt, Decrypt.\\
+\begin{table}[htb]
+  \centering
+  \caption{Run time (ms)}
+\resizebox{9 cm}{!}{
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+  \hline
+  \multicolumn{8}{|c|}{$\mu = 4$ , $\eta = 2^{384}$} \\
+  \hline
+  $N=2^{n}$ & $log_{2}(p)$ & KeyGen & Encrypt & Add & Mult & Recrypt & Decrypt \\
+  \hline
+  $2^{1}$ & 764 & 99 & 0.057 & 0.0 & 2.372 & 2.371 & 0.0 \\
+  $2^{2}$ & 1535 & 221 & 0.072 & 0.0 & 	3.012 & 3.023 & 0.001\\
+  $2^{3}$ & 3077 & 1131 & 0.079 & 0.001 & 3.396 & 3.380 & 0.004 \\
+  $2^{4}$ & 6155 & 8560 & 0.135 & 0.002 & 5.881 & 5.889 & 0.012\\
+  $2^{5}$ & 12329 & 852849 & 0.477 & 0.005 & 20.230 & 20.057 & 0.028\\
+  \hline
+\end{tabular}
+\normalsize
+\label{common cost}
+}
+\end{table}
 
 \textbf{KeyGen}\\
-The measured time execution for KeyGen($N, \mu$)  for fixed values of parameters: $N=8$ and $\mu = 4$ show a variation from 0.2 s to 14.41 s with big density at the interval [0.2s, 1s].
-\begin{comment}
+The measured time execution for KeyGen($N, \mu$)  for fixed values of parameters: $N=8$ and $\mu = 4$ show a variation from 0.2 s to 14.41 s with big density at the interval [0.2s, 2s]\autoref{fig:image_f2}.
+
 \begin{figure}[!h] %on ouvre l'environnement figure
 \centering
-\includegraphics[width=5cm]{f3.eps} 
+\includegraphics[width=5cm]{f3.pdf} 
 \caption{Run time of KeyGen(ms)} 
-\label{image_f2} %l'étiquette pour faire référence à cette image
+\label{fig:image_f2} %l'étiquette pour faire référence à cette image
 \end{figure}
-\end{comment}
+
 
 \textbf{Encryption and Decryption}\\
 
@@ -363,7 +383,7 @@ We note that the sorting programs used do not increase the size of the circuit o
 
 \renewcommand{\lstlistingname}{Code}
 
-\section{Experimental evaluation \\ and analysis}
+\section{Experimental evaluation and analysis}
 \label{Sec:Eval}
 Measurements by varying the parameters or the plaintext size.
 
