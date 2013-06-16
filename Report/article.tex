@@ -9,7 +9,7 @@
 \usepackage[usenames,dvipsnames]{xcolor}
 \usepackage{listings}
 \usepackage{algorithm2e}
-%\usepackage{amsfont}
+\usepackage{subfigure}
 %\usepackage{amsmath}
 %\usepackage{amssymb}
 \hypersetup{
@@ -32,10 +32,6 @@
   filecolor=magenta,      % color of file links
   urlcolor=cyan           % color of external links
 }
-
-
-
-
 \usepackage{listings}
 \usepackage{algorithm2e}
 \usepackage{verbatim}
@@ -321,7 +317,7 @@ Functions operating on bits provide information on the security-cost trade-off f
 2. \textbf{Sum of :}  two $n$ bit sequences  \newline 
 3. \textbf{Majority bit of an $n$-bit sequence} \\
 4. \textbf{Product of two $n\times n$ boolean matrices} \\
-5. \textbf{Sorting of $n$ sequences of $nbits$ using :} \newline\noindent
+5. \textbf{Sorting of $n$ sequences of $nbit$ using :} \newline\noindent
 \phantom{x}\hspace{3ex} a) Insertion sort \phantom{x}\hspace{2ex} b) Bitonic sort \\
 	\phantom{x}\hspace{3ex} 	     c) Odd-Even Merge sort 
 
@@ -337,72 +333,75 @@ As the implementations provide addition and multiplication of cipher-texts,  siz
 \textbf{Sorting :} Several straight-line programs for sorting have have been proposed in literature \cite{dk}, \cite{Batcher:1968:SNA:1468075.1468121}. These programs use a comparator gate : a logical gate with two inputs and two outputs, that computes the minimum and maximum of two $n$ bit sequences. Algorithm \autoref{Code:algo} implements such a comparator gate. We do not need to perform any transformation for these algorithms. The algorithms used for Bitonic and Odd-Even merge sort are provided in the appendix. They accept $n$ which are powers of $2$.
 \newline \newline
 \textbf{Insertion sort :} When allowing for parallel comparators, bubble sort and insertion sort are identical. Hence $n(n-1)/2$ comparator gates are used for insertion sort.\newline \newline
-\textbf{Bitonic Sort :} \autoref{bitsort} and \autoref{bitmerge} are used to perform Bitonic Sort. The algorithm uses $\mathrm{log}(n)·(\mathrm{log}(n)+1)/2$ comparator gates. \newline \newline
+\textbf{Bitonic Sort :} \autoref{bitsort} and \autoref{bitmerge} are used to perform Bitonic Sort. The algorithm uses $n\mathrm{log}(n)·(\mathrm{log}(n)+1)/4$ comparator gates. \newline \newline
 \textbf{Odd-Even Merge sort :} \autoref{oesort} and \autoref{oemerge} are used to perform Odd-Even merge sort and hence  $n(\mathrm{log}^{2}(n)-1)/2 + 1 $ comparator gates are required.\newline
 We note that the sorting programs used do not increase the size of the circuit operating on encrypted input bit sequences.
-
-
 
 \section{Experimental evaluation \\ and results}
 \label{Sec:Eval}
 
-\begin{figure}[t] %on ouvre l'environnement figure
-\centering
-\includegraphics[width=7cm]{fsort1.pdf} 
-\caption{Run time of KeyGen(ms)} 
-\label{fig:image_f2} %l'étiquette pour faire référence à cette image
-
-\centering
-\includegraphics[width=7cm]{fsort2.pdf} 
-\caption{Run time of KeyGen(ms)} 
-\label{fig:image_f2} %l'étiquette pour faire référence à cette image
+\begin{figure}[!H]
 \centering
 \includegraphics[width=7cm]{fsort3.pdf} 
-\caption{Run time of KeyGen(ms)} 
-\label{fig:image_f2} %l'étiquette pour faire référence à cette image
+\caption{Runtime for Insertion sort, nbit=4} 
+\label{fig:image_sf3} %l'étiquette pour faire référence à cette image
 \end{figure}
 
-\begin{figure}[t] %on ouvre l'environnement figure
+\begin{figure}[!H] %on ouvre l'environnement figure
 \centering
 \includegraphics[width=7cm]{fsort4.pdf} 
-\caption{Run time of KeyGen(ms)} 
-\label{fig:image_f2} %l'étiquette pour faire référence à cette image
+\caption{Runtime for Insertion sort, nbit=6} 
+\label{fig:image_sf4} %l'étiquette pour faire référence à cette image
 \end{figure}
 
-\begin{figure}[t] %on ouvre l'environnement figure
+\begin{figure}[!H] %on ouvre l'environnement figure
 \centering
 \includegraphics[width=7cm]{fsort5.pdf} 
-\caption{Run time of KeyGen(ms)} 
-\label{fig:image_f2} %l'étiquette pour faire référence à cette image
+\caption{Run time for Insertion sort, nbit=8} 
+\label{fig:image_sf5} %l'étiquette pour faire référence à cette image
 \end{figure}
 
 
-\begin{figure}[t] %on ouvre l'environnement figure
+\begin{figure}[!H] %on ouvre l'environnement figure
 \centering
 \includegraphics[width=7cm]{fsort6.pdf} 
-\caption{Run time of KeyGen(ms)} 
-\label{fig:image_f2} %l'étiquette pour faire référence à cette image
+\caption{CPU time for Insertion sort, nbit=4} 
+\label{fig:image_sf6} %l'étiquette pour faire référence à cette image
 \end{figure}
 
-\begin{figure}[t] %on ouvre l'environnement figure
-\centering
-\includegraphics[width=7cm]{fsort7.pdf} 
-\caption{Run time of KeyGen(ms)} 
-\label{fig:image_f2} %l'étiquette pour faire référence à cette image
-\end{figure}
 
-\begin{figure}[t] %on ouvre l'environnement figure
+\begin{figure}[!H] %on ouvre l'environnement figure
 \centering
 \includegraphics[width=7cm]{fsort8.pdf} 
-\caption{Run time of KeyGen(ms)} 
-\label{fig:image_f2} %l'étiquette pour faire référence à cette image
+\caption{CPU time for Insertion sort, nbit=6} 
+\label{fig:image_sf8} %l'étiquette pour faire référence à cette image
 \end{figure}
 
+\begin{figure}[!H]%on ouvre l'environnement figure
+\centering
+\includegraphics[width=7cm]{fsort7.pdf} 
+\caption{CPU time for Insertion sort, nbit=8} 
+\label{fig:image_sf7} %l'étiquette pour faire référence à cette image
+\end{figure}
+
+\begin{figure}[!H]
+\centering
+\includegraphics[width=7cm]{fsort2.pdf} 
+\caption{Runtime Comparison for insertion sort} 
+\label{fig:image_sf2} %l'étiquette pour faire référence à cette image
+\end{figure}
+
+\begin{figure}[!H]%nouvre l'environnement figure
+\centering
+\includegraphics[width=7cm]{fsort1.pdf} 
+\caption{Curve fitting for insertion sort}
+\label{fig:image_sf1} %l'étiquette pour faire référence à cette image
+\end{figure}
 
  \textbf{Sorting :} 
 The experiments on the sorting algorithms were performed on the machine M1. For each test, $5-10$ random samples were taken. These were generated using the Unix \texttt{rand()} function by setting the seed using \texttt{srand(time(NULL))}. 
 
-Intially, the cryptographic parameters were set to $(N = 8, \nu = 2^{384}, \mu = 4, s_1 = 8, s_2 = 5)$ which is the default setting in the software. The \textcolor{orange}{above figures} show the variation of CPU time and Wall time with the increase in the number of sequences to sort and the number of bits. These experiments were done for Insertion Sort algorithm. We also present a  curve fitting plot that verifies the quadratic complexity of this algorithm.
+Intially, the cryptographic parameters were set to $(N = 8, \nu = 2^{384}, \mu = 4, s_1 = 8, s_2 = 5)$ which is the default setting in the software. \autoref{fig:image_sf3},\autoref{fig:image_sf4}, \autoref{fig:image_sf5}, \autoref{fig:image_sf6}, \\ \autoref{fig:image_sf8}, \autoref{fig:image_sf7} and \autoref{fig:image_sf2} show the variation of CPU time and Wall time with the increase in the number of sequences to sort and the number of bits. These experiments were done for Insertion Sort algorithm. \autoref{fig:image_sf1} presents a  curve fitting plot that verifies the quadratic complexity of this algorithm.
 
 \begin{table}
 \caption{Wall time for Bitonic Sort}
@@ -456,7 +455,7 @@ Intially, the cryptographic parameters were set to $(N = 8, \nu = 2^{384}, \mu =
 
 
 \begin{table}
-\caption{Wall time for Odd-Even Merge Sort}
+\caption{Wall time for Odd-Even Merge Sort with increased security}
 \resizebox{8cm}{!}{
  
 \begin{tabular}{|l|l|l||}
@@ -468,14 +467,14 @@ Intially, the cryptographic parameters were set to $(N = 8, \nu = 2^{384}, \mu =
   (8, 4)  &    108197  & 103683\\
   (16,4) &   354188 &  341522\\
   (32,4) &  1587427 &  1044640\\
-  (32,6) &   1629722 & 610464\\
+  (32,6) &   1629722 & 1610464\\
 \hline
 \end{tabular}
 \label{OddEvensort2}
 }
 \end{table}
 
-When we increase the security of the system by setting the parameters to  $(N = 256, \nu = 16, \mu = 2, s_1 = 5000, s_2 = 5)$(as suggested in \cite{cryptoeprint:2009:571}) which ensures $25$ bits of security, the Odd-Even sorting algorithm on  $4$ sequences, each of $4$ bits takes hours. By lowering the security level to only $8$ bits using the parameters :$(N = 16, \nu = 32, \mu = 2, s_1 = 85, s_2 = 5)$, the result did not decrypt to the desired output; which we believe is an implementation bug in the bootstrapping mechanism. However, by increasing $\mu$ also increases security, and setting the parameters to :  $(N = 8, \nu = 2^{384}, \mu = 8, s_1 = 8, s_2 = 5)$ we obtained the results as in \autoref{OddEvensort2} :
+When we increase the security of the system by setting the parameters to  $(N = 256, \nu = 16, \mu = 2, s_1 = 5000, s_2 = 5)$(as suggested in \cite{cryptoeprint:2009:571}) which ensures $25$ bits of security, the Odd-Even sorting algorithm on  $4$ sequences, each of $4$ bits takes hours. By lowering the security level to only $8$ bits using the parameters :$(N = 16, \nu = 32, \mu = 2, s_1 = 85, s_2 = 5)$, the result did not decrypt to the desired output; which we believe is an implementation bug in the bootstrapping mechanism. Lowering the security even further to only $5$ bits using the parameters: $(N = 8, \nu = 2^8, \mu = 4, s_1 = 65, s_2 = 5)$, and testing odd-even sorting for $32$ sequences of $6$ bits each took more than an hour. However, increasing $\mu$ also increases security, and setting the parameters to :  $(N = 8, \nu = 2^{384}, \mu = 8, s_1 = 8, s_2 = 5)$ we obtained the results as in \autoref{OddEvensort2}. The results show that this set of parameters provide a better security and at almost no extra cost. For this result to be conclusive, we need to perfom tests for large $n$.
 \section{Conclusion}
 
 With the examples and the programs discussed, we conclude that the tranformation of a non-straight line programs(with branching) in general increases the circuit complexity. The experiments on the implementation and the operations ........
