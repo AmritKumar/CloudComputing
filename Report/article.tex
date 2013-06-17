@@ -70,7 +70,7 @@ Amrit Kumar\\
 % number that will appear in the \additionalauthors section.
 \maketitle
 \begin{abstract}
-This paper investigates the feasibility of transformation of a (possibly) non-straight-line program (on unencrypted data) into a straight-line program on encrypted data. We present an analysis of security-cost trade-off for a homomorphic encryption scheme executing such programs. Analysis is based on the measurements (CPU time and  Wall time) taken for programs : performing \texttt{XOR} of an $n$-bit sequence,  evaluating the sum of two $n$-bit sequences, determining the majority bit of an $n$-bit sequence, finding the product of two $n \times n$ matrices, and sorting $n$ bit sequences of length $nbits$ (usually requiring validity of a boolean predicate). The evaluation is performed on an available implementation ``Scarab library'' of a fully homomorphic encryption scheme. 
+This paper investigates the feasibility of transformation of a (possibly) non-straight-line program (on unencrypted data) into a straight-line program on encrypted data. We present an analysis of security-cost trade-off for a homomorphic encryption scheme executing such programs. Analysis is based on the measurements (CPU time and  Wall time) taken for programs : performing \texttt{XOR} of an $n$-bit sequence,  evaluating the sum of two $n$-bit integers, determining the majority bit of an $n$-bit sequence, finding the product of two $n \times n$ matrices, and sorting $n$ bit sequences of length $nbits$ (usually requiring validity of a boolean predicate). The evaluation is performed on an available implementation ``Scarab library'' of a fully homomorphic encryption scheme. 
 
 \end{abstract}
 
@@ -80,16 +80,16 @@ This paper investigates the feasibility of transformation of a (possibly) non-st
 
 The notion of \textit{fully homomorphic encryption scheme}, originally called a \textit{privacy homomorphism} was introduced by Rivest et al. \cite{rivest78} shortly after the invention of RSA by Rivest, Shamir and Adleman \cite{Rivest78amethod}.  Basic RSA is a multiplicative homomorphic encryption scheme -- i.e. given the public parameters $pk:=(e, N)$ and two messages $m_0, m_1$, their encryption $c_0, c_1$ verify $c_0c_1=(m_0m_1)^e \ \textrm {mod}\ N$. Hence, without knowing the associated secret key, an external agent can compute the encryption of the product of the messages.
 
-Fully homomorphic encryption scheme extends the above property to addition. A fully homomorphic encryption scheme is a tuple of an encryption $\mathcal{E}$, decryption $\mathcal{D}$ algorithm together with an efficient algorithm $Eval_\mathcal{E}$ that evaluates any circuit $C$ on any cipher-texts $c_i \leftarrow \mathcal{E}(pk, m_i)$. The property that it can evaluate the encryption of addition and multiplication of two plain-texts (without access to the secret key) allows it to arbitrarily compute any function on encrypted data without the decryption key. However prior to \cite{homenc}, we did not have a viable construction.
+Fully homomorphic encryption scheme extends the above property to addition. A fully homomorphic encryption scheme is a tuple of an encryption $\mathcal{E}$, decryption $\mathcal{D}$ algorithm together with an efficient algorithm $Eval_\mathcal{E}$ that evaluates any circuit $C$ on any cipher-texts $c_i \leftarrow \mathcal{E}(pk, m_i)$. The property that it can evaluate the encryption of addition and multiplication of two plain-texts (without access to the secret key) allows it to arbitrarily compute any boolean function on encrypted data without the decryption key. However, we assume that no branching is involved. Prior to \cite{homenc}, we did not have a viable construction.
 
 As an application, such schemes can be used to query encrypted data stored on a remote machine. A user prepares his encrypted input data $c_0, c_1, \ldots, c_{n-1}$  and a description of the query i.e. a circuit $C$ he wants to evaluate and sends them to the remote machine. The machine transforms the circuit into $C^{'}$ so that it can evaluate the same query but on encrypted data, performs the operation and returns the encrypted result to the user. The user eventually decrypts the result. 
 
-The immediate question that is raised, is how do we perform the transformation and how does the circuit size change to adapt to computations on encrypted data. We provide an answer by analyzing circuit complexity for finding the minimum-maximum of two $n$-bit sequences in \autoref{sec:ex} and for some other operations in \autoref{sec:bm}. Moreover, the cost of using a fully homomorphic encryption scheme increases with the depth of the circuit representing the $Eval_{\mathcal{E}}$ function. 
+The immediate question that is raised, is how do we perform the transformation and how does the circuit size change to adapt to computations on encrypted data, especially when the function involves \texttt{if-then-else} condition. We provide an answer by analyzing circuit complexity for finding the minimum-maximum of two $n$-bit sequences in \autoref{sec:ex} and for some other operations in \autoref{sec:bm}. Moreover, the cost of using a fully homomorphic encryption scheme increases with the depth of the circuit representing the $Eval_{\mathcal{E}}$ function. 
 
 Some researchers have improved Gentry's scheme and proposed other schemes such as \cite{cryptoeprint:2009:571} and \cite{cryptoeprint:2011:277} which improve the complexity of the scheme. In \autoref{Sec:Eval} we experimentally evaluate an implementation of  \cite{cryptoeprint:2009:571} and analyze the security-cost trade-off for $Eval_{\mathcal{E}}$ varying from \texttt{XOR} of an $n$-bit sequence to sum of two $n$-bit sequences to sorting of $n$ sequences of $nbits$ each. Three different sorting algorithms are tested.  
 Through these experiments, we also provide information on the additional cost to be paid (for these computations) when a higher security is desired.
 
-\section{Fully homomorphic Encryption scheme (FHE) }
+\section{Overview of Fully homomorphic Encryption scheme (FHE) }
 
 The homomorphic encryption scheme proposed by Gentry \cite{homenc} is based on ideal lattices. Gentry's non-deterministic scheme builds on a \textit{somewhat homomorphic encryption}(SWHE) scheme which can perform additions and multiplications on encrypted data till a bounded depth. The non-determinism introduced in the form of noise renders the scheme secure. However, the noise increases with the depth  of the evaluation circuit and hence the decryption algorithm fails to produce the correct plain-text after a certain depth. To counter this problem, Gentry introduces \textit{bootstrapping} technique which ensures unbounded depth operatability of the scheme. Smart and Vercauteren \cite{cryptoeprint:2009:571} have proposed an integer based approach and we use one of its implementations detailed in \cite{perl:poster} for our experiments.
 
@@ -145,7 +145,7 @@ To ensure that the hint does not provide any considerable advantage to an attack
 \subsection{Considered Implementations}
 We used the open source implementation Scarab library \cite{hcrypt}  version $1.0.0$ of the SV scheme which is a part of \textsc{hcryptProject}. The implementation is in beta version. The software requires GMP(we tested with version $5.1.2$) \cite{gmp} : GNU Multiple Precision Arithmetic Library; FLINT version $1.6$ \cite{flint}: Fast Library for Number Theory; MPIR (we tested with $2.6.0$) \cite{mpir} : Multiple-Precision Integers and Rationals and MPFR (tested with version $3.1.2$) \cite{mpfr} :  Multiple-Precision Floating-point computations with correct Rounding. Linux is supposed to be the only supported platform. The libraries are implemented in  C and an installation guide is provided with the package. 
 
-\autoref{funs} presents the list of functions provided by Scarab with their description. The library provides a file \texttt{test.c} where a user can write his own functions to test different operations. It also provides a header file \texttt{parameters.h} to set the parameters $N, \eta, \mu, s_1$ and $ s_2$ of the cryptosystem. To simplify our computational circuit, we added two basic functions \texttt{or(mpz\_t res, mpz\_t a, mpz\_t b, fhe\_pk\_t pk);} and \texttt{not(mpz\_t res, mpz\_t a, fhe\_pk\_t pk);} which compute the logical \texttt{or}(+) of encrypted bits and the negation ($\neg$) of an encrypted bit respectively.
+\autoref{funs} presents the list of functions provided by Scarab with their description. The library provides a file \texttt{test.c} where a user can write his own functions to test different operations. It also provides a header file \texttt{parameters.h} to set the parameters $N, \eta, \mu, s_1$ and $ s_2$ of the cryptosystem. To simplify our computational circuit, we added two basic functions \texttt{or(mpz\_t res, mpz\_t a, mpz\_t b, fhe\_pk\_t pk);} and \texttt{not(mpz\_t res, mpz\_t a, fhe\_pk\_t pk);} which compute the logical \texttt{or}(denoted by $\vee$) of encrypted bits and the negation (denoted by $\neg$) of an encrypted bit respectively. In this article we denote logical \texttt{AND} using $\wedge$ and \texttt{XOR} using $\oplus$.
 
 \begin{table*}
 \centering
@@ -211,8 +211,6 @@ As the time taken by \texttt{KeyGen} depends on how fast the prime $p$ is found,
 
 Using (1), and (2), we calculate the theoretical security level and the depth provided by the cryptosystem, and we find that the security level increases with increase in $N$ and for $\mu =4$ and $\eta=2^{384}$ fixed. \autoref{common cost} asserts that  \texttt{KeyGen} takes 15mins for $N=2^5$. We note that for $N \geq 2^6$, \texttt{KeyGen} takes hours. Hence, we choose $N=8$ for our experiments which provides $1.01472$ level of security and we vary $\mu$ and $\eta$. Due to some erroneous results provided by the decryption function for $d<5.3$, we choose $\mu$ and $\eta$ to ensure that the depth is greater than the threshold value $5.9$.
 
-
-
 \begin{table}[htb]
   \centering
   \caption{Security, Depth}
@@ -235,8 +233,6 @@ Using (1), and (2), we calculate the theoretical security level and the depth pr
 
 \autoref{tab:tradeofftab1} presents the security-cost trade-off for 10000 multiplications as a function of $\eta$. We remark that : decreasing $\eta$ with other parameters fixed increases the security of the system at the cost of decreasing the depth.  We further note that increasing the value of $\eta$ increases the computational cost. On the contrary, \autoref{tab:tradeofftab2} presents the security-cost tradeoff for 10000 multiplications as a function of $\mu$. Here, increasing $\mu$ with other parameters fixed increases the security of the system at the cost of decreasing the depth. However, in this case the cost does not vary much. Hence it is profitable to increase $\mu$ to increase the security of the system.
 
-
- 
 \begin{table}[htb]
   \centering
   \caption{Trade-off for 10000 multiplications}
@@ -279,9 +275,7 @@ Using (1), and (2), we calculate the theoretical security level and the depth pr
 \section{Circuit Transformation}
 As previously discussed, a user sends his program which runs on unencrypted data and his encrypted input to the cloud. The cloud then performs the demanded computation and returns the encrypted result. However, the program in the same form cannot always be used for computations on encrypted data. 
 
-\subsection{Non-secret branching}
-
-We consider a scenario where a user wants to compute the \texttt{xor} of an $n$ bit sequence $a_0,a_1,\ldots, a_{n-1}$. A program on the unencrypted bits would be :
+\textbf{Non-secret branching}: We consider a scenario where a user wants to compute the \texttt{xor} of an $n$ bit sequence $a_0,a_1,\ldots,$ \\ $a_{n-1}$. A program on the unencrypted bits would be :
 
  \phantom{x} \texttt{res=0, i=0;}
 \newline \phantom{x} \texttt{do\{ }
@@ -290,31 +284,36 @@ We consider a scenario where a user wants to compute the \texttt{xor} of an $n$ 
 \newline   \phantom{x} \} \texttt{while(i < n);} 
 \newline  \phantom{x} \texttt{return res;}\\
 
-This program can be directly be used by the cloud, as it only has to check \texttt{if(i<n)} where $i$ and $n$ are unencrypted integers.
+This program can directly be used by the cloud, as it only has to check \texttt{if(i<n)} where $i$ and $n$ are unencrypted integers.
 
 \subsection{Secret Branching}
 
-Consider a program which involves the following test on two inputs : \texttt{if(a > b) instruction\_1; else instruction\_2;}. As the cloud does not know the result of the test\texttt{ a' > b'} where \texttt{a'} and \texttt{b'} are the encryption of \texttt{a} and \texttt{b}, he does not know which of the instructions he has to perform. In fact, he performs both the instructions by transforming the actual program into : \texttt{test(a'> b')*} \texttt{instruction\_1 +}$\neg$\texttt{test(a'> b')*instruction\_2}, where \texttt{test()}  is a function on encrypted inputs \texttt{a'}, \texttt{b'} and returns an encryption of $1$ iff \texttt{a > b}. Hence, if the program used has branching i.e. it involves \texttt{if(cond\_0)} \texttt{\{inst\_0\} else if(cond\_1)\{inst\_1\}} \texttt{ ...else if(cond\_n-2) \{inst\_n-2\}} \texttt{else\{inst\_n-1 \}}; the cloud has to perform all the $n$ instructions i.e. the size of the circuit changes from a constant size to a size linear in the number of tests.
+Consider a program which involves the following test on two inputs : \texttt{if(a > b) instruction\_1; else instruction\_2;} If the cloud could know how to perform \texttt{if(a' > b') instruction\_1; else instruction\_2;} (where \texttt{a'} and \texttt{b'} are the encryptions of \texttt{a} and \texttt{b}) without executing both the instructions, he would know the decryption of the comparison \texttt{a'>b'}, which means that he would have information on \texttt{a} and \texttt{b}. The cloud transforms the actual program into : \texttt{test(a'> b')$\wedge$} \texttt{instruction\_1 +}$\neg$\texttt{test(a'> b')$\wedge$ } \\ \texttt{instruction\_2}, where \texttt{test()}  is a function on encrypted inputs \texttt{a'}, \texttt{b'} and returns an encryption of $1$ iff \texttt{a > b}. Hence, if the program used has branching i.e. it involves \texttt{if(cond\_0)} \texttt{\{inst\_0\} else if(cond\_1)\{inst\_1\}} \texttt{ ...else if(cond\_n-2) \{inst\_n-2\}} \texttt{else\{inst\_n-1 \}}; the cloud has to perform all the $n$ instructions i.e. the size of the circuit changes from a constant size to a size linear in the number of tests.
 
 This increase in size is due to the fact that the cloud transforms a non-straight line program into a straight-line program.
 
-\subsection{Secret Conditional branching}
-We consider the following program that a cloud receives : \\
+\subsection{Secret Conditional Stopping}
+We consider the following program that a cloud receives where \texttt{f} is a boolean function. : \\
  \phantom{x} \texttt{i=0, res=0;}
 \newline \phantom{x} \texttt{do\{ }
 \newline \phantom{x} \hspace{9ex} \texttt{i++;} 
 \newline   \phantom{x} \} \texttt{while(i < n \&\& cond\_i);} 
 \newline  \phantom{x} \texttt{res = f(i)};\\
 In this case, the cloud needs to transform a loop with conditional stopping into a loop with unconditional branching. We propose the following transformation : \\
- \phantom{x} \texttt{endLoop=0', res=0', i=0;}
+ \phantom{x} \texttt{cont=1', res=0', i=0;}
 \newline \phantom{x} \texttt{do\{ }
-\newline \phantom{x} \hspace{6ex} \texttt{endLoop = $\neg$cond\_i;}
-\newline \phantom{x} \hspace{6ex} \texttt{res = $\neg$endLoop*f(i)+($\neg$cond\_i)*res;}
+\newline \phantom{x} \hspace{6ex} \texttt{res = res$\vee$(cont$\wedge$f(i)$\wedge\neg$cond\_i);}
+\newline \phantom{x} \hspace{6ex} \texttt{cont = cont$\wedge$cond\_i;}
 \newline \phantom{x} \hspace{6ex} \texttt{i++;} 
 \newline   \phantom{x} \} \texttt{while(i < n);} 
-
-\textbf{Correctness of the code :} If \texttt{cond\_i} is always \texttt{true}, \texttt{endLoop} is always \texttt{false} and \texttt{res=f(n)}. If at the $t^{th}$ iteration, \texttt{cond\_i} is \texttt{false}, \texttt{endLoop} becomes \texttt{true} and hence \texttt{res} contains its previous value $f(t-1)$. 
-
+\newline \phantom{x} \texttt{res=($\neg$(cond\_i)$\wedge$res)$\vee$(f(n)$\wedge$cond\_i);}
+\newline 
+\textbf{Correctness of the code :} We consider the following three cases :
+ 
+1. \texttt{cond\_i} \textbf{is always} \texttt{true}: res equals $f(n)$ after the end of the loop.\newline
+\phantom{x} 2. \texttt{cond\_i} is \texttt{true} for $i<t$ and \texttt{false} afterwards: \texttt{res} is \texttt{false} and \texttt{cont}=\texttt{true} for $i<t$. At $i=t$, \texttt{cond\_i}=\texttt{false}, so \texttt{res = f(t)}. For $i>t$ \texttt{cont}=\texttt{false} and so hence \texttt{res} retains its value till the end of the loop. \newline  
+\phantom{x} 3. \texttt{cond\_i} is \texttt{false} for the first time at $i=t_1$ and becomes \texttt{true} at $i=t_2$ with $t_1<t_2$ : With the previous argument, \texttt{res=f(t\_1)}$\; \forall i<t_2$. At $i=t_2$, \texttt{$\neg$(cond\_i)}=\texttt{false} hence \texttt{res} retains the value \texttt{f(t\_1)} till the end of the loop.
+ 
 We note that the cost of the above program is $n$ times the computational complexity of the function, however in the initial program the function is evaluated only once.
 
 \subsection{ Didactic example :  Min-Max}
@@ -322,14 +321,14 @@ We note that the cost of the above program is $n$ times the computational comple
 Suppose that a user wants to find the maximum and the minimum of two $n$-bit sequences $a = (a_0,a_1,\ldots, a_{n-1})$, $b=(b_0,b_1,\ldots, b_{n-1})$ where $a_0$ is the highest significant bit. He provides the following algorithm to the cloud :
 \newline \phantom{x} \texttt{aIsGreater=0, i=0;}
 \newline \phantom{x} \texttt{do\{ }
-\newline \phantom{x} \hspace{6ex} \texttt{ if(a[i]==1 \&\& b[i]==0) 
-\newline \phantom{x} \hspace{14ex}aIsGreater = 1;}
+\newline \phantom{x} \hspace{6ex} \texttt{aIsGreater = a\_i$ \wedge \neg$(b\_i);} 
 \newline \phantom{x} \hspace{7ex} \texttt{i++;} 
-\newline   \phantom{x} \} \texttt{while(i < n);} 
+\newline   \phantom{x} \} \texttt{while(i<n \&\& (a\_i$\wedge$b\_i) $\vee$ ($\neg$(a\_i)$\wedge \neg$(b\_i));}
+\newline \newline
+where \texttt{ (a\_i$\wedge$b\_i) $\vee$ ($\neg$(a\_i)$\wedge \neg$(b\_i)} tests the equality of the bits.
 
-We note that, we do not know how an optimized version :  using \texttt{break} to exit the loop once \texttt{aIsGreater} is set to \texttt{true}, could be transformed into a program for the cloud. We believe that the possibility to quit the loop would mean that the cloud knows the result of the \texttt{if(condition)}. 
-
-We propose the transformed algorithm \autoref{Code:algo} of the above program. It inspects the relative magnitude of pairs of bits, starting from the most significant bit and gradually proceeding towards lower significant bits until an inequality is found.
+We propose the transformed algorithm \autoref{Code:algo} of the abov
+e program. It recasts the same ideas used for the previous example. The algorithm inspects the relative magnitude of pairs of bits, starting from the most significant bit and gradually proceeding towards lower significant bits until an inequality is found.
  
 \newtheorem{theorem}{Lemma}
 \begin{theorem}
@@ -338,7 +337,9 @@ Algorithm \autoref{Code:algo} returns the maximum and the minimum of the input b
 
 \begin{proof}
 
-  Consider $x_i = a_i'b_i'+\neg(a_i')\neg(b_i') $. $x_i$ is $1$ iff $a_i'$ and $b_i'$ are equal. We note that, $bitEqual$ is the product of $x_i$ and is $1$ at the $t^{th}$ iteration iff $a_i'=b_i'$ for all $i < t$. The term $\neg(b_i')a_i'$ is $1$ iff $a_i'=1$ and $b_i'=0$. Hence at the $t^{th}$ iteration, the algorithm using $bitEqual$ tests if the previous bits were equal. Hence, $aIsGreater$ is $1$ iff at any stage  $\neg(b_t')a_t'=1$ and the previous bits were equal.
+  Consider $x_{-1}=1$ and $x_i = (a_i'\wedge b_i)'\vee (\neg(a_i')\wedge\neg(b_i')) $ in line 5. $x_i$ is $1$ iff $a_i'$ and $b_i'$ are equal. We denote by $bitEqual_{t}$ the value of $bitEqual$ at $i=t$ before assignment at line 5. In fact, $bitEqual_{t} = \bigwedge_{i<t}{x_i} $ at this stage and it is $1$ iff $a_i'=b_i'$ for all $i < t$. 
+
+The term $\neg(b_i')\wedge a_i'$ at line 4 is $1$ iff $a_i'=1$ and $b_i'=0$. Hence at the iteration $i=t$, the algorithm using $bitEqual$ tests if $a'_i = b'_i \;\forall i<t$, while using $\neg(b_t')\wedge a_t'$, the algorithm tests if $a_t>b_t$. Hence $aIsGreater$ at $i=t$ is set to $1$ if all the bits till $i<t$ are equal and $a_t>b_t$. Once $aIsGreater$ is set to 1, it retains its value till the end of the loop.  
 
 Max and Min regenerate $a_i$ and $b_i$ and hence contain the correct result.  
 \end{proof}
@@ -360,15 +361,15 @@ Max and Min regenerate $a_i$ and $b_i$ and hence contain the correct result.
 	
  \For{$i\leftarrow 0 $ \KwTo $n-1$}{
 						
-     $aIsGreater \leftarrow (aIsGreater +\neg(b_i')a_i') bitEqual$ \;
-     $bitEqual \leftarrow bitEqual(a_i'b_i' + \neg(a_i)'\neg(b_i'))$		       	
+     $aIsGreater \leftarrow aIsGreater \vee (\neg(b_i')\wedge a_i'\wedge bitEqual$) \;
+     $bitEqual \leftarrow bitEqual\wedge((a_i'\wedge b_i')\vee(\neg(a_i)'\wedge\neg(b_i')))$		       	
  }
 
 \For{$i\leftarrow 0$ \KwTo $n-1$}{
 
-     $Max_i \leftarrow aIsGreater\cdot a_i' + \neg(aIsGreater)b_i'$ \;
+     $Max_i \leftarrow (aIsGreater \wedge a_i') \vee (b_i'\wedge \neg(aIsGreater))$ \;
 
-     $Min_i \leftarrow  \neg(aIsGreater)a_i' + aIsGreater \cdot b_i'$ \;
+     $Min_i \leftarrow  (a_i' \wedge \neg(aIsGreater) ) \vee (aIsGreater \wedge b_i')$ \;
 
  }
 
@@ -398,9 +399,9 @@ We propose a set of benchmark functions to evaluate the implementations. These f
 
 Functions operating on bits provide information on the security-cost trade-off for bit-wise operations. The first two categories of functions have straight-line programs on non-encrypted data and hence can directly be translated to operate on encrypted bits. For others, evaluation of \texttt{if-then-else} condition on encrypted data is chosen. In this case, a circuit(program) transformation is required and which often makes the size longer than the one on non-encrypted data. Hence, this provides information on the increase in size of the circuit(when passing from non-encrypted to encrypted data) and the associated trade-off. We study the security-cost trade-off for the following problems : \newline
 1. \textbf{XOR of an $n$-bit sequence}\\
-3. \textbf{Majority bit of an $n$-bit sequence} \\
-2. \textbf{Sum of :}  two unsigned integers of $32$ bits  \newline 
-2. \textbf{Sum of :}  two unsigned integers  \newline 
+2. \textbf{Majority bit of an $n$-bit sequence} \\
+3. \textbf{Sum of :}  a) two unsigned integers of $32$ bits  \newline 
+\phantom{x}\hspace{12ex} b) two unsigned integers of arbitrary  \newline \phantom{x}\hspace{15ex} number of bits  \newline
 4. \textbf{Product of two $n\times n$ boolean matrices} \\
 5. \textbf{Sorting of $n$ sequences of $nbit$ using :} \newline\noindent
 \phantom{x}\hspace{3ex} a) Insertion sort \phantom{x}\hspace{2ex} b) Bitonic sort \\
@@ -414,12 +415,14 @@ As the implementation(\autoref{funs}) provides addition and multiplication of ci
 \textbf{Majority of $n$-bits :} Majority bit is evaluated by obtaining the sum of the bits and then returning the result of the comparison of the sum and $n/2$. The comparison is done using algorithm \autoref{Code:algo}. This operation is interesting in the sense that if the same program is evaluated on the user's side, he has to store the sum of the bits, hence  needs $\mathrm{\lfloor\log_{2}n \rfloor +1}$ bits of memory. However, if he performs the operation remotely on a cloud, he only requires a constant number of bits to retrieve the result. \newline \newline
 \textbf{Sum of two unsigned integers of $32$ bits :} It is a sum of two $n$-bits sequences such as $n<32$ and it is performed using $n$ \texttt{full-adder} circuits (provided as \texttt{fhe\_fulladd(...)} function in the Scarab library). The cost of a full adder circuit is $2$ \texttt{XOR} to calculate the sum and $2$ \texttt{AND}, $1$ \texttt{XOR} and $1$ \texttt{OR} for the carry. Hence the total complexity is $3n$ \texttt{AND}, $5n$ \texttt{XOR}. \newline \newline
 \textbf{Sum of two unsigned integers :} This program selects the first $32$-bits sequences of the $2$ integers and does the sum of them exactly like the previous algorithm and then perform the sum with next $32$-bits sequences with the carry from the previous addition until there is no sequence left. So this program has approximately the same linear cost as the previous one. \newline \newline
-\textbf{Product of two $n\times n$ matrices :} This requires $n^3$ \texttt{AND} gates and \texttt{$n^2(n-1)$} \texttt{XOR} gates. \newline \newline
+\textbf{Product of two $n\times n$ matrices :} Thes standard two loops algorithm requires $n^3$ \texttt{AND} gates and \texttt{$n^2(n-1)$} \texttt{XOR} gates. \newline \newline
 \textbf{Sorting :} Several straight-line programs for sorting have have been proposed in literature \cite{dk}, \cite{Batcher:1968:SNA:1468075.1468121}. These programs use a comparator gate : a logical gate with two inputs and two outputs, that computes the minimum and maximum of two $n$ bit sequences. Algorithm \autoref{Code:algo} implements such a comparator gate. We do not need to perform any transformation for these algorithms. The algorithms used for Bitonic and Odd-Even merge sort are provided in the appendix. They accept $n$ which are powers of $2$.
-\newline \newline
-\textbf{Insertion sort :} When allowing for parallel comparators, bubble sort and insertion sort are identical. Hence $n(n-1)/2$ comparator gates are used for insertion sort.\newline \newline
-\textbf{Bitonic Sort :} The standard algorithm uses $n\mathrm{log}(n)·(\mathrm{log}(n)+1)/4$ comparator gates. \newline \newline
-\textbf{Odd-Even Merge sort :} Odd-Even merge sort requires  $n(\mathrm{log}^{2}(n)-1)/2 + 1 $ comparator gates.\newline
+
+\textbf{Insertion sort :} When allowing for parallel comparators, bubble sort and insertion sort are identical. Hence $n(n-1)/2$ comparator gates are used for insertion sort.
+
+\textbf{Bitonic Sort :} The standard algorithm uses $n\mathrm{log}(n)·(\mathrm{log}(n)+1)/4$ comparator gates. 
+
+\textbf{Odd-Even Merge sort :} Odd-Even merge sort requires  $n(\mathrm{log}^{2}(n)-1)/2 + 1 $ comparator gates.
 We note that the sorting programs used do not increase the size of the circuit operating on encrypted input bit sequences. 
 
 \section{Experimental evaluation \\ and results}
@@ -456,35 +459,9 @@ We execute the implementations of the above programs, and we measure their wall 
 \label{fig:image_sf2} %l'étiquette pour faire référence à cette image
 \end{figure}
 
-\begin{figure}
-\centering
-\includegraphics[width=6cm, height=6cm]{fsort3.pdf} 
-\caption{Run time for Insertion sort, nbit=4} 
-\label{fig:image_sf3} %l'étiquette pour faire référence à cette image
-\end{figure}
-
-\begin{figure} %on ouvre l'environnement figure
-\centering
-\includegraphics[width=6cm, height=6cm]{fsort4.pdf} 
-\caption{Run time for Insertion sort, nbit=6} 
-\label{fig:image_sf4} %l'étiquette pour faire référence à cette image
-\end{figure}
-
-\begin{figure} %on ouvre l'environnement figure
-\centering
-\includegraphics[width=6cm, height=6cm]{fsort5.pdf} 
-\caption{Run time for Insertion sort, nbit=8} 
-\label{fig:image_sf5} %l'étiquette pour faire référence à cette image
-\end{figure}
-
-
-\begin{figure}%on ouvre l'environnement figure
-\centering
-\includegraphics[width=6cm, height=6cm]{fsort6.pdf} 
-\caption{CPU time for Insertion sort, nbit=4} 
-\label{fig:image_sf6} %l'étiquette pour faire référence à cette image
-\end{figure}
-
+ \textbf{Sorting :} 
+The experiments on the sorting algorithms were performed on machine M1. 
+Initially, the cryptographic parameters were set to $(N = 8, \nu = 2^{384}, \mu = 4, s_1 = 8, s_2 = 5)$ which is the default setting in the software. We measured CPU time and Wall time by varying the sequence length(nbit) and the number of sequences(n). We plot maximum and minimum time in minutes for nbit=6, \autoref{fsort8.pdf}.   
 
 \begin{figure} %on ouvre l'environnement figure
 \centering
@@ -493,32 +470,8 @@ We execute the implementations of the above programs, and we measure their wall 
 \label{fig:image_sf8} %l'étiquette pour faire référence à cette image
 \end{figure}
 
-\begin{figure}%on ouvre l'environnement figure
-\centering
-\includegraphics[width=6cm,height=6cm]{fsort7.pdf} 
-\caption{CPU time for Insertion sort, nbit=8} 
-\label{fig:image_sf7} %l'étiquette pour faire référence à cette image
-\end{figure}
 
-\begin{figure}
-\centering
-\includegraphics[width=6cm, height=6cm]{fsort2.pdf} 
-\caption{Run time Comparison for insertion sort} 
-\label{fig:image_sf2} %l'étiquette pour faire référence à cette image
-\end{figure}
-
-\begin{figure}%nouvre l'environnement figure
-\centering
-\includegraphics[width=6cm, height=6cm]{fsort1.pdf} 
-\caption{Curve fitting for insertion sort}
-\label{fig:image_sf1} %l'étiquette pour faire référence à cette image
-\end{figure}
-
-
-
- \textbf{Sorting :} 
-The experiments on the sorting algorithms were performed on the machine M1. 
-Initially, the cryptographic parameters were set to $(N = 8, \nu = 2^{384}, \mu = 4, s_1 = 8, s_2 = 5)$ which is the default setting in the software. \autoref{fig:image_sf3},\autoref{fig:image_sf4}, \autoref{fig:image_sf5}, \autoref{fig:image_sf6}, \\ \autoref{fig:image_sf8}, \autoref{fig:image_sf7} and \autoref{fig:image_sf2} show the variation of CPU time and Wall time with the increase in the number of sequences to sort and the number of bits. These experiments were done for Insertion Sort algorithm. \autoref{fig:image_sf1} presents a  curve fitting plot that verifies the quadratic complexity of this algorithm.
+ \autoref{fig:image_sf3},\autoref{fig:image_sf4}, \autoref{fig:image_sf5}, \autoref{fig:image_sf6}, \\ \autoref{fig:image_sf8}, \autoref{fig:image_sf7} and \autoref{fig:image_sf2} show the variation of CPU time and Wall time with the increase in the number of sequences to sort and the number of bits. These experiments were done for Insertion Sort algorithm. \autoref{fig:image_sf1} presents a  curve fitting plot that verifies the quadratic complexity of this algorithm.
 
 \begin{table}
 \caption{Wall time for Bitonic Sort}
@@ -593,7 +546,9 @@ Initially, the cryptographic parameters were set to $(N = 8, \nu = 2^{384}, \mu 
 When we increase the security of the system by setting the parameters to  $(N = 256,\eta  = 16, \mu = 2, s_1 = 5000, s_2 = 5)$(as suggested in \cite{cryptoeprint:2009:571}) which ensures $25$ bits of security, the Odd-Even sorting algorithm on  $4$ sequences, each of $4$ bits takes hours. By lowering the security level to only $16$ bits using the parameters :$(N = 16, \eta = 32, \mu = 2, s_1 = 85, s_2 = 5)$, the result did not decrypt to the desired output; which confirms to the theory that $\epsilon$ must be greater than 1 for correct decryption. Lowering the security even further to only $2$ bits using the parameters: $(N = 8, \eta = 2^8, \mu = 4, s_1 = 65, s_2 = 5)$, and testing odd-even sorting for $32$ sequences of $6$ bits each took more than an hour. However, increasing $\mu$ also increases security, and setting the parameters to :  $(N = 8, \eta = 2^{384}, \mu = 8, s_1 = 8, s_2 = 5)$ we obtained the results as in \autoref{OddEvensort2}. The results show that this set of parameters provide a better security(than the default parameters) and at almost no extra cost. For this result to be conclusive, we need to perform tests for large $n$. For our last test, we set the parameters to  $(N = 8, \eta = 2^{200}, \mu = 8, s_1 = 8, s_2 = 5)$ which gave us incorrect decryption. We note that decryption fails in case the depth is too small for re-crypt to function.
 
 \section{Conclusion}
-With the examples and the programs discussed, we conclude that the transformation of a non-straight-line program on unencrypted data(with branching) into a straight line program on encrypted data increases the circuit complexity. We experimentally measured the cost of different operations on encrypted data and the security-cost trade-off for certain operations. The existing implementation of Smart-Vercauteren scheme remains practical only for very low level of security, when a user wants to apply a sorting algorithm on his encrypted bit sequences.      
+With the examples and the programs discussed, we conclude that the transformation of a non-straight-line program on unencrypted data(with branching) into a straight line program on encrypted data increases the circuit complexity. We experimentally measured the cost of different operations on encrypted data and the security-cost trade-off for certain operations. The existing implementation of Smart-Vercauteren scheme remains practical only for very low level of security, when a user wants to apply a sorting algorithm on encrypted bit sequences of short length.
+
+As the sorting algorithms used can be parallelized to obtain better results, it would be interesting to perform computations on GPU.        
 
 \bibliographystyle{alpha}
 \bibliography{article}  

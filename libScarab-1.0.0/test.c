@@ -61,13 +61,13 @@ void test_suite()
 	//test_insertion_sort();
 	//test_oddeven_merger_sort();
 	//test_bitonic_sort();
-	test_majority_bit();
+	//test_majority_bit();
 
 	//mesure_test_matrix_prod();
 	//test_sum_unbounded();
 	//measure_test_keygen();
 	//test_keygen();
-	//mesure_encrypt_decrypt();
+	mesure_encrypt_decrypt();
 	//essai();
 }
 
@@ -147,9 +147,9 @@ void mesure_encrypt_decrypt(){
 	
 
 	gettimeofday(&start, NULL); 
-	for(int i=0; i < 100; i++){   
+/*	for(int i=0; i < 100; i++){   
 		fhe_fulladd(c, aux1,c,c,aux2, pk);
-	}
+	}*/
 	gettimeofday(&end, NULL);
 	seconds  = end.tv_sec  - start.tv_sec;
 	useconds = end.tv_usec - start.tv_usec;
@@ -160,6 +160,7 @@ void mesure_encrypt_decrypt(){
 	gettimeofday(&start, NULL);  
 	for(int i=0; i < 10000; i++){  
 		fhe_mul(c,c, c, pk);
+		printf("\nCheck decryption depth %d \n",fhe_decrypt(c,sk));
 	}
 	gettimeofday(&end, NULL);
 	seconds  = end.tv_sec  - start.tv_sec;
