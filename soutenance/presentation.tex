@@ -1,0 +1,148 @@
+\documentclass{beamer}
+%\documentclass[handout]{beamer}
+
+\usepackage{ensislides}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+
+\title[Fully Homomorphic Encryption Scheme]{Analyzing Security-Cost Trade-off for a\\Fully Homomorphic Encryption Scheme}
+
+%\subtitle{Un exemple} % (optional)
+
+%\author{Matthieu Moy}
+\author{Amrit Kumar \\ Kais Chaabouni \\}
+\date{\today}
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+
+\institute{Ensimag}
+%\date{2012-2013}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\section{Introduction}
+
+\begin{frame}\frametitle{Introduction}
+  \begin{itemize}
+  \item What is FHE, what propreties it provides?\\
+    
+    \begin{itemize}
+      \pause
+    \item Partially HE: ex RSA: $c_1c_2=(m_1m_2)^e \ \textrm {mod}\ N$
+      \pause
+    \item $\mathcal{E}(x_1).\mathcal{E}(x_2)=\mathcal{E}(x_1.x_2)$ , $\mathcal{E}(x_1)+\mathcal{E}(x_2)=\mathcal{E}(x_1+x_2)$   
+      
+    \end{itemize}
+    \pause
+  \item Gentry's scheme and other schemes.  
+    
+    \begin{itemize}
+      \pause
+    \item ``Somewhat'' HE. \\ 
+      \pause
+      $r(c_1+c_2) < r(c_1)+r(c_2)$ , $r(c_1.c_2) < r(c_1).r(c_2)$
+      \pause
+    \item ``Bootsrapping'' \\ 
+      \pause
+      ``dirty'' ciphertext
+      
+    \end{itemize}
+    \pause
+  \item Implementations, Cost, Security. \\
+    
+    \begin{itemize}
+      \pause
+    \item \texttt{Min}, \texttt{Max} of $(a,b)$ on plaintext:\\
+      \ \ \ \ \ \ \ \ \ \texttt{Max}= $a > b$? $a$ : $b$ \ \ , \ \ \texttt{Min}= $a \leq b$? $a$ : $b$ 
+      \pause
+      \question{ \texttt{Min}, \texttt{Max} of $(a,b)$ on ciphertext ?}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\section{Theoretical Analysis}
+
+\subsection{SV Scheme: cost-security of crypto-system}
+
+\begin{frame} \frametitle{titre2.1}
+  \begin{itemize}
+  \item {\tt KeyGen}
+    \pause
+  \item {\tt Encrypt,Recrypt, Decrypt, Add, Mult} (pour la table des matières)
+
+  \pause
+  \question{Ça vous plait ?}
+  \item security with parameters
+  \item depth
+  \end{itemize}
+\end{frame}
+
+\subsection{Programs on ciphertexts}
+
+\begin{frame} \frametitle{titre 2.2}
+  \begin{itemize}
+  \item \warning{C'est vert, mais ce n'est pas le style officiel
+      Ensimag, bien sûr.}
+  \item Circuit transformation
+  \end{itemize}
+\end{frame}
+
+
+\subsection{Theoretical cost}
+
+\begin{frame} 
+ \frametitle{titre 2.3}
+  \begin{itemize}
+  \item linear
+  \item sorting
+  \end{itemize}
+\end{frame}
+
+\section[Experimental Analysis]{Experimental Analysis}
+
+\subsection{Security-Cost}
+
+\begin{frame} \frametitle{titre3.1}
+  \begin{itemize}
+  \item cost of keyGen
+  \item Cost depending on security parameters N, eta, mu of crypto system / program
+  \item \warning{depth too little: wrong decryption}
+  \item explication
+  \end{itemize}
+\end{frame}
+
+\subsection{Implementations cost}
+
+\begin{frame} \frametitle{titre3.2}
+  \begin{itemize}
+  \item figures
+  \item explication: cout confirmé
+  \end{itemize}
+\end{frame}
+
+\subsection{Implementations cost}
+
+\begin{frame} \frametitle{titre3.3}
+  \begin{itemize}
+  \item \warning{C'est vert, mais ce n'est pas le style officiel
+      Ensimag, bien sûr.}
+  \end{itemize}
+\end{frame}
+
+\section[Conclusion]{Conclusion}
+
+\begin{frame}
+  \frametitle{Pour la conclusion}
+\end{frame}
+
+\end{document}
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
