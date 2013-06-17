@@ -28,9 +28,39 @@
 
 \begin{frame}\frametitle{Introduction}
   \begin{itemize}
-  \item What is FHE, what propreties it provides?
-  \item Gentry's scheme and other schemes.
-  \item Implementations, Cost, Security.
+  \item What is FHE, what propreties it provides?\\
+    
+    \begin{itemize}
+      \pause
+    \item Partially HE: ex RSA: $c_1c_2=(m_1m_2)^e \ \textrm {mod}\ N$
+      \pause
+    \item $\mathcal{E}(x_1).\mathcal{E}(x_2)=\mathcal{E}(x_1.x_2)$ , $\mathcal{E}(x_1)+\mathcal{E}(x_2)=\mathcal{E}(x_1+x_2)$   
+      
+    \end{itemize}
+    \pause
+  \item Gentry's scheme and other schemes.  
+    
+    \begin{itemize}
+      \pause
+    \item ``Somewhat'' HE. \\ 
+      \pause
+      $r(c_1+c_2) < r(c_1)+r(c_2)$ , $r(c_1.c_2) < r(c_1).r(c_2)$
+      \pause
+    \item ``Bootsrapping'' \\ 
+      \pause
+      ``dirty'' ciphertext
+      
+    \end{itemize}
+    \pause
+  \item Implementations, Cost, Security. \\
+    
+    \begin{itemize}
+      \pause
+    \item \texttt{Min}, \texttt{Max} of $(a,b)$ on plaintext:\\
+      \ \ \ \ \ \ \ \ \ \texttt{Max}= $a > b$? $a$ : $b$ \ \ , \ \ \texttt{Min}= $a \leq b$? $a$ : $b$ 
+      \pause
+      \question{ \texttt{Min}, \texttt{Max} of $(a,b)$ on ciphertext ?}
+    \end{itemize}
   \end{itemize}
 \end{frame}
 
