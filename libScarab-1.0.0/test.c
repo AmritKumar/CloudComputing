@@ -158,7 +158,7 @@ void mesure_encrypt_decrypt(){
 
 
 	gettimeofday(&start, NULL);  
-	for(int i=0; i < 100; i++){  
+	for(int i=0; i < 10000; i++){  
 		fhe_mul(c,c, c, pk);
 	}
 	gettimeofday(&end, NULL);
