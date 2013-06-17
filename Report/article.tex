@@ -276,16 +276,30 @@ Using (1), and (2), we calculate the theoretical security level and the depth pr
 \end{table}
 
 
-
-
 \section{Circuit Transformation}
 As previously discussed, a user sends his program which runs on unencrypted data and his encrypted input to the cloud. The cloud then performs the demanded computation and returns the encrypted result. However, the program in the same form cannot always be used for computations on encrypted data. 
+
+\subsection{Non-secret branching}
+
+We consider a scenario where a user wants to compute the \texttt{xor} of an $n$ bit sequence $a_0,a_1,\ldots, a_{n-1}$. A program on the unencrypted bits would be :
+
+ \phantom{x} \texttt{res=0, i=0;}
+\newline \phantom{x} \texttt{do\{ }
+\newline \phantom{x} \hspace{9ex} \texttt{res=res$\oplus$a\_i;}
+\newline \phantom{x} \hspace{9ex} \texttt{i++;} 
+\newline   \phantom{x} \} \texttt{while(i < n);} 
+\newline  \phantom{x} \texttt{return res;}\\
+
+This program can be directly be used by the cloud, as it only has to check \texttt{if(i<n)} where $i$ and $n$ are unencrypted integers.
+
+\subsection{Secret Branching}
 
 Consider a program which involves the following test on two inputs : \texttt{if(a > b) instruction\_1; else instruction\_2;}. As the cloud does not know the result of the test\texttt{ a' > b'} where \texttt{a'} and \texttt{b'} are the encryption of \texttt{a} and \texttt{b}, he does not know which of the instructions he has to perform. In fact, he performs both the instructions by transforming the actual program into : \texttt{test(a'> b')*} \texttt{instruction\_1 +}$\neg$\texttt{test(a'> b')*instruction\_2}, where \texttt{test()}  is a function on encrypted inputs \texttt{a'}, \texttt{b'} and returns an encryption of $1$ iff \texttt{a > b}. Hence, if the program used has branching i.e. it involves \texttt{if(cond\_0)} \texttt{\{inst\_0\} else if(cond\_1)\{inst\_1\}} \texttt{ ...else if(cond\_n-2) \{inst\_n-2\}} \texttt{else\{inst\_n-1 \}}; the cloud has to perform all the $n$ instructions i.e. the size of the circuit changes from a constant size to a size linear in the number of tests.
 
 This increase in size is due to the fact that the cloud transforms a non-straight line program into a straight-line program.
 
-\textbf{Another transformation}: We consider the following program that a cloud receives : \\
+\subsection{Secret Conditional branching}
+We consider the following program that a cloud receives : \\
  \phantom{x} \texttt{i=0, res=0;}
 \newline \phantom{x} \texttt{do\{ }
 \newline \phantom{x} \hspace{9ex} \texttt{i++;} 
