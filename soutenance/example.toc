@@ -1,0 +1,8 @@
+\beamer@endinputifotherversion {3.10pt}
+\select@language {french}
+\beamer@sectionintoc {1}{D\IeC {\'e}but}{2}{0}{1}
+\beamer@subsectionintoc {1}{1}{Tout d\IeC {\'e}but}{3}{0}{1}
+\beamer@subsectionintoc {1}{2}{Suite apr\IeC {\`e}s le d\IeC {\'e}but}{8}{0}{1}
+\beamer@subsectionintoc {1}{3}{Suite apr\IeC {\`e}s le d\IeC {\'e}but}{10}{0}{1}
+\beamer@sectionintoc {2}{Deuxi\IeC {\`e}me partie}{12}{0}{2}
+\beamer@sectionintoc {3}{Troisi\IeC {\`e}me partie}{14}{0}{3}
