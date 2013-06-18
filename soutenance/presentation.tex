@@ -59,7 +59,8 @@
     \item \texttt{Min}, \texttt{Max} of $(a,b)$ on plaintext:\\
       \ \ \ \ \ \ \ \ \ \texttt{Max}= $a > b$? $a$ : $b$ \ \ , \ \ \texttt{Min}= $a \leq b$? $a$ : $b$ 
       \pause
-      \question{ \texttt{Min}, \texttt{Max} of $(a,b)$ on ciphertext ?}
+      \texttt{Min}, \texttt{Max} of $(a,b)$ on ciphertext ?
+
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -74,7 +75,7 @@
     \pause
   \item {\tt Encrypt,Recrypt, Decrypt, Add, Mult} (pour la table des matières)
   \pause
-  \question{Ça vous plait ?}
+ 
   \item security with parameters
   \item depth
   \end{itemize}
@@ -82,28 +83,77 @@
 
 \subsection{Programs on ciphertexts}
 
-<<<<<<< HEAD
-\begin{frame} \frametitle{Which programs}
-
-
-=======
-\begin{frame} \frametitle{Circuit transformation}
+\begin{frame} \frametitle{ Straight-line vs Non-Straight-line}
   \begin{itemize}
-  \item \warning{C'est vert, mais ce n'est pas le style officiel
-      Ensimag, bien sûr.}
-  \item Circuit transformation
+  \item Straight line $\rightarrow$ translates directly
+  \item Non-Straight line $\rightarrow$ circuit transformation(\textcolor{orange}{Always ?})
   \end{itemize}
->>>>>>> 55e1824130580afa1621ca434760a602abbc90b1
-\end{frame}
+\begin{columns}
+\begin{column}[c]{9cm}
+\begin{exampleblock}{Non-secret branching : XOR}
+\texttt{a[0, $\ldots,$ n-1], res=0, i=0;}
+\newline \phantom{x} \texttt{do\{ }
+\newline \phantom{x} \hspace{9ex} \texttt{res=res$\oplus$a[i];}
+\newline \phantom{x} \hspace{9ex} \texttt{i++;} 
+\newline   \phantom{x} \} \texttt{while(i < n);} \phantom{x} \hspace{9ex}\texttt{// i, n} \textcolor{orange}{not secret}
+\end{exampleblock}
+\end{column}
+\begin{column}[c]{2cm}
 
+ %YOUR SECOND COLUMN HERE
+\end{column}
+\end{columns} 
+\begin{alertblock}{Secret branching}
+\texttt{if(a' > b') instn\_1; else instn\_2;}
+\newline   \phantom{x}  \hspace{8ex} $\Rightarrow$ \texttt{test(a'> b')$\wedge$} \texttt{instn\_1 +} $\neg$\texttt{test(a'> b')$\wedge$ instn\_2 }
+\newline \textcolor{orange}{Cost} = linear
+\end{alertblock}
+\end{frame}
 
 \begin{frame} 
- \frametitle{Theoretical cost}
-  \begin{itemize}
-  \item linear
-  \item sorting
-  \end{itemize}
+ \frametitle{Conditional stopping }
+\restylealgo{algoruled}
+\linesnumbered 
+\begin{columns}
+\begin{column}[c]{9cm}
+
+\begin{block}{\texttt{test(a'>b')}}
+\begin{algorithm}[H]
+
+\SetVline
+ $aIsGreater \leftarrow 0$\;
+ $bitEqual \leftarrow 1$\;
+	
+ \For{$i\leftarrow 0 $ \KwTo $n-1$}{
+						
+     $aIsGreater \leftarrow aIsGreater \vee (\neg(b_i')\wedge a_i'\wedge bitEqual$) \;
+     $bitEqual \leftarrow bitEqual\wedge((a_i'\wedge b_i')\vee(\neg(a_i)'\wedge\neg(b_i')))$\;	       	
+ }
+
+\caption{test(a'$>$b')\label{Code:algo}}
+\end{algorithm}
+\end{block}
+\end{column}
+\begin{column}[c]{2cm}
+\textcolor{orange}{Max/Min ?}
+\end{column}
+\end{columns} 
+
+\begin{columns}
+\begin{column}[c]{8cm}
+\begin{block}{Min-Max}
+ $Max_i \leftarrow (aIsGreater \wedge a_i') \vee (b_i'\wedge \neg(aIsGreater))$ \;
+ $Min_i \leftarrow  (a_i' \wedge \neg(aIsGreater) ) \vee (aIsGreater \wedge b_i')$ \;
+\end{block}
+\end{column}
+\begin{column}[c]{2cm}
+$\Rightarrow$ \textcolor{orange}{spectrum of funcs}
+\end{column}
+\end{columns}
 \end{frame}
+
+
+\subsection{}
 
 \section[Experimental Analysis]{Experimental Analysis}
 

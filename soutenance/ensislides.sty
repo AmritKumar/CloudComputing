@@ -111,18 +111,12 @@
 {\makeatletter\global\advance\c@framenumber by-1\relax\makeatother}
 
 \usepackage{array}
-\newcommand{\question}[1]{%
-  \begin{block}{Question}
-    \begin{tabular}{m{1cm}m{.7\hsize}}
-      \includegraphics[width=.8cm]{fig/question.pdf} & #1 \\
-    \end{tabular}
-  \end{block}
-}
 
 \newcommand{\warning}[1]{\includegraphics[width=.5cm]{fig/warning.pdf}~~#1}
 
 \usepackage{listings}
-
+\usepackage{algorithm2e}
+\usepackage{verbatim}
 \definecolor{trefle}{rgb}{0,0.5,0}
 \definecolor{moka}{rgb}{0.5,0.25,0}
 \definecolor{minuit}{rgb}{0,0,0.5}
