@@ -95,8 +95,8 @@
     \newline \phantom{x}\hspace{3ex}  $c_3=c_1.c_2$ mod $p$; 
     \pause
 
-  \item security with parameters
-  \item depth
+  \item security : $\frac{N}{\epsilon}$ with $2 ^ \epsilon = \frac{\eta}{2\cdot \mu \sqrt{N}} $
+  \item depth :  $d \cdot \mathrm{log}(2) \leq  \mathrm{log}\left( \mathrm{log}\left(\frac{\eta}{2\cdot \sqrt{N}}\right) \right) - \mathrm{log}\left(\mathrm{log}\left( N\mu\right)\right)$
   \end{itemize}
 \end{frame}
 
@@ -136,7 +136,7 @@
 \restylealgo{algoruled}
 \linesnumbered 
 \begin{columns}
-\begin{column}[c]{9cm}
+\begin{column}[c]{8cm}
 
 \begin{block}{\texttt{test(a'>b')}}
 \begin{algorithm}[H]
@@ -155,8 +155,8 @@
 \end{algorithm}
 \end{block}
 \end{column}
-\begin{column}[c]{2cm}
-\textcolor{orange}{Max/Min ?}
+\begin{column}[c]{3cm}
+ $\Rightarrow$ \textcolor{orange}{Max/Min ?}
 \end{column}
 \end{columns} 
 
@@ -173,8 +173,52 @@ $\Rightarrow$ \textcolor{orange}{spectrum of funcs}
 \end{columns}
 \end{frame}
 
+\subsubsection{Tested Operations}
+\begin{frame} \frametitle{Tested Operations}
+  \begin{itemize}
+  \item XOR(of $n$ bits), Majority of $n$-bits, Sum of integers($<32$ bits)
+   \item Matrix product
+  \item Sorting
+   \begin{itemize}
+   \item Insertion sort : $n(n-1)/2$
+   \item Bitonic sort : $n\mathrm{log}(n)(\mathrm{log}(n)+1)/4$ comparators
+    \item Odd-Even sort : $n(\mathrm{log}^{2}(n)-1)/2 + 1 $ comparator
+   \end{itemize}
+\end{itemize}
+sorting $\rightarrow$ \textcolor{orange}{Sorting network}
+\begin{columns}
+\begin{column}[c]{3cm}
+\begin{figure}%on ouvre l'environnement figure
+\vspace{-3ex}
+\centering
+\includegraphics[width=3cm, height=3cm]{network.png} 
+\caption{Insertion Sort Network } 
+ %l'étiquette pour faire référence à cette image
+\end{figure}
+\end{column}
+\begin{column}[c]{3cm}
+\begin{figure}
+\vspace{-3ex}
+\centering
+\includegraphics[width=3cm, height=3cm]{networkBitonic.png} 
+\caption{Bitonic Sort Network } 
+ %l'étiquette pour faire référence à cette image
+\end{figure}
+\end{column}
+\begin{column}[c]{3cm}
+\begin{figure}
+\vspace{-5ex}
+\centering
+\includegraphics[width=3cm, height=3cm]{networkOdddEven.png} 
+\caption{Odd-Even Merge Sort Network } 
+ %l'étiquette pour faire référence à cette image
+\end{figure}
+\end{column}
+\end{columns}
 
-\subsection{}
+\end{frame}
+
+
 
 \section[Experimental Analysis]{Experimental Analysis}
 
