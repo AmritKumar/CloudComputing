@@ -68,13 +68,31 @@
 
 \subsection{SV Scheme: cost-security of crypto-system}
 
-\begin{frame} \frametitle{titre2.1}
+\begin{frame} \frametitle{SV Scheme: cost-security of crypto-system}
   \begin{itemize}
-  \item {\tt KeyGen}
+  \item \texttt{KeyGen}
+
+    %$F(x)=2^{2^n}$
+    %\newline Do until p is prime\{ $S(x) \leftarrow_{R}B_{\infty , N}(\eta/2)$\;
+    %\newline \phantom{x}\hspace{3ex} $G(x)=1+2.S(x)$ 
+    %\newline \phantom{x}\hspace{3ex} $p= \mathrm{\textbf{resultant}}(G(x),F(x))$ \}
+    %\newline $D(x)=\mathrm{\textbf{gcd}}(G(x),F(x))$ over $\mathbb{F}_p[x]$
+    %\newline $\alpha$ $\leftarrow$ unique root of $D(x) \in \mathbb{F}_p $
+    %\newline apply \texttt{xgcd} algorithm over $\mathbb{Q}[x]$ to obtain $Z(x).G(x)=p$ mod $F(x)$
+    %\newline $B=z_0$ mod $2p$
+    $pk = (p, \alpha)$ and $sk = (p , B)$
     \pause
-  \item {\tt Encrypt,Recrypt, Decrypt, Add, Mult} (pour la table des matières)
-  \pause
-  \question{Ça vous plait ?}
+  \item  \texttt{Encrypt}($m \in \{0,1\} , pk$): 
+    \newline   $R(x) \leftarrow_{R}B_{\infty , N}(\mu/2)$
+    \; $C(x)=m+2\cdot R(x)$ 
+    \newline \phantom{x}\hspace{3ex} return  $c=C(\alpha)$ mod $p$;
+    \newline \texttt{Decrypt}($c, sk$):
+    \newline \phantom{x}\hspace{3ex} $m = (c - \lfloor c \cdot B/p \rceil )$ mod $2$;
+    \newline \texttt{Add}($c_1$, $c_2$, $pk$):
+    \newline \phantom{x}\hspace{3ex} $c_3=c_1+c_2$ mod $p$; 
+    \newline \texttt{Mult}($c_1$, $c_2$, $pk$):
+    \newline \phantom{x}\hspace{3ex}  $c_3=c_1.c_2$ mod $p$; 
+    \pause
   \item security with parameters
   \item depth
   \end{itemize}
@@ -82,18 +100,12 @@
 
 \subsection{Programs on ciphertexts}
 
-<<<<<<< HEAD
-\begin{frame} \frametitle{Which programs}
-
-
-=======
 \begin{frame} \frametitle{Circuit transformation}
   \begin{itemize}
   \item \warning{C'est vert, mais ce n'est pas le style officiel
       Ensimag, bien sûr.}
   \item Circuit transformation
   \end{itemize}
->>>>>>> 55e1824130580afa1621ca434760a602abbc90b1
 \end{frame}
 
 
