@@ -231,8 +231,10 @@ Using (1), and (2), we calculate the theoretical security level and the depth pr
 \label{tab:securitytab}
 \end{table}
 
-\autoref{tab:tradeofftab1} presents the security-cost trade-off for 10000 multiplications as a function of $\eta$. We remark that : decreasing $\eta$ with other parameters fixed increases the security of the system at the cost of decreasing the depth.  We further note that increasing the value of $\eta$ increases the computational cost. On the contrary, \autoref{tab:tradeofftab2} presents the security-cost tradeoff for 10000 multiplications as a function of $\mu$. Here, increasing $\mu$ with other parameters fixed increases the security of the system at the cost of decreasing the depth. However, in this case the cost does not vary much. Hence it is profitable to increase $\mu$ to increase the security of the system.
+\autoref{tab:tradeofftab1} presents the security-cost trade-off for 10000 multiplications as a function of $\eta$. We remark that : decreasing $\eta$ with other parameters fixed increases the security of the system at the cost of decreasing the depth. This confirms equation (1) and (2).  We further note that increasing the value of $\eta$ increases the computational cost as $p$ increases which makes the the ciphertexts longer. On the contrary, \autoref{tab:tradeofftab2} presents the security-cost tradeoff for 10000 multiplications as a function of $\mu$. In this case, increasing $\mu$ with other parameters fixed increases the security of the system(confirms (1)) at the cost of decreasing the depth. With small values of $\mu$, the cost remains stable. However, for larger values, the cost increases considerably and this is due to the fact that, the coefficients of the random polynomial in \texttt{Encrypt} increase  which is reflected in the size of the ciphertexts. Hence it is profitable to increase $\mu$ to increase the security of the system when $\mu$ is not too large
 
+
+.
 \begin{table}[htb]
   \centering
   \caption{Trade-off for 10000 multiplications}
@@ -265,8 +267,8 @@ Using (1), and (2), we calculate the theoretical security level and the depth pr
   $4$ & 526 & 5.89 & 1.01894 \\
   $8$ & 528  & 5.63 & 1.01900 \\
   $16$ & 529  & 5.40 & 1.01907 \\
-  $32$ & 801  & 5.40 & 1.01907 \\
-  $64$ & 824  & 5.40 & 1.01907 \\
+  $32$ & 801  & 5.40 & 1.01913 \\
+  $64$ & 824  & 5.40 & 1.01920 \\
 
    \hline
 \end{tabular}
@@ -430,51 +432,65 @@ We note that the sorting programs used do not increase the size of the circuit o
 
 \section{Experimental evaluation \\ and results}
 \label{Sec:Eval}
-We execute the implementations of the above programs, and we measure their wall time and compare the cost with the theoretical complexity depending on the sizes of the input data. For each test, $5-10$ random samples were taken. These were generated using the Unix \texttt{rand()} function by setting the seed using \texttt{srand(time(NULL))}. 
+We execute the implementations of the above programs, and we measure their wall time and CPU time, and compare the experimental cost with the theoretical complexity. For each test, $5-10$ random samples were taken. These were generated using the Unix \texttt{rand()} function by setting the seed using \texttt{srand(time(NULL))}.  
 
  \autoref{fig:image_sf7} represents minimum and maximum wall time of \texttt{XOR}. We can see that the wall time increases linearly with number of bits which confirm the theoretical cost. We notice the same complexity for both \texttt{Bit Majority} \autoref{fig:image_sf0bis} and \texttt{sum of integers} \autoref{fig:image_sf1}. We further confirm the $O(n^{3})$ complexity for the \texttt{matrix product} \autoref{fig:image_sf2}. These experiments were performed on M2.
 
 
 \begin{figure}[!H]%on ouvre l'environnement figure
 \centering
-\includegraphics[width=5cm, height=4cm]{f4.pdf} 
+\includegraphics[width=8cm, height=6cm]{f4.pdf} 
 \caption{Wall time for XOR} 
 \label{fig:image_sf0} %l'étiquette pour faire référence à cette image
 \end{figure}
 
 \begin{figure}%on ouvre l'environnement figure
 \centering
-\includegraphics[width=5cm, height=4cm]{f8.pdf} 
+\includegraphics[width=8cm, height=6cm]{f8.pdf} 
 \caption{Wall time for bit majority} 
 \label{fig:image_sf0bis} %l'étiquette pour faire référence à cette image
 \end{figure}
 \begin{figure}%on ouvre l'environnement figure
 \centering
-\includegraphics[width=5cm, height=4cm]{f8.pdf} 
+\includegraphics[width=8cm, height=6cm]{f8.pdf} 
 \caption{Wall time for sum} 
 \label{fig:image_sf1} %l'étiquette pour faire référence à cette image
 \end{figure}
 
 \begin{figure}%on ouvre l'environnement figure
 \centering
-\includegraphics[width=5cm, height=4cm]{f9.pdf} 
+\includegraphics[width=8cm, height=6cm]{f9.pdf} 
 \caption{Wall time for matrix product} 
 \label{fig:image_sf2} %l'étiquette pour faire référence à cette image
 \end{figure}
 
  \textbf{Sorting :} 
 The experiments on the sorting algorithms were performed on machine M1. 
-Initially, the cryptographic parameters were set to $(N = 8, \nu = 2^{384}, \mu = 4, s_1 = 8, s_2 = 5)$ which is the default setting in the software. We measured CPU time and Wall time by varying the sequence length(nbit) and the number of sequences(n). We plot maximum and minimum time in minutes for nbit=6, \autoref{fsort8.pdf}.   
+Initially, the cryptographic parameters were set to $(N = 8, \nu = 2^{384}, \mu = 4, s_1 = 8, s_2 = 5)$ which is the default setting in the software. We measured CPU time and Wall time by varying the sequence length($nbit$) and the number of sequences(n). We plot maximum and minimum time in minutes for $nbit=6$ for insertion sort, \autoref{fig:image_sf4} . \autoref{fig:image_sf2} compares the results with changing values of $nbit$. \autoref{fig:image_sf1} presents a curve fitting plot that verifies the quadratic complexity of this algorithm.
 
 \begin{figure} %on ouvre l'environnement figure
 \centering
-\includegraphics[width=6cm, height=6cm]{fsort8.pdf} 
-\caption{CPU time for Insertion sort, nbit=6} 
-\label{fig:image_sf8} %l'étiquette pour faire référence à cette image
+\includegraphics[width=10cm, height=10cm]{fsort4.pdf} 
+\caption{Wall time for Insertion sort, nbit=6} 
+\label{fig:image_sf4} %l'étiquette pour faire référence à cette image
 \end{figure}
 
 
- \autoref{fig:image_sf3},\autoref{fig:image_sf4}, \autoref{fig:image_sf5}, \autoref{fig:image_sf6}, \\ \autoref{fig:image_sf8}, \autoref{fig:image_sf7} and \autoref{fig:image_sf2} show the variation of CPU time and Wall time with the increase in the number of sequences to sort and the number of bits. These experiments were done for Insertion Sort algorithm. \autoref{fig:image_sf1} presents a  curve fitting plot that verifies the quadratic complexity of this algorithm.
+\begin{figure} %on ouvre l'environnement figure
+\centering
+\includegraphics[width=10cm, height=10cm]{fsort2.pdf} 
+\caption{Wall time in minutes for Insertion sort} 
+\label{fig:image_sf2} %l'étiquette pour faire référence à cette image
+\end{figure}
+
+Graphs for other values of $nbit$ and with wall time and CPU time are presented in Appendix. 
+
+\begin{figure} %on ouvre l'environnement figure
+\centering
+\includegraphics[width=10cm, height=10cm]{fsort1.pdf} 
+\caption{Curve fitting for Insertion sort, nbit=6} 
+\label{fig:image_sf1} %l'étiquette pour faire référence à cette image
+\end{figure}
 
 \begin{table}
 \caption{Wall time for Bitonic Sort}
