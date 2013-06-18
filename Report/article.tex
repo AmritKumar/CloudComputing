@@ -118,11 +118,11 @@ Through these experiments, we also provide information on the additional cost to
 
 \section{Fully homomorphic Encryption scheme (FHE) }
 
-The homomorphic encryption scheme proposed by Gentry \cite{homenc} is based on ideal lattices. The Gentry's non-determi-nistic scheme builds on a \textit{somewhat homomorphic} scheme which can perform additions and multiplications on encrypted data till a bounded depth. The non-determinism introduced in the form of a noise renders the scheme secure. But, the noise increases with the depth  of the evaluation circuit. To counter this problem, Gentry introduces \textit{bootstrapping} technique which ensures unbounded depth operatability of the scheme. Smart Vercauteren \cite{cryptoeprint:2009:571} have proposed an integer based approach and we use one of its implementation detailed in \cite{perl:poster} for our experiments.
+The homomorphic encryption scheme proposed by Gentry \cite{homenc} is based on ideal lattices. The Gentry's non-determi-nistic scheme builds on a \textit{somewhat homomorphic encryption}(SWHE) scheme which can perform additions and multiplications on encrypted data till a bounded depth. The non-determinism introduced in the form of a noise renders the scheme secure. But, the noise increases with the depth  of the evaluation circuit. To counter this problem, Gentry introduces \textit{bootstrapping} technique which ensures unbounded depth operatability of the scheme. Smart Vercauteren \cite{cryptoeprint:2009:571} have proposed an integer based approach and we use one of its implementation detailed in \cite{perl:poster} for our experiments.
 
 \subsection{Smart-Vercauteren  scheme}
 
-The scheme proposed in \cite{cryptoeprint:2009:571} has 3 parameters:($N, \nu, \mu$ ). The somewhat homomorphic scheme uses 5 algorithms: (\texttt{KeyGen}, \texttt{Encrypt}, \texttt{Decrypt}, \texttt{Add}, \texttt{Mult}). Algorithm \autoref{Code:SV} presents the \texttt{KeyGen} algorithm.
+The scheme proposed in \cite{cryptoeprint:2009:571} has 3 parameters:($N, \nu, \mu$ ). The somewhat homomorphic scheme uses 5 algorithms: (\texttt{KeyGen}, \texttt{Encrypt}, \texttt{Decrypt}, \texttt{Add}, \texttt{Mult}). Algorithm \autoref{Code:SV} presents the \texttt{KeyGen} algorithm. This sheme will be referred to as SV scheme in this paper.
 
 \restylealgo{algoruled}
 \linesnumbered
@@ -151,10 +151,10 @@ where $ B_{\infty , n}(r) = \{\sum_{i=0}^{n-1}{a_i}x^i : -r \leq a_i \leq r \} $
 \texttt{Encrypt}($m \in \{0,1\} , pk$): 
 \newline \phantom{x}\hspace{3ex}  $R(x)=_{R}(B_{\infty , N}(\mu/2)$
  \; $C(x)=m+2\cdot R(x)$ 
-\newline \phantom{x}\hspace{3ex} return  $c=C(\alpha)$ mod $p$
+\newline \phantom{x}\hspace{3ex} return  $c=C(\alpha)$ mod $p$;
 \newline \texttt{Decrypt}($c, sk$):
 \newline \phantom{x}\hspace{3ex} $m = (c - \lfloor c \cdot B/p \rceil )$ mod $2$;
-\phantom{x}\hspace{1ex} return $m$
+\phantom{x}\hspace{1ex} return $m$;
 \newline \texttt{Add}($c_1$, $c_2$, $pk$):
 \newline \phantom{x}\hspace{3ex} $c_3=c_1+c_2$ mod $p$
 ;  \phantom{x}\hspace{1ex}  return $c_3$
@@ -168,12 +168,15 @@ where $ B_{\infty , n}(r) = \{\sum_{i=0}^{n-1}{a_i}x^i : -r \leq a_i \leq r \} $
 
 If we choose $F(x)$ \footnote{a choice that authors of SV scheme propose and is always a safe choice for monic and irreducible polynomial over $\mathbb{Z}[x] $} to be $x^N+1$, and take $2 ^ \lambda = \frac{\nu}{2\cdot \mu \sqrt{N}} $, then the SV scheme provides $N /\lambda$ bits of security.
 
-\textbf{SWHE to FHE :} We recall that the authors have proved that the multiplicative depth $d$ of SWHE  verifies \[d \cdot log(2) \leq log( log(\frac{\nu}{2\cdot \sqrt{N}}) ) - log(log( N\mu))\]
-when $F(x)= x^N+1$. Turning the SWHE to FHE is achieved by recasting Gentr's method for the parameters of this scheme. To achive this the authors propose to generate $s_1$ uniformly random integers $B_i$ in $[-p, \ldots, p]$ such that there exists a subset $S$ of $s_2$ elements with $\sum_{j \in S}{B_j}= B$ over integers. By defining $sk_i =1$ iff $i\in S$ and taking $c_i=Encrypt(sk_i,pk)$ we generate a new public key which contains hint of the secret key $sk$. The public key now comprises of \[(p, \alpha, s_1, s_2, \{c_i, B_i\}_{i=1}^{s1})\].
+\textbf{SWHE to FHE :} We recall that the authors have proved that the multiplicative depth $d$ of SWHE  verifies \[d \cdot \mathrm{log}(2) \leq  \mathrm{log}\left( \mathrm{log}\left(\frac{\nu}{2\cdot \sqrt{N}}\right) \right) - \mathrm{log}\left(\mathrm{log}\left( N\mu\right)\right)\]
+when $F(x)= x^N+1$. Turning the SWHE to FHE is achieved by recasting Gentr's method for the parameters of this scheme. To achive this the authors propose to generate $s_1$ uniformly random integers $B_i$ in $[-p, \ldots, p]$ such that there exists a subset $S$ of $s_2$ elements with $\sum_{j \in S}{B_j}= B$ over integers. By defining $sk_i =1$ iff $i\in S$ and taking $c_i=\texttt{Encrypt}(sk_i,pk)$ we generate a new public key which contains hint of the secret key $sk$. The public key now comprises of \[(p, \alpha, s_1, s_2, \{c_i, B_i\}_{i=1}^{s1})\].
 
 To ensure that the hint doesn't provide considerable advantage to an attacker, the underlying \textit{sparse subset-sum problem} SSSP must remain remain hard. If we take $s_1$ to be slightly greater than $p$, then we need to select $s_2$ such that $\sqrt {{s_1}  \choose {s_2} } \leq 2 ^{N/\lambda}$ so as to ensure that SSSP difficulty is at least as difficult as the difficulty of the BDDP underlying the SWHE scheme.
+
 \subsection{Considered Implementations}
-We used the open source implementation Scarab library \cite{hcrypt}  version $1.0.0$ of the Smart-Vercauteren scheme and is a part of \textsc{hcryptProject}. The implementation is in beta version. The software requires GMP \cite{gmp}, The GNU Multiple Precision Arithmetic Library; FLINT \cite{flint} , Fast Library for Number Theory; MPIR \cite{mpir}, Multiple Precision Integers and Rationals and MPFR \cite{mpfr}, multiple-precision floating-point computations with correct rounding. Linux is supposed to be the only supported platform. The libraries are in implemented in  C and the installation guide is provided with the package. \autoref{funs} presents the list of functions provided by the implementation with their description. The library provides a file \texttt{test.c} where a user can write his own function to test different operations.
+We used the open source implementation Scarab library \cite{hcrypt}  version $1.0.0$ of the Smart-Vercauteren scheme and is a part of \textsc{hcryptProject}. The implementation is in beta version. The software requires GMP(we tested with version $5.1.2$) \cite{gmp}, The GNU Multiple Precision Arithmetic Library; FLINT version $1.6$ \cite{flint} , Fast Library for Number Theory; MPIR (we tested with $2.6.0$) \cite{mpir}, Multiple Precision Integers and Rationals and MPFR (tested with version $3.1.2$) \cite{mpfr}  Multiple-Precision Floating-point computations with correct Rounding. Linux is supposed to be the only supported platform. The libraries are implemented in  C and the installation guide is provided with the package. 
+
+\autoref{funs} presents the list of functions provided by the implementation with their description. The library provides a file \texttt{test.c} where a user can write his own functions to test different operations. It also provides a header file \texttt{parameters.h} to set the parameters $N, \nu, \mu, s_1$ and $ s_2$ of the cryptosystem.
 \begin{table*}
 \caption{Function available in Scarab}
 \begin{tabular}{|l|l||}
@@ -195,12 +198,12 @@ We used the open source implementation Scarab library \cite{hcrypt}  version $1.
 \label{funs}
 \end{table*}
 
-To simplify out computational circuit added, we added two basic functions \texttt{or(mpz\_t res, mpz\_t a, mpz\_t b, fhe\_pk\_t pk);} and \texttt{not(mpz\_t res, mpz\_t a, fhe\_pk\_t pk);} which compute the logical or of encrypted bits and the negation of an encrypted bit respectively.
+To simplify our computational circuit, we added two basic functions \texttt{or(mpz\_t res, mpz\_t a, mpz\_t b, fhe\_pk\_t pk);} and \texttt{not(mpz\_t res, mpz\_t a, fhe\_pk\_t pk);} which compute the logical \texttt{or}(+) of encrypted bits and the negation ($\neg$) of an encrypted bit respectively.
 
-We time the various algorithms on two desktop machines. Both these machines were x86-64 platform running linux kernel $3.2.0$-$45$-generic  and used GCC $4.6.3$ C compiler.  The first machine housed Intel Core i3 M330 (2.13GHz x 4) processor and will be referred in this article as machine M1 while the other used  housed Intel Core i5 2430 M(2.40 x4) processor and will be referred as machine M2.
+We time the various algorithms on two desktop machines. Both these machines were x86-64 platform running linux kernel $3.2.0$-$45$-generic  and used GCC $4.6.3$ C compiler.  The first machine housed Intel Core i3 M330 (2.13GHz x 4) processor and will be referred in this article as machine M1 while the other used  housed Intel Core i5 M2430 (2.40GHz x 4) processor and will be referred as machine M2. During the experiments these machines were not connected to any network and were executing the inevitable applications to support them.
  
 \subsection{Intial set-up cost}
-Measurements taken are CPU time, Wall Time, Memory Usage by varying the input size  and the algorithmic parameters. Noise reduction threshold.\\
+Measurements taken are CPU time and Wall Time by varying the input size  and the algorithmic parameters. Noise reduction threshold.\\
 Here we estimate the performance of this program in terms of run time for KeyGen, Encrypt, Decrypt and the Min-Max algorithm.
 
 \textbf{KeyGen}\\
@@ -315,7 +318,7 @@ Max and Min regenerate $a_i$ and $b_i$ and hence contain the correct result.
 \label{image_f2} %l'étiquette pour faire référence à cette image
 \end{figure}
 \end{comment}
-The cost of this algorithm on ciphertext is linear with bit number, like  the algorithm on plaintext, the extra cost in this case is encryption-decryption cost and especially the code generation which is very inpreductible and take often a long time in the SV-Scheme.
+The cost of this algorithm on ciphertext is linear with bit number, like  the algorithm on plaintext, the extra cost in this case is encryption-decryption cost and especially the code generation which is very inpreductible and take often a long time in the SV scheme.
 
 \section{Choice of Benchmarks}
 \label{sec:bm}
@@ -344,8 +347,8 @@ As the implementations provide addition and multiplicaion of ciphertexts,  size 
 \textbf{XOR of $n$-bits :} \texttt{XOR} of $n$-bits requires $n-1$ \texttt{XOR} gates. \newline
 \textbf{Sum of integers of $n$-bits :} Sum of two integers is performed using an $n$ \texttt{full-adder} circuits. The cost of a full adder circuit is $2$ \texttt{XOR} to calculate the sum and $2$ \texttt{AND}, $1$ \texttt{XOR} and $1$ \texttt{OR} for the carry. Hence the total complexity is $3n$ \texttt{AND}, $5n$ \texttt{XOR}. \newline
 \textcolor{orange}{\textbf{Sum of arbitrary integers}} \newline
-\textbf{Majority of $n$-bits :} Majority bit is evaluated by obtaining the sum of the bits and then returning the result of the comparision of the sum and $n/2$. \newline \newline
-\textbf{Product of two $n\times n$ matrices}: This resquires $n^3$ \texttt{AND} gates and \texttt{$n^2(n-1)$} \texttt{XOR} gates. \newline \newline
+\textbf{Majority of $n$-bits :} Majority bit is evaluated by obtaining the sum of the bits and then returning the result of the comparision of the sum and $n/2$. This operation is interesting in the sense that if the same program is evaluated on the user's side, he has to store the sum of the bits, hence  needs $\mathrm{\lfloor\log_{2}n \rfloor +1}$ bits. However, if he performs the operation remotely on a cloud, he only requires a constant number of bits to retrieve the result. \newline \newline
+\textbf{Product of two $n\times n$ matrices}: This requires $n^3$ \texttt{AND} gates and \texttt{$n^2(n-1)$} \texttt{XOR} gates. \newline \newline
 \textbf{Sorting} Several straight-line programs for sorting have have been proposed in litterature \cite{dk}, \cite{Batcher:1968:SNA:1468075.1468121}. These programs use a comparator gate : a logical gate with two inputs and two ouputs, that computes the minimum and maximum of two $n$ bit sequences. Algorithm \autoref{Code:algo} implements a comparator gate. Hence we do not need to perform any transformation for these algorithms.
 \newline \newline
 \textbf{Insertion sort :} When allowing for parallel comparators, bubble sort and insertion sort are identical. Hence $n(n-1)/2$ comparator gates are used for insertion sort.\newline \newline
@@ -365,26 +368,98 @@ We note that the sorting programs used do not increase the size of the circuit o
 
 \section{Experimental evaluation \\ and analysis}
 \label{Sec:Eval}
-Measurements by varying the parameters or the plaintext size.
 
+\begin{comment}
 \begin{figure}[!h] %on ouvre l'environnement figure
 \centering
 \includegraphics[width=8cm]{./Insertion_sort_CPU.jpg} 
 \caption{Run time of } 
 \label{image_f2} %l'étiquette pour faire référence à cette image
 \end{figure}
-\
+\end{comment}
+\begin{comment}
+\begin{figure}
 
-%\begin{figure*}
+\includegraphics{/home/kumaram/Bureau/Measurements/PARAMS1/figures/InsertionSort/Insertion\_sort\_min-max\_4bits.jpg}
+ \label{fig:insernbit4}
+ \caption{Wall time for Insertion sort}
+\end{figure}
+\end{comment}
+ \textbf{Sorting :} 
+The experiments on the sorting methods were done on the machine M1. For each test 5 random samples were taken. These were generated using the Unix \texttt{rand} function by setting the seed using \texttt{srand(time(NULL))}. Intially the cryptographic parameters were set to $(N = 8, \nu = 2^{384}, \mu = 4, s_1 = 8, $  and $ s_2 = 5)$which is the default setting in the software. The above figures show how the CPU time and Wall time vary with the increase in the number of sequences to sort and the number of bits. These experiments were done for Insertion Sorting algorithm. We also present a  curve fitting plot that verifies quadratic nature of the complexity of this algorithm.
 
-%\incudegraphics{"/home/honey/Documents/Mosig\_1/ProjSpec/Measurements\Insertion\_sort\_CPU.jpg"}
+\begin{table}
+\caption{CPU time for Bitonic Sort}
+\resizebox{8cm}{!}{
+ 
+\begin{tabular}{|l|l|l||}
+  \hline
+  (Number of bits,  & Maximum time (in ms) & Minimum time (in ms) \\
+  Number of sequences) &  &    \\
+  \hline
+  (4, 4) & 		 34584 & 32759\\
+  (8,4)  & 	  	 189685  & 130157\\
+  (16,4) & 	 	 635705 &  438146\\
+  (32,4) &	 	 1315663 &  1313082\\
 
-%\end{figure*}
+\hline
+\end{tabular}
+\label{bitonicsort}
+}
+\end{table}
 
+
+\begin{table}
+\caption{CPU time for Odd-Even Sort}
+\resizebox{8cm}{!}{
+ 
+\begin{tabular}{|l|l|l||}
+  \hline
+  (Number of bits,  & Maximum time (in ms) & Minimum time (in ms) \\
+  Number of sequences) &  &    \\
+  \hline
+  (4, 4) & 		 27958 & 27455\\
+  (8,4)  & 	  	 108197  & 103683\\
+  (16,4) & 	 	 354188 &  341522\\
+  (32,4) &	 	 1587427 &  1044640\\
+
+\hline
+\end{tabular}
+\label{OddEvensort}
+}
+\end{table}
+ 
+ 
+When we increase the security of the system by setting the parameters to  $(N = 256, \nu = 16, \mu = 2, s_1 = 5000, s_2 = 5)$ which ensures $25$ bits of security, we obtain the following results for Odd-Even Sorting algorithm.
+
+\begin{table}
+\caption{CPU time for Odd-Even Sort}
+\resizebox{8cm}{!}{
+ 
+\begin{tabular}{|l|l|l||}
+  \hline
+  (Number of bits,  & Maximum time (in ms) & Minimum time (in ms) \\
+  Number of sequences) &  &    \\
+  \hline
+  (4, 4) & 		 27958 & 27455\\
+  (8,4)  & 	  	 108197  & 103683\\
+  (16,4) & 	 	 354188 &  341522\\
+  (32,4) &	 	 1587427 &  1044640\\
+
+\hline
+\end{tabular}
+\label{OddEvensort}
+}
+\end{table}
+ 
 
 \section{Conclusion}
 
+%\begin{figure*}
 
+%  \incudegraphics{"/home/honey/Documents/Mosig\_1/ProjSpec/Measurements\Insertion\_sort\_CPU.jpg"}
+
+%\end{figure*}
 
 \bibliographystyle{alpha}
 \bibliography{article}  
