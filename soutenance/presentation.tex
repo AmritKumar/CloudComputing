@@ -95,13 +95,14 @@
     \newline \texttt{Decrypt}($c, sk$):
     \newline \phantom{x}\hspace{3ex} $m = (c - \lfloor c \cdot B/p \rceil )$ mod $2$;
 \end{block}
-
+\pause
 \begin{block}{Operations}
     \texttt{Add}($c_1$, $c_2$, $pk$):
     \newline \phantom{x}\hspace{3ex} $c_3=c_1+c_2$ mod $p$; 
     \newline \texttt{Mult}($c_1$, $c_2$, $pk$):
     \newline \phantom{x}\hspace{3ex}  $c_3=c_1.c_2$ mod $p$; 
 \end{block}
+\pause
 \begin{itemize}
   \item security : $\frac{N}{\epsilon}$ with $2 ^ \epsilon = \frac{\eta}{2\cdot \mu \sqrt{N}} $
   \item depth :  $d \cdot \mathrm{log}(2) \leq  \mathrm{log}\left( \mathrm{log}\left(\frac{\eta}{2\cdot \sqrt{N}}\right) \right) - \mathrm{log}\left(\mathrm{log}\left( N\mu\right)\right)$
@@ -116,7 +117,7 @@
   \item Straight line $\rightarrow$ translates directly
   \item Non-Straight line $\rightarrow$ circuit transformation(\textcolor{orange}{Always ?})
   \end{itemize}
-
+\pause
 \begin{columns}
 \begin{column}[c]{9cm}
 \begin{exampleblock}{Non-secret branching : XOR}
@@ -132,6 +133,7 @@
  %YOUR SECOND COLUMN HERE
 \end{column}
 \end{columns} 
+\pause
 \begin{alertblock}{Secret branching}
 \texttt{if(a' > b') instn\_1; else instn\_2;}
 \newline   \phantom{x}  \hspace{8ex} $\Rightarrow$ \texttt{test(a'> b')$\wedge$} \texttt{instn\_1 +} $\neg$\texttt{test(a'> b')$\wedge$ instn\_2 }
@@ -144,7 +146,7 @@
 \restylealgo{algoruled}
 \linesnumbered 
 \begin{columns}
-\begin{column}[c]{8cm}
+\begin{column}[c]{9cm}
 
 \begin{block}{\texttt{test(a'>b')}}
 \begin{algorithm}[H]
@@ -163,11 +165,12 @@
 \end{algorithm}
 \end{block}
 \end{column}
-\begin{column}[c]{3cm}
+\begin{column}[c]{2cm}
+
  $\Rightarrow$ \textcolor{orange}{Max/Min ?}
 \end{column}
 \end{columns} 
-
+\pause
 \begin{columns}
 \begin{column}[c]{8cm}
 \begin{block}{Min-Max}
@@ -176,6 +179,7 @@
 \end{block}
 \end{column}
 \begin{column}[c]{2cm}
+
 $\Rightarrow$ \textcolor{orange}{spectrum of funcs}
 \end{column}
 \end{columns}
