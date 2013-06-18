@@ -28,7 +28,7 @@
 
 \begin{frame}\frametitle{Introduction}
   \begin{itemize}
-  \item What is FHE, what propreties it provides?\\
+  \item What is FHE, what properties it provides?\\
     
     \begin{itemize}
       \pause
@@ -46,9 +46,9 @@
       \pause
       $r(c_1+c_2) < r(c_1)+r(c_2)$ , $r(c_1.c_2) < r(c_1).r(c_2)$
       \pause
-    \item ``Bootsrapping'' \\ 
+    \item ``Bootstrapping'' \\ 
       \pause
-      ``dirty'' ciphertext $\rightarrow$ ``clean'' ciphertext
+      ``dirty'' cipher-text $\rightarrow$ ``clean'' cipher-text
       
     \end{itemize}
     \pause
@@ -56,10 +56,11 @@
     
     \begin{itemize}
       \pause
-    \item \texttt{Min}, \texttt{Max} of $(a,b)$ on plaintext:\\
-      \ \ \ \ \ \ \ \ \ \texttt{Max}= $a > b$? $a$ : $b$ \ \ , \ \ \texttt{Min}= $a \leq b$? $a$ : $b$ 
+    \item \texttt{Min}, \texttt{Max} of $(a,b)$ on plain-text:
+       \newline \phantom{x}\hspace{3ex}  \texttt{Max}= $a > b$? $a$ : $b$ 
+       \newline \phantom{x}\hspace{3ex}   \texttt{Min}= $a \leq b$? $a$ : $b$ 
       \pause
-      \texttt{Min}, \texttt{Max} of $(a,b)$ on ciphertext ?
+     \item \texttt{Min}, \texttt{Max} of $(a,b)$ on cipher-text ?
 
     \end{itemize}
   \end{itemize}
@@ -70,31 +71,39 @@
 \subsection{SV Scheme: cost-security of crypto-system}
 
 \begin{frame} \frametitle{SV Scheme: cost-security of crypto-system}
-  \begin{itemize}
-  \item \texttt{KeyGen}
 
-    %$F(x)=2^{2^n}$
-    %\newline Do until p is prime\{ $S(x) \leftarrow_{R}B_{\infty , N}(\eta/2)$\;
-    %\newline \phantom{x}\hspace{3ex} $G(x)=1+2.S(x)$ 
-    %\newline \phantom{x}\hspace{3ex} $p= \mathrm{\textbf{resultant}}(G(x),F(x))$ \}
-    %\newline $D(x)=\mathrm{\textbf{gcd}}(G(x),F(x))$ over $\mathbb{F}_p[x]$
-    %\newline $\alpha$ $\leftarrow$ unique root of $D(x) \in \mathbb{F}_p $
-    %\newline apply \texttt{xgcd} algorithm over $\mathbb{Q}[x]$ to obtain $Z(x).G(x)=p$ mod $F(x)$
-    %\newline $B=z_0$ mod $2p$
+
+    \begin{block}{\texttt{KeyGen}}
+
+    $F(x)=X^{2^n}+1$
+    \newline Do until p is prime\{ $S(x) \leftarrow_{R}B_{\infty , N}(\eta/2)$\;
+    \newline \phantom{x}\hspace{3ex} $G(x)=1+2.S(x)$ 
+    \newline \phantom{x}\hspace{3ex} $p= \mathrm{\textbf{resultant}}(G(x),F(x))$ \}
+    \newline $D(x)=\mathrm{\textbf{gcd}}(G(x),F(x))$ over $\mathbb{F}_p[x]$
+    \newline $\alpha$ $\leftarrow$ unique root of $D(x) \in \mathbb{F}_p $
+    \newline apply \texttt{xgcd} algorithm over $\mathbb{Q}[x]$ to obtain $Z(x).G(x)=p$ mod $F(x)$
+    \newline $B=z_0$ mod $2p$
     $pk = (p, \alpha)$ and $sk = (p , B)$
-    \pause
-  \item  \texttt{Encrypt}($m \in \{0,1\} , pk$): 
-    \newline   $R(x) \leftarrow_{R}B_{\infty , N}(\mu/2)$
+\end{block}
+\end{frame}
+
+\begin{frame} \frametitle{Continued}
+\begin{block}{Encrypt/Decrypt(pk,sk)}
+ $R(x) \leftarrow_{R}B_{\infty , N}(\mu/2)$
     \; $C(x)=m+2\cdot R(x)$ 
     \newline \phantom{x}\hspace{3ex} return  $c=C(\alpha)$ mod $p$;
     \newline \texttt{Decrypt}($c, sk$):
     \newline \phantom{x}\hspace{3ex} $m = (c - \lfloor c \cdot B/p \rceil )$ mod $2$;
-    \newline \texttt{Add}($c_1$, $c_2$, $pk$):
+\end{block}
+\pause
+\begin{block}{Operations}
+    \texttt{Add}($c_1$, $c_2$, $pk$):
     \newline \phantom{x}\hspace{3ex} $c_3=c_1+c_2$ mod $p$; 
     \newline \texttt{Mult}($c_1$, $c_2$, $pk$):
     \newline \phantom{x}\hspace{3ex}  $c_3=c_1.c_2$ mod $p$; 
-    \pause
-
+\end{block}
+\pause
+\begin{itemize}
   \item security : $\frac{N}{\epsilon}$ with $2 ^ \epsilon = \frac{\eta}{2\cdot \mu \sqrt{N}} $
   \item depth :  $d \cdot \mathrm{log}(2) \leq  \mathrm{log}\left( \mathrm{log}\left(\frac{\eta}{2\cdot \sqrt{N}}\right) \right) - \mathrm{log}\left(\mathrm{log}\left( N\mu\right)\right)$
   \end{itemize}
@@ -108,7 +117,7 @@
   \item Straight line $\rightarrow$ translates directly
   \item Non-Straight line $\rightarrow$ circuit transformation(\textcolor{orange}{Always ?})
   \end{itemize}
-
+\pause
 \begin{columns}
 \begin{column}[c]{9cm}
 \begin{exampleblock}{Non-secret branching : XOR}
@@ -124,6 +133,7 @@
  %YOUR SECOND COLUMN HERE
 \end{column}
 \end{columns} 
+\pause
 \begin{alertblock}{Secret branching}
 \texttt{if(a' > b') instn\_1; else instn\_2;}
 \newline   \phantom{x}  \hspace{8ex} $\Rightarrow$ \texttt{test(a'> b')$\wedge$} \texttt{instn\_1 +} $\neg$\texttt{test(a'> b')$\wedge$ instn\_2 }
@@ -136,7 +146,7 @@
 \restylealgo{algoruled}
 \linesnumbered 
 \begin{columns}
-\begin{column}[c]{8cm}
+\begin{column}[c]{9cm}
 
 \begin{block}{\texttt{test(a'>b')}}
 \begin{algorithm}[H]
@@ -155,11 +165,12 @@
 \end{algorithm}
 \end{block}
 \end{column}
-\begin{column}[c]{3cm}
+\begin{column}[c]{2cm}
+
  $\Rightarrow$ \textcolor{orange}{Max/Min ?}
 \end{column}
 \end{columns} 
-
+\pause
 \begin{columns}
 \begin{column}[c]{8cm}
 \begin{block}{Min-Max}
@@ -168,6 +179,7 @@
 \end{block}
 \end{column}
 \begin{column}[c]{2cm}
+
 $\Rightarrow$ \textcolor{orange}{spectrum of funcs}
 \end{column}
 \end{columns}
@@ -312,18 +324,67 @@ sorting $\rightarrow$ \textcolor{orange}{Sorting network}
 
 \subsection{Implementations cost}
 
-\begin{frame} \frametitle{titre3.2}
-  \begin{itemize}
-  \item figures
-  \item explication: cout confirmé
-  \end{itemize}
+\begin{frame} \frametitle{Results}
+
+\begin{columns}
+\begin{column}[c]{3cm}
+\begin{figure}%on ouvre l'environnement figure
+\vspace{-3ex}
+\centering
+\includegraphics[width=5cm, height=5cm]{f4.pdf} 
+\caption{XOR of $n$ bits} 
+ %l'étiquette pour faire référence à cette image
+\end{figure}
+\end{column}
+\begin{column}[c]{5cm}
+\begin{figure}
+\vspace{-2cm}
+\centering
+\includegraphics[width=6cm, height=8cm]{fsort1.pdf} 
+\caption{Insertion sort nbit=6} 
+ %l'étiquette pour faire référence à cette image
+\end{figure}
+\end{column}
+\end{columns}
+
 \end{frame}
 
-\begin{frame} \frametitle{titre3.3}
-  \begin{itemize}
-  \item \warning{C'est vert, mais ce n'est pas le style officiel
-    Ensimag, bien sûr.}
-  \end{itemize}
+
+\begin{frame} \frametitle{Results}
+ \begin{columns}
+\begin{column}[c]{3cm}
+\begin{figure}%on ouvre l'environnement figure
+\vspace{-3ex}
+\centering
+\includegraphics[width=5cm, height=5cm]{f9.pdf} 
+\caption{Matrix product} 
+ %l'étiquette pour faire référence à cette image
+\end{figure}
+\end{column}
+\begin{column}[c]{4cm}
+\begin{table}
+\caption{Wall time for Odd-Even Merge Sort}
+\resizebox{5cm}{!}{
+\begin{tabular}{|l|l|l||}
+  \hline
+  (Number of sequences,  & Maximum time (in ms) & Minimum time (in ms) \\
+  Number of bits) &  &    \\
+  \hline
+  (4, 4) & 28363 & 27321  \\
+  (8, 4)  & 158674 & 120868 \\
+  (16,4) & 459895  & 340981  \\
+  (32,4) & 1043093 &  1041674 \\
+  (4,6) & 41350 & 41204 \\
+  (8,6) & 158272  &156721 \\
+  (16,6) & 543735 & 520719 \\
+  (32,6) & 1638711 & 1594432 \\
+\hline
+\end{tabular}
+\label{OddEvensort1}
+}
+\end{table}
+\end{column}
+\end{columns}
 \end{frame}
 
 \section[Conclusion]{Conclusion}
